@@ -1,0 +1,23 @@
+{% extends 'base.html' %} {% comment %} extiende al template base {% endcomment %}
+
+{% comment %}
+    Arreglar toda la parte visual de esta pagina
+{% endcomment %}
+    
+{% load static %}
+{% block titulo %} {% comment %} abre el bloque para titulo {% endcomment %}
+Inicio
+{% endblock %} {% comment %} cierra el bloque para titulo {% endcomment %}
+
+{% block contenido %} {% comment %} abre el bloque para contenido {% endcomment %}
+<div class="container mt-5">
+    <h1 class="text-center">Editar Vacante</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success">Guardar Cambios</button>
+        <a href="{% url 'lista_vacantes' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

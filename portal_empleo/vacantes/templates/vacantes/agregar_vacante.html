@@ -1,0 +1,30 @@
+{% extends 'base.html' %} {% comment %} extiende al template base {% endcomment %}
+
+{% comment %}
+    Arreglar toda la parte visual de esta pagina
+{% endcomment %}
+    
+{% load static %}
+{% block titulo %} {% comment %} abre el bloque para titulo {% endcomment %}
+Inicio
+{% endblock %} {% comment %} cierra el bloque para titulo {% endcomment %}
+
+{% block contenido %} {% comment %} abre el bloque para contenido {% endcomment %}
+<div class="container d-flex justify-content-center align-items-center min-vh-50" style="opacity: 90%;">
+    <div class="form-container bg-light p-5 rounded shadow-sm w-50">
+        <h1 class="text-center mb-4">Agregar Vacante</h1>
+        <form method="post" class="form">
+            {% csrf_token %}
+            <div class="mb-3">
+                {{ form.as_p }}
+            </div>
+            <div class="d-flex justify-content-between">
+                <button type="submit" class="btn btn-primary">Guardar</button>
+                <button type="button" class="btn btn-secondary" onclick="window.history.back();">Cancelar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+{% endblock %} {% comment %} cierra el bloque para contenido {% endcomment %}

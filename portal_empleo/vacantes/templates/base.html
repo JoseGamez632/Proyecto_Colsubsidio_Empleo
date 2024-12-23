@@ -1,0 +1,132 @@
+{% comment %}
+    Arreglar toda la parte visual de esta página, esta es la base y va a estar presente en todas las páginas del proyectto
+{% endcomment %}
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <title>{% block titulo %}{% endblock titulo %}</title>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Poppins:wght@400;700&family=Raleway:wght@400;700&display=swap" rel="stylesheet">
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
+
+    <style>
+                /* Imagen con sombra blanca alrededor del contorno */
+        .navbar-brand img {
+            border-radius: 15px; /* Bordes redondeados */
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8)); /* Sombra blanca en el contorno */
+            transition: transform 0.3s ease; /* Transición para el zoom */
+        }
+
+        .navbar-brand img:hover {
+            transform: scale(1.1); /* Zoom al pasar el ratón */
+        }
+
+
+        /* Navbar styling */
+        .navbar {
+            background: linear-gradient(135deg, #2a2a2a, #3d3d3d); /* Dark gradient */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Adds shadow effect */
+            transition: background-color 0.5s ease, transform 0.3s ease-in-out;
+        }
+
+        .navbar:hover {
+            background: linear-gradient(135deg, #1a1a1a, #333333); /* Darker gradient on hover */
+            transform: translateY(-5px); /* Slight lift effect */
+        }
+
+        /* Navbar links */
+        .navbar-nav .nav-link {
+            color: #f8d047; /* Yellow color for links */
+            transition: color 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #fff; /* White color on hover */
+            transform: scale(1.1); /* Zoom effect on hover */
+        }
+
+        /* Logo animation */
+        .navbar-brand img {
+            transition: transform 0.3s ease;
+        }
+
+        .navbar-brand:hover img {
+            transform: scale(1.1);
+        }
+
+        /* Mobile Navbar Toggler */
+        .navbar-toggler-icon {
+            background-color: #f8d047; /* Yellow color for mobile menu icon */
+        }
+
+        /* Background animation */
+        @keyframes backgroundAnimation {
+            0% { background-color: rgba(42, 42, 42, 0.6); }
+            100% { background-color: rgba(255, 255, 255, 0.8); }
+        }
+    </style>
+
+</head>
+<body">
+
+    {% comment %} Barra de navegación {% endcomment %}
+    <div class="bg"></div>
+    <div class="bg bg2"></div>
+    <div class="bg bg3"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark py-3">
+        <div class="container px-5">
+            <a class="navbar-brand" href="{% url 'inicio' %}">
+                <span class="fw-bolder text-light">
+                    <img src="{% static 'app/imagenes/AGENCIA_DE_EMPLEO_AMARILLO.png' %}" width="120" height="30" class="img-fluid shadow-img">
+                </span>
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 small fw-bolder">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'inicio' %}">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="">Vacantes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="">Sedes Agencias</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="">Cronograma Movil</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'lista_vacantes' %}">Vacantes Lista</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <br><br>
+
+    <!-- Content Section -->
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                {% block contenido %}
+                {% endblock contenido %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

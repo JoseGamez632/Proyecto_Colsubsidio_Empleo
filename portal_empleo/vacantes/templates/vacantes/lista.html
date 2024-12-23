@@ -1,0 +1,138 @@
+{% extends 'base.html' %} {% comment %} extiende al template base {% endcomment %}
+
+{% comment %}
+    Arreglar toda la parte visual de esta pagina
+{% endcomment %}
+    
+{% load static %}
+{% block titulo %} {% comment %} abre el bloque para titulo {% endcomment %}
+Inicio
+{% endblock %} {% comment %} cierra el bloque para titulo {% endcomment %}
+
+
+
+{% block contenido %} {% comment %} abre el bloque para contenido {% endcomment %}
+
+
+<div class="container-fluid" style="opacity: 90%; background-color: #525252; color: #f1f1f1;">
+    <div class="row flex-nowrap">
+        <!-- Contenido principal que se ajusta al resto de la pantalla -->
+        <div class="col py-3">
+            <h1 style="color: #f8d047;">Listado de Vacantes Activas.</h1>
+            <form action="">
+                <button type="button" class="btn btn-outline-warning" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">Filtrar Vacantes</button>
+                <button type="submit" class="btn btn-outline-warning" onclick="clearFilters()">Borrar Filtros</button>
+                <a class="btn btn-outline-warning" href="{% url 'agregar_vacante' %}" role="button">Agregar Vacante</a>
+            </form>
+            <br>
+            <div class="accordion" id="accordionExample" style="background-color: #333333; border-radius: 8px;">
+                {% for vacante in vacantes %}
+                <div class="accordion-item" style="background-color: #222222; border: 1px solid #444444;">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ vacante.id }}" aria-expanded="false" aria-controls="collapse-{{ vacante.id }}" style="background-color: #333333; color: #f1f1f1; border: none;">
+                            <h5><small style="text-transform: uppercase;">• {{ vacante.cargo }} - {{ vacante.ciudad }}</small>
+                                    
+                                    <form action="{% url 'eliminar_vacante' vacante.id %}" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta vacante?');">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-outline-danger">❌</button>
+                                        <a href="{% url 'editar_vacante' vacante.id %}" class="btn btn-outline-success">✍️</a>
+                                    </form>
+                            </h5>
+                        </button>
+                        <div style="margin: -0.1cm;">
+                            <h6 style="text-align: center; color: #bbb;">
+                                <small>👥 Numero de Vacantes {{ vacante.numero_puestos }}</small>
+                                <small>⌛ Experiencia: {{ vacante.tiempo_experiencia }}</small>
+                                <small>👨‍🎓 {{ vacante.nivel_estudios }}</small><br>
+                                <small>🏠🏢 Modalidad: {{ vacante.modalidad_trabajo }}</small>
+                                <small>💵 Rango Salarial: {{ vacante.rango_salarial }}</small>
+                            </h6>
+                        </div>
+                    </h2>
+                    <div id="collapse-{{ vacante.id }}" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                        <div class="accordion-body" style="background-color: #282828; color: #f1f1f1;">
+                            <strong>{{ vacante.cargo }}</strong>
+                            <p>{{ vacante.descripcion_vacante }}</p>
+                            <a href="{% url 'editar_vacante' vacante.id %}" class="btn btn-primary">Editar Vacante</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <br><br>
+        </div>
+    </div>
+</div>
+
+
+  
+<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="offcanvasExampleLabel">Filtrar Vacantes</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+      <div>
+        <form action="" method="GET">
+            <div class="mb-3">
+                <label for="cargo" class="form-label">Cargo</label>
+                <input type="text" name="cargo" id="cargo" class="form-control" value="{{ request.GET.cargo }}">
+            </div>
+            <div class="mb-3">
+                <label for="area" class="form-label">Área</label>
+                <input type="text" name="area" id="area" class="form-control" value="{{ request.GET.area }}">
+            </div>
+            <div class="mb-3">
+                <label for="modalidad_trabajo" class="form-label">Modalidad de Trabajo</label>
+                <input type="text" name="modalidad_trabajo" id="modalidad_trabajo" class="form-control" value="{{ request.GET.modalidad_trabajo }}">
+            </div>
+            <div class="mb-3">
+                <label for="tipo_contrato" class="form-label">Tipo de Contrato</label>
+                <input type="text" name="tipo_contrato" id="tipo_contrato" class="form-control" value="{{ request.GET.tipo_contrato }}">
+            </div>
+            <div class="mb-3">
+                <label for="jornada_trabajo" class="form-label">Jornada de Trabajo</label>
+                <input type="text" name="jornada_trabajo" id="jornada_trabajo" class="form-control" value="{{ request.GET.jornada_trabajo }}">
+            </div>
+            <div class="mb-3">
+                <label for="tiempo_experiencia" class="form-label">Tiempo de Experiencia</label>
+                <input type="text" name="tiempo_experiencia" id="tiempo_experiencia" class="form-control" value="{{ request.GET.tiempo_experiencia }}">
+            </div>
+            <div class="mb-3">
+                <label for="nivel_estudios" class="form-label">Nivel de Estudios</label>
+                <input type="text" name="nivel_estudios" id="nivel_estudios" class="form-control" value="{{ request.GET.nivel_estudios }}">
+            </div>
+            <div class="mb-3">
+                <label for="departamento" class="form-label">Departamento</label>
+                <input type="text" name="departamento" id="departamento" class="form-control" value="{{ request.GET.departamento }}">
+            </div>
+            <div class="mb-3">
+                <label for="ciudad" class="form-label">Ciudad</label>
+                <input type="text" name="ciudad" id="ciudad" class="form-control" value="{{ request.GET.ciudad }}">
+            </div>
+            <div class="mb-3">
+                <label for="rango_salarial" class="form-label">Rango Salarial</label>
+                <input type="text" name="rango_salarial" id="rango_salarial" class="form-control" value="{{ request.GET.rango_salarial }}">
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Aplicar Filtros</button>
+        </form>
+  
+        <!-- Botón para Borrar Filtros -->
+        <form action="" method="GET" class="mt-3">
+            <button type="submit" class="btn btn-danger w-100" onclick="clearFilters()">Borrar Filtros</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    function clearFilters() {
+      // Vaciar los campos del formulario antes de enviar
+      const formElements = document.querySelectorAll('.offcanvas-body form input');
+      formElements.forEach(input => input.value = '');
+    }
+  </script>
+  
+
+
+{% endblock %} {% comment %} cierra el bloque para contenido {% endcomment %}
