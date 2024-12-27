@@ -100,14 +100,25 @@
                         <a class="nav-link" href="">Vacantes</a>
                     </li>
                     <li class="nav-item">
-                        <a href="{% url 'logout' %}">Cerrar Sesión</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="">Cronograma Movil</a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link" href="{% url 'lista_vacantes' %}">Vacantes Lista</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="">
+                            <ul>
+                                {% if user.is_authenticated %}
+                                    <li>Bienvenido, {{ user.username }}!</li>
+                                    <li>
+                                        <form action="{% url 'logout' %}" method="post" style="display:inline;">
+                                            {% csrf_token %}
+                                            <button type="submit">Cerrar Sesión</button>
+                                        </form>
+                                    </li>
+                                {% else %}
+                                {% endif %}
+                            </ul>
+                        </a>
+                    </li>
+
                 </ul>
             </div>
         </div>
@@ -116,15 +127,8 @@
     <br>
     <ul>
         {% if user.is_authenticated %}
-            <li>Bienvenido, {{ user.username }}!</li>
-            <li>
-                <form action="{% url 'logout' %}" method="post" style="display:inline;">
-                    {% csrf_token %}
-                    <button type="submit">Cerrar Sesión</button>
-                </form>
-            </li>
+            <h6>Usuario: {{ user.username }}</h6>
         {% else %}
-            <li><a href="{% url 'login' %}">Iniciar Sesión</a></li>
         {% endif %}
     </ul>
     <br>
