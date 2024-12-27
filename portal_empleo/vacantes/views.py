@@ -2,11 +2,12 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.http import HttpResponse
 from .models import Vacante
-from .forms import VacanteForm
+from .forms import VacanteForm, RegistroCandidatoForm
 from django.contrib.auth.decorators import login_required # Solicitar ligin para ejecutar funcion
 from django.contrib.auth.decorators import permission_required # Solicita login para permisos especificos @permission_required('app_name.add_vacante')
 
 
+# Mensaje de éxito
 
 #Agregado por Jose
 
@@ -156,3 +157,17 @@ def editar_vacante(request, id):
     else:
         form = VacanteForm(instance=vacante)
     return render(request, 'vacantes/editar_vacante.html', {'form': form, 'vacante': vacante})
+
+
+#Registro de candidatos
+
+def registro_candidato_view(request):
+    if request.method == 'POST':
+        form = RegistroCandidatoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('candidato_exito')  # Redirige a una página de éxito
+    else:
+        form = RegistroCandidatoForm()
+    
+    return render(request, 'registro_candidato.html', {'form': form})
