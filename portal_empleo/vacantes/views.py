@@ -3,6 +3,10 @@ from django.contrib import messages
 from django.http import HttpResponse
 from .models import Vacante
 from .forms import VacanteForm
+from django.contrib.auth.decorators import login_required # Solicitar ligin para ejecutar funcion
+from django.contrib.auth.decorators import permission_required # Solicita login para permisos especificos @permission_required('app_name.add_vacante')
+
+
 
 #Agregado por Jose
 
@@ -117,6 +121,7 @@ class Migration(migrations.Migration):
 
 
 #Agregado por Jose
+@login_required
 def eliminar_vacante(request, id):
     """Elimina la vacante con el ID proporcionado."""
     if request.method == 'POST':
@@ -126,7 +131,7 @@ def eliminar_vacante(request, id):
     # Cambia 'nombre_de_tu_vista_principal' por la vista principal, por ejemplo, 'lista_vacantes'
     return redirect('lista_vacantes')
 
-
+@login_required
 def agregar_vacante(request):
     if request.method == 'POST':
         form = VacanteForm(request.POST)
@@ -140,7 +145,7 @@ def agregar_vacante(request):
 def inicio(request):
     return render(request, "paginas/inicio.html")
 
-
+@login_required
 def editar_vacante(request, id):
     vacante = get_object_or_404(Vacante, id=id)
     if request.method == 'POST':

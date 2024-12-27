@@ -74,13 +74,30 @@
     </style>
 
 </head>
-<body">
-
+<body>
+    
+    <form action="{% url 'logout' %}" method="post">
+        {% csrf_token %}
+        <button type="submit">Cerrar Sesión</button>
+    </form>
     {% comment %} Barra de navegación {% endcomment %}
     <div class="bg"></div>
     <div class="bg bg2"></div>
     <div class="bg bg3"></div>
-
+    <ul>
+        <li><a href="/">Inicio</a></li>
+        {% if user.is_authenticated %}
+            <li>Bienvenido, {{ user.username }}!</li>
+            <li>
+                <form action="{% url 'logout' %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit">Cerrar Sesión</button>
+                </form>
+            </li>
+        {% else %}
+            <li><a href="{% url 'login' %}">Iniciar Sesión</a></li>
+        {% endif %}
+    </ul>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark py-3">
         <div class="container px-5">
@@ -102,7 +119,7 @@
                         <a class="nav-link" href="">Vacantes</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="">Sedes Agencias</a>
+                        <a href="{% url 'logout' %}">Cerrar Sesión</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="">Cronograma Movil</a>

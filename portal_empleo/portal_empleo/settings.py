@@ -27,6 +27,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+LOGIN_REDIRECT_URL = '/lista_vacantes/'  # Cambia por la URL donde quieres redirigir al usuario
+LOGOUT_REDIRECT_URL = '/lista_vacantes/'
+LOGIN_URL = 'agregar/'  # Página para forzar autenticación si no está logueado
+
+
 
 # Application definition
 
