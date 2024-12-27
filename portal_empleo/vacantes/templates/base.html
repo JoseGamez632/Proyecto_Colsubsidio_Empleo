@@ -75,29 +75,10 @@
 
 </head>
 <body>
-    
-    <form action="{% url 'logout' %}" method="post">
-        {% csrf_token %}
-        <button type="submit">Cerrar Sesión</button>
-    </form>
     {% comment %} Barra de navegación {% endcomment %}
     <div class="bg"></div>
     <div class="bg bg2"></div>
     <div class="bg bg3"></div>
-    <ul>
-        <li><a href="/">Inicio</a></li>
-        {% if user.is_authenticated %}
-            <li>Bienvenido, {{ user.username }}!</li>
-            <li>
-                <form action="{% url 'logout' %}" method="post" style="display:inline;">
-                    {% csrf_token %}
-                    <button type="submit">Cerrar Sesión</button>
-                </form>
-            </li>
-        {% else %}
-            <li><a href="{% url 'login' %}">Iniciar Sesión</a></li>
-        {% endif %}
-    </ul>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark py-3">
         <div class="container px-5">
@@ -131,7 +112,22 @@
             </div>
         </div>
     </nav>
-    <br><br>
+
+    <br>
+    <ul>
+        {% if user.is_authenticated %}
+            <li>Bienvenido, {{ user.username }}!</li>
+            <li>
+                <form action="{% url 'logout' %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit">Cerrar Sesión</button>
+                </form>
+            </li>
+        {% else %}
+            <li><a href="{% url 'login' %}">Iniciar Sesión</a></li>
+        {% endif %}
+    </ul>
+    <br>
 
     <!-- Content Section -->
     <div class="container">
