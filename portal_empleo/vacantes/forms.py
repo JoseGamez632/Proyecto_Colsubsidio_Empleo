@@ -16,34 +16,32 @@ class VacanteForm(forms.ModelForm):
 class RegistroCandidatoForm(forms.ModelForm):
     vacantes = forms.ModelMultipleChoiceField(
         queryset=Vacante.objects.all(),
-        widget=forms.CheckboxSelectMultiple,
+        widget=forms.CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
         label="Vacantes disponibles",
-        required=False  # Puede ser opcional
+        required=False
     )
-    
-    # Agregar campo de fecha con widget de calendario
+
+
     fecha_nacimiento = forms.DateField(
-        widget=forms.DateInput(attrs={'type': 'date'}),
+        widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
         label="Fecha de Nacimiento"
     )
 
     fecha_feria = forms.DateField(
-        widget=forms.DateInput(attrs={'type': 'date'}),
+        widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
         label="Fecha de Feria"
     )
 
-    # Campo para "Experiencia Laboral"
     experiencia_laboral = forms.JSONField(
         label="Experiencia Laboral",
-        required=False,  # Puede ser opcional
-        widget=forms.Textarea(attrs={'placeholder': 'Ingrese su experiencia en formato JSON'})
+        required=False,
+        widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Ingrese su experiencia en formato JSON'})
     )
 
-    # Campo para "Interés Ocupacional"
     interes_ocupacional = forms.JSONField(
         label="Interés Ocupacional",
-        required=False,  # Puede ser opcional
-        widget=forms.Textarea(attrs={'placeholder': 'Ingrese su interés ocupacional en formato JSON'})
+        required=False,
+        widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Ingrese su interés ocupacional en formato JSON'})
     )
 
     class Meta:
@@ -51,11 +49,7 @@ class RegistroCandidatoForm(forms.ModelForm):
         fields = '__all__'
 
     def clean_experiencia_laboral(self):
-        """
-        Limpiar y convertir los datos de experiencia laboral en formato JSON
-        """
         experiencia_laboral = self.cleaned_data.get('experiencia_laboral', [])
-        # Verifica si los datos están en formato JSON adecuado
         if isinstance(experiencia_laboral, str):
             try:
                 experiencia_laboral = json.loads(experiencia_laboral)
@@ -64,11 +58,7 @@ class RegistroCandidatoForm(forms.ModelForm):
         return experiencia_laboral
 
     def clean_interes_ocupacional(self):
-        """
-        Limpiar y convertir los datos de interés ocupacional en formato JSON
-        """
         interes_ocupacional = self.cleaned_data.get('interes_ocupacional', [])
-        # Verifica si los datos están en formato JSON adecuado
         if isinstance(interes_ocupacional, str):
             try:
                 interes_ocupacional = json.loads(interes_ocupacional)
