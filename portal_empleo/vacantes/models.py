@@ -197,8 +197,8 @@ class RegistroCandidato(models.Model):
     fecha_nacimiento = models.DateField()
     formacion_academica = models.CharField(max_length=3, choices=EDUCATION_LEVEL_CHOICES)
     programa_academico = models.CharField(max_length=100)
-    experiencia_laboral = models.JSONField()  # Guardará experiencias como JSON
-    interes_ocupacional = models.JSONField()
+    experiencia_laboral = models.TextField(blank=True, null=True)
+    interes_ocupacional = models.TextField(blank=True, null=True)
     localidad_municipio = models.CharField(max_length=100)
     candidato_discapacidad = models.CharField(max_length=2, choices=DISABILITY_CHOICES)
     tipo_discapacidad = models.CharField(max_length=100, blank=True, null=True)

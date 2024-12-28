@@ -32,36 +32,18 @@ class RegistroCandidatoForm(forms.ModelForm):
         label="Fecha de Feria"
     )
 
-    experiencia_laboral = forms.JSONField(
+    experiencia_laboral = forms.CharField(
+        widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Describa su experiencia laboral'}),
         label="Experiencia Laboral",
-        required=False,
-        widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Ingrese su experiencia en formato JSON'})
+        required=False
     )
 
-    interes_ocupacional = forms.JSONField(
+    interes_ocupacional = forms.CharField(
+        widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Describa su interés ocupacional'}),
         label="Interés Ocupacional",
-        required=False,
-        widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Ingrese su interés ocupacional en formato JSON'})
+        required=False
     )
 
     class Meta:
         model = RegistroCandidato
         fields = '__all__'
-
-    def clean_experiencia_laboral(self):
-        experiencia_laboral = self.cleaned_data.get('experiencia_laboral', [])
-        if isinstance(experiencia_laboral, str):
-            try:
-                experiencia_laboral = json.loads(experiencia_laboral)
-            except json.JSONDecodeError:
-                raise forms.ValidationError("El formato de experiencia laboral no es válido.")
-        return experiencia_laboral
-
-    def clean_interes_ocupacional(self):
-        interes_ocupacional = self.cleaned_data.get('interes_ocupacional', [])
-        if isinstance(interes_ocupacional, str):
-            try:
-                interes_ocupacional = json.loads(interes_ocupacional)
-            except json.JSONDecodeError:
-                raise forms.ValidationError("El formato de interés ocupacional no es válido.")
-        return interes_ocupacional
