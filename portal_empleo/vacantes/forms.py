@@ -47,3 +47,7 @@ class RegistroCandidatoForm(forms.ModelForm):
     class Meta:
         model = RegistroCandidato
         fields = '__all__'
+
+def clean_vacantes_disponibles(self):
+    vacantes = self.cleaned_data.get('vacantes_disponibles', [])
+    return ','.join(vacantes)  # Guarda como una lista separada por comas

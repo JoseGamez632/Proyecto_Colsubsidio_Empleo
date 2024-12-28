@@ -175,6 +175,7 @@ def registro_candidato_view(request):
     return render(request, 'registro_candidato.html', {'form': form})
 
 
+
 #Descargar Excel
 
 def descargar_excel(request):
@@ -189,7 +190,7 @@ def descargar_excel(request):
         'Apellidos', 'Número de Celular', 'Correo Electrónico', 'Fecha de Nacimiento', 'Formación Académica', 
         'Programa Académico', 'Experiencia Laboral', 'Interés Ocupacional', 'Localidad/Municipio', 
         'Candidato con Discapacidad', 'Tipo de Discapacidad', 'Horario Interesado', 'Aspiración Salarial', 
-        'Registrado en SISE', 'Técnico de Selección'
+        'Registrado en SISE', 'Técnico de Selección', 'Vacantes Disponibles'
     ]
     ws.append(headers)
 
@@ -208,6 +209,15 @@ def descargar_excel(request):
 
     # Escribir los datos de cada candidato en las filas
     for candidato in candidatos:
+        vacantes_disponibles = candidato.vacantes_disponibles or 'N/A'  # Obtener las vacantes disponibles, o 'N/A' si no hay
+
+        # Si las vacantes están almacenadas como texto y las quieres separar (por ejemplo, por comas):
+        vacantes_list = vacantes_disponibles.split(',') if vacantes_disponibles != 'N/A' else ['N/A']
+
+        # Agregar las vacantes como una cadena separada por comas para que se vea bien en Excel
+        vacantes_str = ', '.join(vacantes_list)
+
+        # Agregar la fila con todos los datos
         row = [
             candidato.feria,
             candidato.fecha_feria,
@@ -229,7 +239,8 @@ def descargar_excel(request):
             SCHEDULE_CHOICES.get(candidato.horario_interesado, candidato.horario_interesado),
             SALARY_CHOICES.get(candidato.aspiracion_salarial, candidato.aspiracion_salarial),
             SISE_CHOICES.get(candidato.registrado_en_sise, candidato.registrado_en_sise),
-            RECRUITER_CHOICES.get(candidato.tecnico_seleccion, candidato.tecnico_seleccion)
+            RECRUITER_CHOICES.get(candidato.tecnico_seleccion, candidato.tecnico_seleccion),
+            vacantes_str  # Vacantes disponibles
         ]
         ws.append(row)
 
