@@ -164,14 +164,14 @@ def editar_vacante(request, id):
 #Registro de candidatos
 
 def registro_candidato_view(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         form = RegistroCandidatoForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('inicio')  # Redirige a una página de éxito
+            return redirect('inicio')  # Redirigir a una página de éxito
     else:
         form = RegistroCandidatoForm()
-    
+
     return render(request, 'registro_candidato.html', {'form': form})
 
 
@@ -209,13 +209,8 @@ def descargar_excel(request):
 
     # Escribir los datos de cada candidato en las filas
     for candidato in candidatos:
-        vacantes_disponibles = candidato.vacantes_disponibles or 'N/A'  # Obtener las vacantes disponibles, o 'N/A' si no hay
-
-        # Si las vacantes están almacenadas como texto y las quieres separar (por ejemplo, por comas):
-        vacantes_list = vacantes_disponibles.split(',') if vacantes_disponibles != 'N/A' else ['N/A']
-
-        # Agregar las vacantes como una cadena separada por comas para que se vea bien en Excel
-        vacantes_str = ', '.join(vacantes_list)
+        vacantes_disponibles = candidato.vacantes_disponibles.all()  # Relación ManyToMany, obtenemos las vacantes
+        vacantes_str = ', '.join([vacante.codigo_vacante for vacante in vacantes_disponibles]) if vacantes_disponibles else 'N/A'
 
         # Agregar la fila con todos los datos
         row = [

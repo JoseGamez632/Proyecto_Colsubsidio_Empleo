@@ -207,7 +207,7 @@ class RegistroCandidato(models.Model):
     aspiracion_salarial = models.CharField(max_length=5, choices=SALARY_CHOICES)
     registrado_en_sise = models.CharField(max_length=2, choices=SISE_CHOICES)
     tecnico_seleccion = models.CharField(max_length=3, choices=RECRUITER_CHOICES)
-    vacantes_disponibles = models.TextField(blank=True, null=True)  # Almacena como texto
+    vacantes_disponibles = models.ManyToManyField(Vacante, related_name="candidatos", blank=True)
 
     class Meta:
         verbose_name = "Registro de Candidato"
