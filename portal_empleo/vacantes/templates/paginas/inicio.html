@@ -1,9 +1,5 @@
 {% extends 'base.html' %} {% comment %} extiende al template base {% endcomment %}
 
-{% comment %}
-    Arreglar toda la parte visual de esta pagina
-{% endcomment %}
-    
 {% load static %}
 {% block titulo %} {% comment %} abre el bloque para titulo {% endcomment %}
 Inicio
@@ -167,20 +163,14 @@ Inicio
                 Tu navegador no soporta el video.
             </video>
         </section>
+        {% block footer %}
+        {% include 'footer.html' %}  <!-- Incluir el footer -->
+        {% endblock %}
     </main>
-
-    <!-- Pie de página -->
-    <footer class="bg-dark text-center text-light py-4">
-        <p>&copy; 2024 Agencia de Empleo. Todos los derechos reservados.</p>
-        <a href="#" class="footer-btn">Iniciar Sesión</a>
-    </footer>
-
     <!-- Scripts de Bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
 </body>
 
-    
-
-
-
 {% endblock %} {% comment %} cierra el bloque para contenido {% endcomment %}
+

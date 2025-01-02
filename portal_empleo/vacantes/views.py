@@ -2,7 +2,14 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.http import HttpResponse
 from .models import Vacante
-from .forms import VacanteForm
+from .forms import VacanteForm, RegistroCandidatoForm
+from django.contrib.auth.decorators import login_required # Solicitar ligin para ejecutar funcion
+from django.contrib.auth.decorators import permission_required # Solicita login para permisos especificos @permission_required('app_name.add_vacante')
+import openpyxl
+from .models import RegistroCandidato
+
+
+# Mensaje de éxito
 
 #Agregado por Jose
 
@@ -117,6 +124,7 @@ class Migration(migrations.Migration):
 
 
 #Agregado por Jose
+@login_required
 def eliminar_vacante(request, id):
     """Elimina la vacante con el ID proporcionado."""
     if request.method == 'POST':
@@ -126,7 +134,7 @@ def eliminar_vacante(request, id):
     # Cambia 'nombre_de_tu_vista_principal' por la vista principal, por ejemplo, 'lista_vacantes'
     return redirect('lista_vacantes')
 
-
+@login_required
 def agregar_vacante(request):
     if request.method == 'POST':
         form = VacanteForm(request.POST)
@@ -140,7 +148,7 @@ def agregar_vacante(request):
 def inicio(request):
     return render(request, "paginas/inicio.html")
 
-
+@login_required
 def editar_vacante(request, id):
     vacante = get_object_or_404(Vacante, id=id)
     if request.method == 'POST':
@@ -151,3 +159,89 @@ def editar_vacante(request, id):
     else:
         form = VacanteForm(instance=vacante)
     return render(request, 'vacantes/editar_vacante.html', {'form': form, 'vacante': vacante})
+
+
+#Registro de candidatos
+
+def registro_candidato_view(request):
+    if request.method == "POST":
+        form = RegistroCandidatoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('inicio')  # Redirigir a una página de éxito
+    else:
+        form = RegistroCandidatoForm()
+
+    return render(request, 'registro_candidato.html', {'form': form})
+
+
+
+#Descargar Excel
+
+def descargar_excel(request):
+    # Crear un libro de trabajo y una hoja de trabajo
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "Candidatos Registrados"
+
+    # Escribir los encabezados de las columnas
+    headers = [
+        'Feria', 'Fecha de Feria', 'Sexo', 'Tipo de Documento', 'Número de Documento', 'Nombres', 
+        'Apellidos', 'Número de Celular', 'Correo Electrónico', 'Fecha de Nacimiento', 'Formación Académica', 
+        'Programa Académico', 'Experiencia Laboral', 'Interés Ocupacional', 'Localidad/Municipio', 
+        'Candidato con Discapacidad', 'Tipo de Discapacidad', 'Horario Interesado', 'Aspiración Salarial', 
+        'Registrado en SISE', 'Técnico de Selección', 'Vacantes Disponibles'
+    ]
+    ws.append(headers)
+
+    # Obtener todos los candidatos registrados de la base de datos
+    candidatos = RegistroCandidato.objects.all()
+
+    # Mapeo de las opciones para hacer más legible la salida en Excel
+    SEX_CHOICES = dict(RegistroCandidato.SEX_CHOICES)
+    DOCUMENT_TYPE_CHOICES = dict(RegistroCandidato.DOCUMENT_TYPE_CHOICES)
+    EDUCATION_LEVEL_CHOICES = dict(RegistroCandidato.EDUCATION_LEVEL_CHOICES)
+    SCHEDULE_CHOICES = dict(RegistroCandidato.SCHEDULE_CHOICES)
+    SALARY_CHOICES = dict(RegistroCandidato.SALARY_CHOICES)
+    DISABILITY_CHOICES = dict(RegistroCandidato.DISABILITY_CHOICES)
+    SISE_CHOICES = dict(RegistroCandidato.SISE_CHOICES)
+    RECRUITER_CHOICES = dict(RegistroCandidato.RECRUITER_CHOICES)
+
+    # Escribir los datos de cada candidato en las filas
+    for candidato in candidatos:
+        vacantes_disponibles = candidato.vacantes_disponibles.all()  # Relación ManyToMany, obtenemos las vacantes
+        vacantes_str = ', '.join([vacante.codigo_vacante for vacante in vacantes_disponibles]) if vacantes_disponibles else 'N/A'
+
+        # Agregar la fila con todos los datos
+        row = [
+            candidato.feria,
+            candidato.fecha_feria,
+            SEX_CHOICES.get(candidato.sexo, candidato.sexo),
+            DOCUMENT_TYPE_CHOICES.get(candidato.tipo_documento, candidato.tipo_documento),
+            candidato.numero_documento,
+            candidato.nombres,
+            candidato.apellidos,
+            candidato.numero_celular,
+            candidato.correo_electronico,
+            candidato.fecha_nacimiento,
+            EDUCATION_LEVEL_CHOICES.get(candidato.formacion_academica, candidato.formacion_academica),
+            candidato.programa_academico,
+            str(candidato.experiencia_laboral),  # Convertir el JSON a cadena para guardarlo
+            str(candidato.interes_ocupacional),  # Convertir el JSON a cadena para guardarlo
+            candidato.localidad_municipio,
+            DISABILITY_CHOICES.get(candidato.candidato_discapacidad, candidato.candidato_discapacidad),
+            candidato.tipo_discapacidad or 'N/A',  # Si no tiene tipo de discapacidad, colocar "N/A"
+            SCHEDULE_CHOICES.get(candidato.horario_interesado, candidato.horario_interesado),
+            SALARY_CHOICES.get(candidato.aspiracion_salarial, candidato.aspiracion_salarial),
+            SISE_CHOICES.get(candidato.registrado_en_sise, candidato.registrado_en_sise),
+            RECRUITER_CHOICES.get(candidato.tecnico_seleccion, candidato.tecnico_seleccion),
+            vacantes_str  # Vacantes disponibles
+        ]
+        ws.append(row)
+
+    # Crear una respuesta HTTP con el archivo Excel
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename=candidatos_registrados.xlsx'
+    wb.save(response)
+
+    return response

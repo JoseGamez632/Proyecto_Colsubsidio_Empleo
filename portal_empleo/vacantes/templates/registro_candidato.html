@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% block titulo %}
+Inicio
+{% endblock %}
+
+{% block contenido %}
+<div class="container mt-5" style="text-align: center;">
+    
+    <h1 class="text-center">Formulario de Registro de Candidato</h1>
+    
+    <div class="card shadow-sm p-4" style="background-color: rgb(248, 248, 248);">
+        
+        <!-- Mostrar errores de formulario aquí -->
+        {% if form.errors %}
+        <div class="alert alert-danger">
+            <ul>
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+
+            <!-- Fila para Feria y Fecha de Feria -->
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="feria">Feria</label>
+                    {{ form.feria }}
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="fecha_feria">Fecha de Feria</label>
+                    {{ form.fecha_feria }}
+                </div>
+            </div>
+
+            <!-- Fila para Sexo y Tipo de Documento -->
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="sexo">Sexo</label>
+                    {{ form.sexo }}
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="tipo_documento">Tipo de Documento</label>
+                    {{ form.tipo_documento }}
+                </div>
+            </div>
+
+            <!-- Fila para Número de Documento y Nombres -->
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="numero_documento">Número de Documento</label>
+                    {{ form.numero_documento }}
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="nombres">Nombres</label>
+                    {{ form.nombres }}
+                </div>
+            </div>
+
+            <!-- Fila para Apellidos y Número de Celular -->
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="apellidos">Apellidos</label>
+                    {{ form.apellidos }}
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="numero_celular">Número de Celular</label>
+                    {{ form.numero_celular }}
+                </div>
+            </div>
+
+            <!-- Fila para Correo Electrónico y Fecha de Nacimiento -->
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="correo_electronico">Correo Electrónico</label>
+                    {{ form.correo_electronico }}
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="fecha_nacimiento">Fecha de Nacimiento</label>
+                    {{ form.fecha_nacimiento }}
+                </div>
+            </div>
+
+            <!-- Fila para Formación Académica y Programa Académico -->
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="formacion_academica">Formación Académica</label>
+                    {{ form.formacion_academica }}
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="programa_academico">Programa Académico</label>
+                    {{ form.programa_academico }}
+                </div>
+            </div>
+
+            <!-- Fila para Experiencia Laboral e Interés Ocupacional -->
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="experiencia_laboral">Experiencia Laboral</label>
+                    {{ form.experiencia_laboral }}
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="interes_ocupacional">Interés Ocupacional</label>
+                    {{ form.interes_ocupacional }}
+                </div>
+            </div>
+            
+            <!-- Fila para Localidad/Municipio y Candidato con Discapacidad -->
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="localidad_municipio">Localidad/Municipio</label>
+                    {{ form.localidad_municipio }}
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="candidato_discapacidad">¿Es candidato con discapacidad?</label>
+                    {{ form.candidato_discapacidad }}
+                </div>
+            </div>
+
+            <!-- Fila para Tipo de Discapacidad y Horario Interesado -->
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="tipo_discapacidad">Tipo de Discapacidad</label>
+                    {{ form.tipo_discapacidad }}
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="horario_interesado">Horario de Interés</label>
+                    {{ form.horario_interesado }}
+                </div>
+            </div>
+
+            <!-- Fila para Aspiración Salarial y Registrado en SISE -->
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="aspiracion_salarial">Aspiración Salarial</label>
+                    {{ form.aspiracion_salarial }}
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="registrado_en_sise">¿Está registrado en SISE?</label>
+                    {{ form.registrado_en_sise }}
+                </div>
+            </div>
+
+            <!-- Fila para Técnico de Selección y Vacantes -->
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="tecnico_seleccion">Técnico de Selección</label>
+                    {{ form.tecnico_seleccion }}
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="vacantes">Vacantes disponibles</label>
+                    <div class="form-check">
+                        {% for vacante in form.vacantes %}
+                            <div class="form-check">
+                                {{ vacante }}
+                                <label class="form-check-label"></label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botón para Registrar -->
+            <button type="submit" class="btn btn-primary btn-block mt-3">Registrar</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
