@@ -12,12 +12,13 @@
             <input type="text" name="q" class="form-control" placeholder="Buscar por nombre, apellidos o documento" value="{{ query }}">
             <div class="input-group-append">
                 <button type="submit" class="btn btn-primary">Buscar</button>
+                <a href="{% url 'descargar_excel' %}" class="btn btn-success">Descargar Excel</a>
             </div>
         </div>
     </form>
 
     <!-- Tabla de resultados -->
-    <table class="table table-striped table-hover">
+    <table class="table table-striped table-dark">
         <thead>
             <tr>
                 <th>#</th>
