@@ -18,6 +18,9 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(next_page='/'), name='logout'),
     path('registro/', views.registro_candidato_view, name='registro_candidato'),  # El nombre de la URL para el formulario
     path('descargar_excel/', views.descargar_excel, name='descargar_excel'),
+    path('candidatos/', views.listar_candidatos, name='listar_candidatos'),
+    path('editar/<int:pk>/', views.editar_candidato, name='editar_candidato'),
+
 
 
 

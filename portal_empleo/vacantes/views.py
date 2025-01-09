@@ -7,6 +7,8 @@ from django.contrib.auth.decorators import login_required # Solicitar ligin para
 from django.contrib.auth.decorators import permission_required # Solicita login para permisos especificos @permission_required('app_name.add_vacante')
 import openpyxl
 from .models import RegistroCandidato
+from unicodedata import normalize
+
 
 
 # Mensaje de éxito
@@ -245,3 +247,50 @@ def descargar_excel(request):
     wb.save(response)
 
     return response
+
+
+def normalizar_texto(texto):
+    """
+    Normaliza un texto eliminando tildes y caracteres especiales.
+    """
+    if texto:
+        return normalize('NFKD', texto).encode('ASCII', 'ignore').decode('utf-8').lower()
+    return ''
+
+def listar_candidatos(request):
+    query = request.GET.get('q', '')  # Obtenemos el término de búsqueda
+    candidatos = RegistroCandidato.objects.all()
+
+    if query:
+        query_normalizada = normalizar_texto(query)
+
+        # Filtrar normalizando nombres, apellidos, correo y documento
+        candidatos = candidatos.filter(
+            Q(nombres__icontains=query) |
+            Q(apellidos__icontains=query) |
+            Q(numero_documento__icontains=query) |
+            Q(correo_electronico__icontains=query)
+        )
+
+        # Normalizar los resultados para eliminar tildes
+        candidatos = [
+            candidato for candidato in candidatos
+            if query_normalizada in normalizar_texto(candidato.nombres) or
+               query_normalizada in normalizar_texto(candidato.apellidos) or
+               query_normalizada in candidato.numero_documento or
+               query_normalizada in normalizar_texto(candidato.correo_electronico)
+        ]
+
+    return render(request, 'listar_candidatos.html', {'candidatos': candidatos})
+
+
+def editar_candidato(request, pk):
+    candidato = get_object_or_404(RegistroCandidato, pk=pk)
+    if request.method == "POST":
+        form = RegistroCandidatoForm(request.POST, instance=candidato)
+        if form.is_valid():
+            form.save()
+            return redirect('listar_candidatos')
+    else:
+        form = RegistroCandidatoForm(instance=candidato)
+    return render(request, 'registro_candidato.html', {'form': form})
