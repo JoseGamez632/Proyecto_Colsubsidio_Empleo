@@ -106,7 +106,10 @@ class Vacante(models.Model):
     )
     fecha_publicacion = models.DateField(auto_now_add=True)
     empresa_usuaria = models.CharField(max_length=100)
+    candidatos_registrados = models.ManyToManyField('RegistroCandidato', related_name='vacantes', blank=True)
+    
 
+    
     class Meta:
         verbose_name = "Vacante"
         verbose_name_plural = "Vacantes"
@@ -114,6 +117,7 @@ class Vacante(models.Model):
     def __str__(self):
         """Representación legible del objeto."""
         return f"[{self.codigo_vacante}] {self.cargo} ({self.area})"
+    
 
 
 # ✅ Registro de candidatos

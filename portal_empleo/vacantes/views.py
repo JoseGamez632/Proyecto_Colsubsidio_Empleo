@@ -40,6 +40,7 @@ def lista_vacantes(request):
 
     # Obtener todas las vacantes
     vacantes = Vacante.objects.all()
+    
 
     # Filtrar por cargo (ignorando tildes y mayúsculas/minúsculas)
     if cargo:
@@ -245,3 +246,20 @@ def descargar_excel(request):
     wb.save(response)
 
     return response
+
+
+
+def lista_candidatos(request, id):
+    # Obtener la vacante específica
+    vacante = get_object_or_404(Vacante, id=id)
+    
+    # Obtener la lista de candidatos relacionados con esta vacante
+    candidatos = vacante.candidatos.all()  # Asumiendo que tienes una relación en el modelo
+
+    # Renderizar la información en el template
+    return render(request, 'vacantes/lista_candidatos.html', {'vacante': vacante, 'candidatos': candidatos})
+
+#def candidatos_por_vacante(request, vacante_id):
+#    vacante = get_object_or_404(Vacante, id=vacante_id)
+#    candidatos = vacante.candidatos.all()
+#    return render(request, 'candidatos_por_vacante.html', {'vacante': vacante, 'candidatos': candidatos})
