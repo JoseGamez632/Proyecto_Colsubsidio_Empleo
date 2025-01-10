@@ -14,7 +14,7 @@ class VacanteForm(forms.ModelForm):
 # Registro de candidatos
 
 class RegistroCandidatoForm(forms.ModelForm):
-    vacantes = forms.ModelMultipleChoiceField(
+    vacantes_disponibles = forms.ModelMultipleChoiceField(
         queryset=Vacante.objects.all(),
         widget=forms.CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
         label="Vacantes disponibles",
@@ -43,11 +43,14 @@ class RegistroCandidatoForm(forms.ModelForm):
         label="Interés Ocupacional",
         required=False
     )
+    
 
     class Meta:
         model = RegistroCandidato
         fields = '__all__'
 
-def clean_vacantes_disponibles(self):
-    vacantes = self.cleaned_data.get('vacantes_disponibles', [])
-    return ','.join(vacantes)  # Guarda como una lista separada por comas
+# def clean_vacantes_disponibles(self):
+#     vacantes = self.cleaned_data.get('vacantes_disponibles', [])
+#     return ','.join(vacantes)  # Guarda como una lista separada por comas
+
+
