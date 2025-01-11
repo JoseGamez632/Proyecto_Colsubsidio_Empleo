@@ -41,6 +41,7 @@ Inicio
                                         {% csrf_token %}
                                         <button type="submit" class="btn btn-outline-danger">❌</button>
                                         <a href="{% url 'editar_vacante' vacante.id %}" class="btn btn-outline-success">✍️</a>
+                                        <a href="{% url 'lista_candidatos' vacante.id %}" class="btn btn-outline-success">🔎</a>
                                     </form>
                                 {% endif %}    
                             </h5>

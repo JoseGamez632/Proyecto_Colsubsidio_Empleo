@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block titulo %}
+Candidatos para la Vacante
+{% endblock %}
+
+{% block contenido %}
+<div class="container-fluid" style="opacity: 90%; background-color: #525252; color: #f1f1f1;">
+    <div class="row">
+        <div class="col py-3">
+            <h1 style="color: #f8d047;">Candidatos para la Vacante: {{ vacante.cargo }}</h1>
+            <div class="accordion" id="accordionCandidatos" style="background-color: #333333; border-radius: 8px;">
+                {% for candidato in candidatos %}
+                <div class="accordion-item" style="background-color: #222222; border: 1px solid #444444;">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ candidato.id }}" aria-expanded="false" aria-controls="collapse-{{ candidato.id }}" style="background-color: #333333; color: #f1f1f1; border: none;">
+                            <small>{{ candidato.nombres }} {{ candidato.apellidos }} - {{ candidato.numero_documento }}</small>
+                        </button>
+                    </h2>
+                    <div id="collapse-{{ candidato.id }}" class="accordion-collapse collapse" data-bs-parent="#accordionCandidatos">
+                        <div class="accordion-body" style="background-color: #282828; color: #f1f1f1;">
+                            <p><strong>Feria:</strong> {{ candidato.feria }}</p>
+                            <p><strong>Fecha de la feria:</strong> {{ candidato.fecha_feria }}</p>
+                            <p><strong>Sexo:</strong> {{ candidato.sexo }}</p>
+                            <p><strong>Tipo de documento:</strong> {{ candidato.tipo_documento }}</p>
+                            <p><strong>Número de documento:</strong> {{ candidato.numero_documento }}</p>
+                            <p><strong>Nombres:</strong> {{ candidato.nombres }}</p>
+                            <p><strong>Apellidos:</strong> {{ candidato.apellidos }}</p>
+                            <p><strong>Número de celular:</strong> {{ candidato.numero_celular }}</p>
+                            <p><strong>Correo electrónico:</strong> {{ candidato.correo_electronico }}</p>
+                            <p><strong>Fecha de nacimiento:</strong> {{ candidato.fecha_nacimiento }}</p>
+                            <p><strong>Formación académica:</strong> {{ candidato.formacion_academica }}</p>
+                            <p><strong>Programa académico:</strong> {{ candidato.programa_academico }}</p>
+                            <p><strong>Experiencia laboral:</strong> {{ candidato.experiencia_laboral }}</p>
+                            <p><strong>Interés ocupacional:</strong> {{ candidato.interes_ocupacional }}</p>
+                            <p><strong>Localidad/Municipio:</strong> {{ candidato.localidad_municipio }}</p>
+                            <p><strong>Discapacidad:</strong> {{ candidato.candidato_discapacidad }}</p>
+                            <p><strong>Tipo de discapacidad:</strong> {{ candidato.tipo_discapacidad }}</p>
+                            <p><strong>Horario interesado:</strong> {{ candidato.horario_interesado }}</p>
+                            <p><strong>Aspiración salarial:</strong> {{ candidato.aspiracion_salarial }}</p>
+                            <p><strong>Registrado en SISE:</strong> {{ candidato.registrado_en_sise }}</p>
+                            <p><strong>Técnico de selección:</strong> {{ candidato.tecnico_seleccion }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="alert alert-warning">No hay candidatos para esta vacante.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
