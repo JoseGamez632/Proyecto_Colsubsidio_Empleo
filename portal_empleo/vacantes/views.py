@@ -259,6 +259,10 @@ def lista_candidatos(request, id):
     # Renderizar la información en el template
     return render(request, 'vacantes/lista_candidatos.html', {'vacante': vacante, 'candidatos': candidatos})
 
+
+
+
+
 #def candidatos_por_vacante(request, vacante_id):
 #    vacante = get_object_or_404(Vacante, id=vacante_id)
 #    candidatos = vacante.candidatos.all()
