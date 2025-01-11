@@ -215,3 +215,4 @@ class RegistroCandidato(models.Model):
 
     def __str__(self):
         return f"{self.nombres} {self.apellidos} - {self.tipo_documento}: {self.numero_documento}"
+
