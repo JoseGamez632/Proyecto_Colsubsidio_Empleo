@@ -16,7 +16,10 @@ class VacanteForm(forms.ModelForm):
 class RegistroCandidatoForm(forms.ModelForm):
     vacantes_disponibles = forms.ModelMultipleChoiceField(
         queryset=Vacante.objects.all(),
-        widget=forms.CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
+        widget=forms.SelectMultiple(attrs={
+            'class': 'form-control select2',  # Clase personalizada para Select2
+            'multiple': 'multiple'  # Habilita selección múltiple
+        }),
         label="Vacantes disponibles",
         required=False
     )
