@@ -7,6 +7,8 @@ from django.contrib.auth.decorators import login_required # Solicitar ligin para
 from django.contrib.auth.decorators import permission_required # Solicita login para permisos especificos @permission_required('app_name.add_vacante')
 import openpyxl
 from .models import RegistroCandidato
+from django.db.models.functions import Lower
+
 
 
 # Mensaje de éxito
@@ -258,6 +260,43 @@ def lista_candidatos(request, id):
 
     # Renderizar la información en el template
     return render(request, 'vacantes/lista_candidatos.html', {'vacante': vacante, 'candidatos': candidatos})
+
+
+def lista_registros(request):
+    query = request.GET.get('q', '')  # Captura el término de búsqueda
+    registros = RegistroCandidato.objects.all()
+
+    if query:
+        # Ignorar tildes y hacer búsquedas insensibles a mayúsculas
+        registros = registros.annotate(
+            nombres_lower=Lower('nombres'),
+            apellidos_lower=Lower('apellidos'),
+            documento_lower=Lower('numero_documento')
+        ).filter(
+            Q(nombres_lower__icontains=query) |
+            Q(apellidos_lower__icontains=query) |
+            Q(documento_lower__icontains=query)
+        )
+
+    context = {
+        'registros': registros,
+        'query': query
+    }
+    return render(request, 'lista_registros.html', context)
+
+# Vista para editar un registro
+def editar_registro(request, pk):
+    registro = get_object_or_404(RegistroCandidato, pk=pk)
+
+    if request.method == 'POST':
+        form = RegistroCandidatoForm(request.POST, instance=registro)
+        if form.is_valid():
+            form.save()
+            return redirect('lista_registros')
+    else:
+        form = RegistroCandidatoForm(instance=registro)
+
+    return render(request, 'registro_candidato.html', {'form': form})
 
 
 

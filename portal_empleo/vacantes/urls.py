@@ -19,6 +19,9 @@ urlpatterns = [
     path('registro/', views.registro_candidato_view, name='registro_candidato'),  # El nombre de la URL para el formulario
     path('descargar_excel/', views.descargar_excel, name='descargar_excel'),
     path('vacantes/<int:id>/candidatos/', views.lista_candidatos, name='lista_candidatos'),
+    path('registros/', views.lista_registros, name='lista_registros'),
+    path('editar/<int:pk>/', views.editar_registro, name='editar_registro'),
+
 
 
 

@@ -3,7 +3,7 @@
 {% endcomment %}
 {% load static %}
 <!doctype html>
-<html lang="en">
+<html lang="es">
 <head>
     <title>{% block titulo %}{% endblock titulo %}</title>
 
@@ -104,6 +104,10 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'lista_vacantes' %}">Vacantes Lista</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'lista_registros' %}">Lista de Registros</a>
+                    </li>
+
                     <li class="nav-item">
                         <a class="nav-link" href="">
                             <ul>
