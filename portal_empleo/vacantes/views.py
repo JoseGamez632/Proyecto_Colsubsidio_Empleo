@@ -162,9 +162,11 @@ def editar_vacante(request, id):
     return render(request, 'vacantes/editar_vacante.html', {'form': form, 'vacante': vacante})
 
 
-#Registro de candidatos
+#Registro de candidatos (modificado)
+
 
 def registro_candidato_view(request):
+    selected_vacantes = request.GET.get('selected_vacantes', '').split(',')
     if request.method == "POST":
         form = RegistroCandidatoForm(request.POST)
         if form.is_valid():
@@ -173,7 +175,28 @@ def registro_candidato_view(request):
     else:
         form = RegistroCandidatoForm()
 
-    return render(request, 'registro_candidato.html', {'form': form})
+    return render(request, 'registro_candidato.html', {'form': form, 'selected_vacantes': selected_vacantes})
+
+
+
+# def registro_candidato_view(request):
+#     selected_vacantes_ids = request.GET.get('selected_vacantes', '').split(',')
+#     selected_vacantes = Vacante.objects.filter(id__in=selected_vacantes_ids)
+
+#     if request.method == "POST":
+#         form = RegistroCandidatoForm(request.POST)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('inicio')  # Redirigir a una página de éxito
+#     else:
+#         form = RegistroCandidatoForm()
+
+#     return render(request, 'registro_candidato.html', {
+#         'form': form,
+#         'selected_vacantes': selected_vacantes
+#     })
+
+
 
 
 

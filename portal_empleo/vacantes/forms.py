@@ -29,7 +29,8 @@ class RegistroCandidatoForm(forms.ModelForm):
 
     fecha_feria = forms.DateField(
         widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-        label="Fecha de Feria"
+        label="Fecha de Feria",
+        required=False
     )
 
     experiencia_laboral = forms.CharField(

@@ -29,6 +29,7 @@ Inicio
             {% csrf_token %}
 
             <!-- Fila para Feria y Fecha de Feria -->
+            {% if request.user.is_authenticated %}
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label for="feria">Feria</label>
@@ -39,6 +40,7 @@ Inicio
                     {{ form.fecha_feria }}
                 </div>
             </div>
+            {% endif %}   
 
             <!-- Fila para Sexo y Tipo de Documento -->
             <div class="form-row">
@@ -149,19 +151,23 @@ Inicio
             </div>
 
             <!-- Fila para Técnico de Selección y Vacantes -->
+            
             <div class="form-row">
+                {% if request.user.is_authenticated %}
                 <div class="form-group col-md-6">
                     <label for="tecnico_seleccion">Técnico de Selección</label>
                     {{ form.tecnico_seleccion }}
                 </div>
+                {% endif %}   
                 <div class="form-group col-md-6">
                     <label for="vacantes">Vacantes disponibles</label>
                     <div class="form-check">
-                        {% for vacante in form.vacantes_disponibles %}
-                            <div class="form-check">
-                                {{ vacante }}
-                                <label class="form-check-label"></label>
-                            </div>
+                        {% for vacante in form.fields.vacantes_disponibles.queryset %}
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="vacantes_disponibles" value="{{ vacante.id }}"
+                                id="vacante{{ vacante.id }}" {% if vacante in selected_vacantes %}checked{% endif %}>
+                            <label class="form-check-label" for="vacante{{ vacante.id }}">{{ vacante }}</label>
+                        </div>
                         {% endfor %}
                     </div>
                 </div>
@@ -172,4 +178,20 @@ Inicio
         </form>
     </div>
 </div>
+
+{% comment %} script para preseleccionar las vacantes {% endcomment %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const selectedVacantes = urlParams.get('selected_vacantes') ? urlParams.get('selected_vacantes').split(',') : [];
+        selectedVacantes.forEach(id => {
+            const checkbox = document.getElementById('vacante' + id);
+            if (checkbox) {
+                checkbox.checked = true;
+            }
+        });
+    });
+</script>
+
+
 {% endblock %}
