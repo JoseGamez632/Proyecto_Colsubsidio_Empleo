@@ -10,7 +10,7 @@ Inicio
     
     <h1 class="text-center">Formulario de Registro de Candidato</h1>
     
-    <div class="card shadow-sm p-4 text-white bg-dark" style="background-color: rgb(248, 248, 248);">
+    <div class="card shadow-sm p-4" style="background-color: rgb(248, 248, 248);">
         
         <!-- Mostrar errores de formulario aquí -->
         {% if form.errors %}
@@ -29,6 +29,7 @@ Inicio
             {% csrf_token %}
 
             <!-- Fila para Feria y Fecha de Feria -->
+            {% if request.user.is_authenticated %}
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label for="feria">Feria</label>
@@ -39,6 +40,7 @@ Inicio
                     {{ form.fecha_feria }}
                 </div>
             </div>
+            {% endif %}   
 
             <!-- Fila para Sexo y Tipo de Documento -->
             <div class="form-row">
@@ -149,34 +151,26 @@ Inicio
             </div>
 
             <!-- Fila para Técnico de Selección y Vacantes -->
+            
             <div class="form-row">
+                {% if request.user.is_authenticated %}
                 <div class="form-group col-md-6">
                     <label for="tecnico_seleccion">Técnico de Selección</label>
                     {{ form.tecnico_seleccion }}
                 </div>
-                <!-- Campo de selección múltiple -->
-                    <div class="form-group col-md-6">
-                        <label for="id_vacantes_disponibles">Vacantes disponibles</label>
-                        {{ form.vacantes_disponibles }}
+                {% endif %}   
+                <div class="form-group col-md-6">
+                    <label for="vacantes">Vacantes disponibles</label>
+                    <div class="form-check">
+                        {% for vacante in form.fields.vacantes_disponibles.queryset %}
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="vacantes_disponibles" value="{{ vacante.id }}"
+                                id="vacante{{ vacante.id }}" {% if vacante in selected_vacantes %}checked{% endif %}>
+                            <label class="form-check-label" for="vacante{{ vacante.id }}">{{ vacante }}</label>
+                        </div>
+                        {% endfor %}
                     </div>
-
-                    <!-- Incluye los estilos y scripts de Select2 -->
-                    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/css/select2.min.css" rel="stylesheet">
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/js/select2.min.js"></script>
-
-                    <script>
-                        // Inicializa Select2 en el campo con la clase 'select2'
-                        $(document).ready(function() {
-                            $('.select2').select2({
-                                placeholder: "Seleccione vacantes", // Texto inicial
-                                allowClear: true,                  // Permitir limpiar selección
-                                width: '100%',                     // Ajustar al contenedor
-                                closeOnSelect: false               // Permitir selección 1 por 1
-                            });
-                        });
-                    </script>
-
+                </div>
             </div>
 
             <!-- Botón para Registrar -->
@@ -184,4 +178,20 @@ Inicio
         </form>
     </div>
 </div>
+
+{% comment %} script para preseleccionar las vacantes {% endcomment %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const selectedVacantes = urlParams.get('selected_vacantes') ? urlParams.get('selected_vacantes').split(',') : [];
+        selectedVacantes.forEach(id => {
+            const checkbox = document.getElementById('vacante' + id);
+            if (checkbox) {
+                checkbox.checked = true;
+            }
+        });
+    });
+</script>
+
+
 {% endblock %}

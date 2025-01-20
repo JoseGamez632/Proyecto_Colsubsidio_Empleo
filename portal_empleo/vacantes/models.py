@@ -1,7 +1,7 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 import uuid
-
+from datetime import date
 
 def generate_unique_codigo():
     """Genera un código de vacante único de la forma COD-XXXXXXXX."""
@@ -190,8 +190,8 @@ class RegistroCandidato(models.Model):
     ]
 
     # Campos
-    feria = models.CharField(max_length=100)
-    fecha_feria = models.DateField()
+    feria = models.CharField(max_length=100, blank=True, null=True)
+    fecha_feria = models.DateField(default=date(2025, 1, 1), blank=True, null=True)
     sexo = models.CharField(max_length=1, choices=SEX_CHOICES)
     tipo_documento = models.CharField(max_length=3, choices=DOCUMENT_TYPE_CHOICES)
     numero_documento = models.CharField(max_length=20, unique=True)
@@ -210,7 +210,7 @@ class RegistroCandidato(models.Model):
     horario_interesado = models.CharField(max_length=2, choices=SCHEDULE_CHOICES)
     aspiracion_salarial = models.CharField(max_length=5, choices=SALARY_CHOICES)
     registrado_en_sise = models.CharField(max_length=2, choices=SISE_CHOICES)
-    tecnico_seleccion = models.CharField(max_length=3, choices=RECRUITER_CHOICES)
+    tecnico_seleccion = models.CharField(max_length=3, choices=RECRUITER_CHOICES,blank=True, null=True)
     vacantes_disponibles = models.ManyToManyField(Vacante, related_name="candidatos", blank=True)
 
     class Meta:
