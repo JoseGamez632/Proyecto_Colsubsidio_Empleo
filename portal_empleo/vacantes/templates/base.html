@@ -99,7 +99,7 @@
                         <a class="nav-link" href="{% url 'inicio' %}">Inicio</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'registro_candidato' %}">Registro Vacantes</a>
+                        {% if request.user.is_authenticated %}<a class="nav-link" href="{% url 'registro_candidato' %}">Registro Vacantes</a>{% endif %}   
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'lista_vacantes' %}">Vacantes Lista</a>

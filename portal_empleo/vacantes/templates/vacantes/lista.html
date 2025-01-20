@@ -14,6 +14,9 @@ Inicio
 {% block contenido %} {% comment %} abre el bloque para contenido {% endcomment %}
 
 
+
+
+
 <div class="container-fluid" style="opacity: 90%; background-color: #525252; color: #f1f1f1;">
     <div class="row flex-nowrap">
         <!-- Contenido principal que se ajusta al resto de la pantalla -->
@@ -21,11 +24,16 @@ Inicio
             
             <h1 style="color: #f8d047;">Listado de Vacantes Activas.</h1>
             <!-- Botón para descargar los datos en formato Excel -->
+            {% if request.user.is_authenticated %}
             <a href="{% url 'descargar_excel' %}" class="btn btn-success">Descargar Excel</a>
+            {% endif %}   
 
             <form action="">
                 <button type="button" class="btn btn-outline-warning" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">Filtrar Vacantes</button>
                 <button type="submit" class="btn btn-outline-warning" onclick="clearFilters()">Borrar Filtros</button>
+                <a href="{% url 'registro_candidato' %}" class="btn btn-outline-success" onclick="redirectToRegistro(event)">
+                    Registro Vacantes
+                </a>
                 {% if request.user.is_authenticated %}<a class="btn btn-outline-warning" href="{% url 'agregar_vacante' %}" role="button">Agregar Vacante</a>{% endif %}
             </form>
             <br>
@@ -34,8 +42,7 @@ Inicio
                 <div class="accordion-item" style="background-color: #222222; border: 1px solid #444444;">
                     <h2 class="accordion-header">
                         <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ vacante.id }}" aria-expanded="false" aria-controls="collapse-{{ vacante.id }}" style="background-color: #333333; color: #f1f1f1; border: none;">
-                            <h5><small style="text-transform: uppercase;">• {{ vacante.cargo }} - {{ vacante.ciudad }}</small>
-                                    
+                            <h5><small style="text-transform: uppercase;">• {{ vacante.cargo }} - {{ vacante.ciudad }}</small> 
                                 {% if request.user.is_authenticated %}    
                                 <form action="{% url 'eliminar_vacante' vacante.id %}" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta vacante?');">
                                         {% csrf_token %}
@@ -47,6 +54,13 @@ Inicio
                             </h5>
                         </button>
                         <div style="margin: 0.5cm;">
+                            <div class="form-check">
+                                <h4 style="text-align: center; color: #bbb; margin: 25px;">
+                                <input class="form-check-input" type="checkbox" value="{{ vacante.id }}" id="check{{ vacante.id }}">
+                                <label data-id="{{ vacante.id }}" class="form-check-label" for="check{{ vacante.id }}">
+                                    Seleccionar
+                                </label>
+                            </div>
                             <h6 style="text-align: center; color: #bbb;">
                                 <small>👥 Numero de Vacantes {{ vacante.numero_puestos }}</small>
                                 <small>⌛ Experiencia: {{ vacante.tiempo_experiencia }}</small>
@@ -134,14 +148,43 @@ Inicio
     </div>
   </div>
 
-  <script>
+<script>
     function clearFilters() {
       // Vaciar los campos del formulario antes de enviar
-      const formElements = document.querySelectorAll('.offcanvas-body form input');
-      formElements.forEach(input => input.value = '');
+        const formElements = document.querySelectorAll('.offcanvas-body form input');
+        formElements.forEach(input => input.value = '');
     }
-  </script>
-  
+</script>
+
+{% comment %} script para almacenar las vacantes seleccionadas en localStorage {% endcomment %}
+<script>
+    function storeVacanteSelection(vacanteId) {
+        let selectedVacantes = JSON.parse(localStorage.getItem('selectedVacantes')) || [];
+        const index = selectedVacantes.indexOf(vacanteId);
+        if (index > -1) {
+            selectedVacantes.splice(index, 1); // Remove if already selected
+        } else {
+            selectedVacantes.push(vacanteId); // Add if not selected
+        }
+        localStorage.setItem('selectedVacantes', JSON.stringify(selectedVacantes));
+    }
+</script>
+
+
+{% comment %} script para pasar las vacantes seleccionadas a la URL {% endcomment %}
+<script>
+    function redirectToRegistro(event) {
+        event.preventDefault();
+        const selectedVacantes = Array.from(document.querySelectorAll('.form-check-input:checked'))
+            .map(checkbox => checkbox.value);
+        const url = "{% url 'registro_candidato' %}?selected_vacantes=" + selectedVacantes.join(',');
+        window.location.href = url;
+    }
+</script>
+
+
+
+
 
 
 {% endblock %} {% comment %} cierra el bloque para contenido {% endcomment %}
