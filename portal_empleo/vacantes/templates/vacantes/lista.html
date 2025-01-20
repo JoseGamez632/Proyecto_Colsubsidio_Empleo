@@ -42,7 +42,13 @@ Inicio
                 <div class="accordion-item" style="background-color: #222222; border: 1px solid #444444;">
                     <h2 class="accordion-header">
                         <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ vacante.id }}" aria-expanded="false" aria-controls="collapse-{{ vacante.id }}" style="background-color: #333333; color: #f1f1f1; border: none;">
-                            <h5><small style="text-transform: uppercase;">• {{ vacante.cargo }} - {{ vacante.ciudad }}</small> 
+                            <h5>" 
+                                <input class="form-check-input" type="checkbox" value="{{ vacante.id }}" id="check{{ vacante.id }}">
+                                <label data-id="{{ vacante.id }}" class="form-check-label" for="check{{ vacante.id }}">
+                                    
+                                </label>
+
+                                <small style="text-transform: uppercase;">• {{ vacante.cargo }} - {{ vacante.ciudad }}</small> 
                                 {% if request.user.is_authenticated %}    
                                 <form action="{% url 'eliminar_vacante' vacante.id %}" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta vacante?');">
                                         {% csrf_token %}
@@ -56,10 +62,7 @@ Inicio
                         <div style="margin: 0.5cm;">
                             <div class="form-check">
                                 <h4 style="text-align: center; color: #bbb; margin: 25px;">
-                                <input class="form-check-input" type="checkbox" value="{{ vacante.id }}" id="check{{ vacante.id }}">
-                                <label data-id="{{ vacante.id }}" class="form-check-label" for="check{{ vacante.id }}">
-                                    Seleccionar
-                                </label>
+
                             </div>
                             <h6 style="text-align: center; color: #bbb;">
                                 <small>👥 Numero de Vacantes {{ vacante.numero_puestos }}</small>
