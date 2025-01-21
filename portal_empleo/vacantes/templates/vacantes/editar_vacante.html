@@ -1,23 +1,209 @@
-{% extends 'base.html' %} {% comment %} extiende al template base {% endcomment %}
+{% extends 'base.html' %}
 
-{% comment %}
-    Arreglar toda la parte visual de esta pagina
-{% endcomment %}
-    
 {% load static %}
-{% block titulo %} {% comment %} abre el bloque para titulo {% endcomment %}
-Inicio
-{% endblock %} {% comment %} cierra el bloque para titulo {% endcomment %}
+{% block titulo %}
+Editar Vacante
+{% endblock %}
 
-{% block contenido %} {% comment %} abre el bloque para contenido {% endcomment %}
-<div class="container mt-5">
-    <h1 class="text-center">Editar Vacante</h1>
+{% block contenido %}
+<style>
+    /* Estilos generales del formulario */
+    .card {
+        border-radius: 15px;
+        background: linear-gradient(145deg, #1a1a1a, #2d2d2d) !important;
+    }
+    
+    .form-control {
+        background-color: #2d2d2d !important;
+        border: 1px solid #404040 !important;
+        color: #ffffff !important;
+        border-radius: 8px;
+    }
 
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-success">Guardar Cambios</button>
-        <a href="{% url 'lista_vacantes' %}" class="btn btn-secondary">Cancelar</a>
-    </form>
+    .form-control:focus {
+        box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+        background-color: #333333 !important;
+    }
+
+    /* Estilos para labels */
+    label {
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        color: #e0e0e0 !important;
+    }
+
+    /* Estilos para los botones */
+    .btn-success {
+        background: linear-gradient(145deg, #f8d047, #f8d047) !important;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 8px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+        color: #000 !important;
+    }
+
+    .btn-success:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px #f8d047;
+    }
+
+    .btn-secondary {
+        background: linear-gradient(145deg, #4a4a4a, #3d3d3d) !important;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 8px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+        color: #fff !important;
+        text-decoration: none;
+    }
+
+    .btn-secondary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(255,255,255,0.1);
+        color: #fff !important;
+    }
+
+    /* Estilos para los grupos de form-row */
+    .form-row {
+        margin-bottom: 1.5rem;
+    }
+
+    /* Animación al cargar el formulario */
+    .card {
+        animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Estilos para el contenedor principal */
+    .main-container {
+        min-height: 100vh;
+        padding: 2rem 0;
+    }
+
+    /* Estilos para textarea */
+    textarea.form-control {
+        min-height: 150px;
+    }
+
+    /* Estilos para el título */
+    .page-title {
+        color: #e0e0e0;
+        margin-bottom: 2rem;
+        font-weight: 600;
+    }
+</style>
+
+<div class="container main-container">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow-sm p-4 text-light">
+                <h1 class="text-center page-title">Editar Vacante</h1>
+
+                {% if form.errors %}
+                <div class="alert alert-danger">
+                    <ul class="mb-0">
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
+                <form method="post" class="form">
+                    {% csrf_token %}
+                    
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="{{ form.cargo.id_for_label }}">Cargo</label>
+                            {{ form.cargo }}
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="{{ form.area.id_for_label }}">Área</label>
+                            {{ form.area }}
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="{{ form.numero_puestos.id_for_label }}">Número de Puestos</label>
+                            {{ form.numero_puestos }}
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="{{ form.modalidad_trabajo.id_for_label }}">Modalidad de Trabajo</label>
+                            {{ form.modalidad_trabajo }}
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="{{ form.tipo_contrato.id_for_label }}">Tipo de Contrato</label>
+                            {{ form.tipo_contrato }}
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="{{ form.jornada_trabajo.id_for_label }}">Jornada de Trabajo</label>
+                            {{ form.jornada_trabajo }}
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-12">
+                            <label for="{{ form.descripcion_vacante.id_for_label }}">Descripción de la Vacante</label>
+                            {{ form.descripcion_vacante }}
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="{{ form.tiempo_experiencia.id_for_label }}">Tiempo de Experiencia</label>
+                            {{ form.tiempo_experiencia }}
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="{{ form.nivel_estudios.id_for_label }}">Nivel de Estudios</label>
+                            {{ form.nivel_estudios }}
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="{{ form.departamento.id_for_label }}">Departamento</label>
+                            {{ form.departamento }}
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="{{ form.ciudad.id_for_label }}">Ciudad</label>
+                            {{ form.ciudad }}
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="{{ form.rango_salarial.id_for_label }}">Rango Salarial</label>
+                            {{ form.rango_salarial }}
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="{{ form.empresa_usuaria.id_for_label }}">Empresa Usuaria</label>
+                            {{ form.empresa_usuaria }}
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <button type="submit" class="btn btn-success">Guardar Cambios</button>
+                        <a href="{% url 'lista_vacantes' %}" class="btn btn-secondary">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

@@ -6,11 +6,33 @@ from django.forms import modelformset_factory
 
 #Agregado por Jose
 
+from django import forms
+from .models import Vacante
+
 class VacanteForm(forms.ModelForm):
     class Meta:
         model = Vacante
-        fields = '__all__'  # O especifica los campos que quieres mostrar en el formulario
-
+        fields = [
+            'cargo', 'area', 'numero_puestos', 'modalidad_trabajo',
+            'tipo_contrato', 'jornada_trabajo', 'descripcion_vacante',
+            'tiempo_experiencia', 'nivel_estudios', 'departamento',
+            'ciudad', 'rango_salarial', 'empresa_usuaria'
+        ]
+        widgets = {
+            'cargo': forms.TextInput(attrs={'class': 'form-control'}),
+            'area': forms.Select(attrs={'class': 'form-control'}),
+            'numero_puestos': forms.NumberInput(attrs={'class': 'form-control', 'min': '1'}),
+            'modalidad_trabajo': forms.Select(attrs={'class': 'form-control'}),
+            'tipo_contrato': forms.Select(attrs={'class': 'form-control'}),
+            'jornada_trabajo': forms.Select(attrs={'class': 'form-control'}),
+            'descripcion_vacante': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
+            'tiempo_experiencia': forms.Select(attrs={'class': 'form-control'}),
+            'nivel_estudios': forms.Select(attrs={'class': 'form-control'}),
+            'departamento': forms.Select(attrs={'class': 'form-control'}),
+            'ciudad': forms.Select(attrs={'class': 'form-control'}),
+            'rango_salarial': forms.TextInput(attrs={'class': 'form-control'}),
+            'empresa_usuaria': forms.TextInput(attrs={'class': 'form-control'}),
+        }
 # Registro de candidatos
 
 class RegistroCandidatoForm(forms.ModelForm):
