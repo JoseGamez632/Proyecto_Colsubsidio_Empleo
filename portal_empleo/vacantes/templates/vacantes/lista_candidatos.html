@@ -11,45 +11,247 @@ Candidatos para la Vacante
     <div class="row">
         <div class="col py-3">
             <h1 style="color: #f8d047;">Candidatos para la Vacante: {{ vacante.cargo }}</h1>
-            <div class="accordion" id="accordionCandidatos" style="background-color: #333333; border-radius: 8px;">
+            
+            <!-- Filtros -->
+            <div class="mb-4 p-3" style="background-color: #333333; border-radius: 8px;">
+                <div class="row">
+                    <div class="col-md-3 mb-2">
+                        <input type="text" id="searchNombre" class="form-control" placeholder="Buscar por nombre...">
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <input type="text" id="searchCiudad" class="form-control" placeholder="Buscar por ciudad...">
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <input type="text" id="searchDocumento" class="form-control" placeholder="Buscar por documento...">
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <button id="clearFilters" class="btn btn-warning w-100">Limpiar filtros</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lista de candidatos en tarjetas -->
+            <div class="row" id="candidatosList">
                 {% for candidato in candidatos %}
-                <div class="accordion-item" style="background-color: #222222; border: 1px solid #444444;">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ candidato.id }}" aria-expanded="false" aria-controls="collapse-{{ candidato.id }}" style="background-color: #333333; color: #f1f1f1; border: none;">
-                            <small>{{ candidato.nombres }} {{ candidato.apellidos }} - {{ candidato.numero_documento }}</small>
-                        </button>
-                    </h2>
-                    <div id="collapse-{{ candidato.id }}" class="accordion-collapse collapse" data-bs-parent="#accordionCandidatos">
-                        <div class="accordion-body" style="background-color: #282828; color: #f1f1f1;">
-                            <p><strong>Feria:</strong> {{ candidato.feria }}</p>
-                            <p><strong>Fecha de la feria:</strong> {{ candidato.fecha_feria }}</p>
-                            <p><strong>Sexo:</strong> {{ candidato.sexo }}</p>
-                            <p><strong>Tipo de documento:</strong> {{ candidato.tipo_documento }}</p>
-                            <p><strong>Número de documento:</strong> {{ candidato.numero_documento }}</p>
-                            <p><strong>Nombres:</strong> {{ candidato.nombres }}</p>
-                            <p><strong>Apellidos:</strong> {{ candidato.apellidos }}</p>
-                            <p><strong>Número de celular:</strong> {{ candidato.numero_celular }}</p>
-                            <p><strong>Correo electrónico:</strong> {{ candidato.correo_electronico }}</p>
-                            <p><strong>Fecha de nacimiento:</strong> {{ candidato.fecha_nacimiento }}</p>
-                            <p><strong>Formación académica:</strong> {{ candidato.formacion_academica }}</p>
-                            <p><strong>Programa académico:</strong> {{ candidato.programa_academico }}</p>
-                            <p><strong>Experiencia laboral:</strong> {{ candidato.experiencia_laboral }}</p>
-                            <p><strong>Interés ocupacional:</strong> {{ candidato.interes_ocupacional }}</p>
-                            <p><strong>Localidad/Municipio:</strong> {{ candidato.localidad_municipio }}</p>
-                            <p><strong>Discapacidad:</strong> {{ candidato.candidato_discapacidad }}</p>
-                            <p><strong>Tipo de discapacidad:</strong> {{ candidato.tipo_discapacidad }}</p>
-                            <p><strong>Horario interesado:</strong> {{ candidato.horario_interesado }}</p>
-                            <p><strong>Aspiración salarial:</strong> {{ candidato.aspiracion_salarial }}</p>
-                            <p><strong>Registrado en SISE:</strong> {{ candidato.registrado_en_sise }}</p>
-                            <p><strong>Técnico de selección:</strong> {{ candidato.tecnico_seleccion }}</p>
+                <div class="col-md-6 col-lg-4 mb-3 candidato-card" 
+                     data-nombre="{{ candidato.nombres }} {{ candidato.apellidos }}"
+                     data-ciudad="{{ candidato.localidad_municipio }}"
+                     data-documento="{{ candidato.numero_documento }}">
+                    <div class="card h-100" style="background-color: #333333; color: #ffffff;">
+                        <div class="card-body">
+                            <h5 class="card-title text-warning mb-3">
+                                {{ candidato.nombres }} {{ candidato.apellidos }}
+                            </h5>
+                            <div class="card-text">
+                                <div class="mb-2 text-light">
+                                    <i class="fas fa-map-marker-alt text-warning"></i>
+                                    <span class="ms-2">{{ candidato.localidad_municipio }}</span>
+                                </div>
+                                <div class="mb-2 text-light">
+                                    <i class="fas fa-id-card text-warning"></i>
+                                    <span class="ms-2">{{ candidato.tipo_documento }}: {{ candidato.numero_documento }}</span>
+                                </div>
+                                <div class="mb-3 text-light">
+                                    <i class="fas fa-calendar text-warning"></i>
+                                    <span class="ms-2">Feria: {{ candidato.fecha_feria }}</span>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary btn-sm w-100 view-details" data-candidato-id="{{ candidato.id }}">
+                                <i class="fas fa-eye me-1"></i> Ver Hoja de Vida
+                            </button>
                         </div>
                     </div>
                 </div>
                 {% empty %}
-                <div class="alert alert-warning">No hay candidatos para esta vacante.</div>
+                <div class="col">
+                    <div class="alert alert-warning">No hay candidatos para esta vacante.</div>
+                </div>
                 {% endfor %}
             </div>
         </div>
     </div>
 </div>
+
+<!-- Modal para la hoja de vida -->
+<div class="modal fade" id="cvModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content" style="background-color: #333333; color: #ffffff;">
+            <div class="modal-header border-bottom border-secondary">
+                <h5 class="modal-title text-warning">Hoja de Vida</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="cvContent"></div>
+            </div>
+            <div class="modal-footer border-top border-secondary">
+                <button type="button" class="btn btn-secondary" id="prevCandidate">Anterior</button>
+                <button type="button" class="btn btn-secondary" id="nextCandidate">Siguiente</button>
+                <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Estilos CSS -->
+<style>
+    .candidato-card {
+        transition: transform 0.2s;
+    }
+    .candidato-card:hover {
+        transform: translateY(-5px);
+    }
+    .card {
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .cv-section {
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        background-color: #282828;
+        border-radius: 8px;
+        color: #ffffff;
+    }
+    .cv-section h4 {
+        color: #f8d047;
+        margin-bottom: 1rem;
+    }
+    .modal-body strong {
+        color: #f8d047;
+    }
+</style>
+
+<!-- JavaScript -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const candidatos = [
+        {% for candidato in candidatos %}
+        {
+            id: {{ candidato.id }},
+            nombres: "{{ candidato.nombres }}",
+            apellidos: "{{ candidato.apellidos }}",
+            feria: "{{ candidato.feria }}",
+            fecha_feria: "{{ candidato.fecha_feria }}",
+            sexo: "{{ candidato.sexo }}",
+            tipo_documento: "{{ candidato.tipo_documento }}",
+            numero_documento: "{{ candidato.numero_documento }}",
+            numero_celular: "{{ candidato.numero_celular }}",
+            correo_electronico: "{{ candidato.correo_electronico }}",
+            fecha_nacimiento: "{{ candidato.fecha_nacimiento }}",
+            formacion_academica: "{{ candidato.formacion_academica }}",
+            programa_academico: "{{ candidato.programa_academico }}",
+            experiencia_laboral: "{{ candidato.experiencia_laboral }}",
+            interes_ocupacional: "{{ candidato.interes_ocupacional }}",
+            localidad_municipio: "{{ candidato.localidad_municipio }}",
+            candidato_discapacidad: "{{ candidato.candidato_discapacidad }}",
+            tipo_discapacidad: "{{ candidato.tipo_discapacidad }}",
+            horario_interesado: "{{ candidato.horario_interesado }}",
+            aspiracion_salarial: "{{ candidato.aspiracion_salarial }}",
+            registrado_en_sise: "{{ candidato.registrado_en_sise }}",
+            tecnico_seleccion: "{{ candidato.tecnico_seleccion }}"
+        },
+        {% endfor %}
+    ];
+
+    let currentCandidatoIndex = 0;
+    const modal = new bootstrap.Modal(document.getElementById('cvModal'));
+
+    // Función para mostrar la hoja de vida en el modal
+    function showCV(candidato) {
+        const cvContent = document.getElementById('cvContent');
+        cvContent.innerHTML = `
+            <div class="cv-section">
+                <h4>Información Personal</h4>
+                <p><strong>Nombre completo:</strong> ${candidato.nombres} ${candidato.apellidos}</p>
+                <p><strong>Documento:</strong> ${candidato.tipo_documento} ${candidato.numero_documento}</p>
+                <p><strong>Fecha de nacimiento:</strong> ${candidato.fecha_nacimiento}</p>
+                <p><strong>Sexo:</strong> ${candidato.sexo}</p>
+            </div>
+
+            <div class="cv-section">
+                <h4>Contacto</h4>
+                <p><strong>Celular:</strong> ${candidato.numero_celular}</p>
+                <p><strong>Correo:</strong> ${candidato.correo_electronico}</p>
+                <p><strong>Localidad/Municipio:</strong> ${candidato.localidad_municipio}</p>
+            </div>
+
+            <div class="cv-section">
+                <h4>Formación y Experiencia</h4>
+                <p><strong>Formación académica:</strong> ${candidato.formacion_academica}</p>
+                <p><strong>Programa académico:</strong> ${candidato.programa_academico}</p>
+                <p><strong>Experiencia laboral:</strong> ${candidato.experiencia_laboral}</p>
+            </div>
+
+            <div class="cv-section">
+                <h4>Información Adicional</h4>
+                <p><strong>Interés ocupacional:</strong> ${candidato.interes_ocupacional}</p>
+                <p><strong>Horario interesado:</strong> ${candidato.horario_interesado}</p>
+                <p><strong>Aspiración salarial:</strong> ${candidato.aspiracion_salarial}</p>
+            </div>
+
+            <div class="cv-section">
+                <h4>Datos de la Feria</h4>
+                <p><strong>Feria:</strong> ${candidato.feria}</p>
+                <p><strong>Fecha de la feria:</strong> ${candidato.fecha_feria}</p>
+                <p><strong>Técnico de selección:</strong> ${candidato.tecnico_seleccion}</p>
+                <p><strong>Registrado en SISE:</strong> ${candidato.registrado_en_sise}</p>
+            </div>
+        `;
+    }
+
+    // Event listeners para los botones de navegación
+    document.querySelectorAll('.view-details').forEach(button => {
+        button.addEventListener('click', function() {
+            const candidatoId = parseInt(this.dataset.candidatoId);
+            currentCandidatoIndex = candidatos.findIndex(c => c.id === candidatoId);
+            showCV(candidatos[currentCandidatoIndex]);
+            modal.show();
+        });
+    });
+
+    document.getElementById('prevCandidate').addEventListener('click', function() {
+        if (currentCandidatoIndex > 0) {
+            currentCandidatoIndex--;
+            showCV(candidatos[currentCandidatoIndex]);
+        }
+    });
+
+    document.getElementById('nextCandidate').addEventListener('click', function() {
+        if (currentCandidatoIndex < candidatos.length - 1) {
+            currentCandidatoIndex++;
+            showCV(candidatos[currentCandidatoIndex]);
+        }
+    });
+
+    // Funciones de filtrado
+    function filterCandidatos() {
+        const searchNombre = document.getElementById('searchNombre').value.toLowerCase();
+        const searchCiudad = document.getElementById('searchCiudad').value.toLowerCase();
+        const searchDocumento = document.getElementById('searchDocumento').value.toLowerCase();
+
+        document.querySelectorAll('.candidato-card').forEach(card => {
+            const nombre = card.dataset.nombre.toLowerCase();
+            const ciudad = card.dataset.ciudad.toLowerCase();
+            const documento = card.dataset.documento.toLowerCase();
+
+            const matchesNombre = nombre.includes(searchNombre);
+            const matchesCiudad = ciudad.includes(searchCiudad);
+            const matchesDocumento = documento.includes(searchDocumento);
+
+            card.style.display = (matchesNombre && matchesCiudad && matchesDocumento) ? 'block' : 'none';
+        });
+    }
+
+    // Event listeners para los filtros
+    document.getElementById('searchNombre').addEventListener('input', filterCandidatos);
+    document.getElementById('searchCiudad').addEventListener('input', filterCandidatos);
+    document.getElementById('searchDocumento').addEventListener('input', filterCandidatos);
+    
+    document.getElementById('clearFilters').addEventListener('click', function() {
+        document.getElementById('searchNombre').value = '';
+        document.getElementById('searchCiudad').value = '';
+        document.getElementById('searchDocumento').value = '';
+        filterCandidatos();
+    });
+});
+</script>
 {% endblock %}
