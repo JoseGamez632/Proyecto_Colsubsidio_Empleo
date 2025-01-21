@@ -23,11 +23,6 @@ Inicio
         <div class="col py-3">
             
             <h1 style="color: #f8d047;">Listado de Vacantes Activas.</h1>
-            <!-- Botón para descargar los datos en formato Excel -->
-            {% if request.user.is_authenticated %}
-            <a href="{% url 'descargar_excel' %}" class="btn btn-success">Descargar Excel</a>
-            {% endif %}   
-
             <form action="">
                 <button type="button" class="btn btn-outline-warning" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">Filtrar Vacantes</button>
                 <button type="submit" class="btn btn-outline-warning" onclick="clearFilters()">Borrar Filtros</button>
@@ -77,9 +72,6 @@ Inicio
                         <div class="accordion-body" style="background-color: #282828; color: #f1f1f1;">
                             <strong>{{ vacante.cargo }}</strong>
                             <p>{{ vacante.descripcion_vacante }}</p>
-                            {% if request.user.is_authenticated %}
-                            <a href="{% url 'editar_vacante' vacante.id %}" class="btn btn-primary">Editar Vacante</a>
-                            {% endif %}
                         </div>
                     </div>
                 </div>

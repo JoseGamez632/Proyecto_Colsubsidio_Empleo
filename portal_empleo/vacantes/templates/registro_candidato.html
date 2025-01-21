@@ -6,11 +6,109 @@ Inicio
 {% endblock %}
 
 {% block contenido %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+<style>
+    /* Estilos generales del formulario */
+    .card {
+        border-radius: 15px;
+        background: linear-gradient(145deg, #1a1a1a, #2d2d2d) !important;
+    }
+    
+    .form-control {
+        background-color: #2d2d2d !important;
+        border: 1px solid #404040 !important;
+        color: #ffffff !important;
+        border-radius: 8px;
+    }
+
+    .form-control:focus {
+        box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+        background-color: #333333 !important;
+    }
+
+    /* Estilos para Select2 */
+    .select2-container--default .select2-selection--multiple {
+        background-color: #2d2d2d !important;
+        border: 1px solid #404040 !important;
+        border-radius: 8px;
+    }
+
+    .select2-container--default .select2-selection--multiple .select2-selection__choice {
+        background-color:rgb(168, 166, 49) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 15px !important;
+        padding: 2px 8px !important;
+    }
+
+    .select2-container--default .select2-results__option--highlighted[aria-selected] {
+        background-color: #007bff !important;
+        color: white !important;
+    }
+
+    .select2-container--default .select2-results__option[aria-selected=true] {
+        background-color: #0056b3 !important;
+        color: white !important;
+    }
+
+    .select2-dropdown {
+        background-color: #2d2d2d !important;
+        border: 1px solid #404040 !important;
+    }
+
+    .select2-search__field {
+        background-color: #333333 !important;
+        color: white !important;
+    }
+
+    .select2-results__option {
+        color: #ffffff !important;
+    }
+
+    /* Estilos para labels */
+    label {
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        color: #e0e0e0 !important;
+    }
+
+    /* Estilos para el botón */
+    .btn-primary {
+        background: linear-gradient(145deg, #007bff, #0056b3) !important;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 8px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,123,255,0.3);
+    }
+
+    /* Estilos para los grupos de form-row */
+    .form-row {
+        margin-bottom: 1.5rem;
+    }
+
+    /* Animación al cargar el formulario */
+    .card {
+        animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
 <div class="container mt-5" style="text-align: center;">
     
     <h1 class="text-center">Formulario de Registro de Candidato</h1>
     
-    <div class="card shadow-sm p-4" style="background-color: rgb(248, 248, 248);">
+    <div class="card shadow-sm p-4 text-light bg-dark"  style="background-color: rgb(248, 248, 248);">
         
         {% if form.errors %}
         <div class="alert alert-danger">
@@ -154,7 +252,7 @@ Inicio
                 {% endif %}   
                 <div class="form-group col-md-6">
                     <label for="vacantes">Vacantes disponibles</label>
-                    <select id="vacantes" name="vacantes_disponibles" class="form-control" multiple="multiple">
+                    <select id="vacantes" name="vacantes_disponibles" class="form-control" multiple="multiple" >
                         {% for vacante in form.fields.vacantes_disponibles.queryset %}
                             <option value="{{ vacante.id }}" 
                                 {% if vacante in selected_vacantes %}selected{% endif %}>
