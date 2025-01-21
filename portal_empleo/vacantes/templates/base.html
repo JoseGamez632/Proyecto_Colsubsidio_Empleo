@@ -17,66 +17,124 @@
     <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
-
     <style>
-                /* Imagen con sombra blanca alrededor del contorno */
+        /* Imagen con sombra blanca alrededor del contorno */
         .navbar-brand img {
-            border-radius: 15px; /* Bordes redondeados */
-            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8)); /* Sombra blanca en el contorno */
-            transition: transform 0.3s ease; /* Transición para el zoom */
+            border-radius: 15px;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
+            transition: transform 0.3s ease;
         }
 
         .navbar-brand img:hover {
-            transform: scale(1.1); /* Zoom al pasar el ratón */
+            transform: scale(1.1);
         }
-
 
         /* Navbar styling */
         .navbar {
-            background: linear-gradient(135deg, #2a2a2a, #3d3d3d); /* Dark gradient */
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Adds shadow effect */
+            background: linear-gradient(135deg, #2a2a2a, #3d3d3d);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
             transition: background-color 0.5s ease, transform 0.3s ease-in-out;
         }
 
         .navbar:hover {
-            background: linear-gradient(135deg, #1a1a1a, #333333); /* Darker gradient on hover */
-            transform: translateY(-5px); /* Slight lift effect */
+            background: linear-gradient(135deg, #1a1a1a, #333333);
+            transform: translateY(-5px);
         }
 
         /* Navbar links */
         .navbar-nav .nav-link {
-            color: #f8d047; /* Yellow color for links */
+            color: #f8d047;
             transition: color 0.3s ease-in-out, transform 0.3s ease-in-out;
         }
 
         .navbar-nav .nav-link:hover {
-            color: #fff; /* White color on hover */
-            transform: scale(1.1); /* Zoom effect on hover */
-        }
-
-        /* Logo animation */
-        .navbar-brand img {
-            transition: transform 0.3s ease;
-        }
-
-        .navbar-brand:hover img {
+            color: #fff;
             transform: scale(1.1);
         }
 
         /* Mobile Navbar Toggler */
         .navbar-toggler-icon {
-            background-color: #f8d047; /* Yellow color for mobile menu icon */
+            background-color: #f8d047;
         }
 
-        /* Background animation */
         @keyframes backgroundAnimation {
             0% { background-color: rgba(42, 42, 42, 0.6); }
             100% { background-color: rgba(255, 255, 255, 0.8); }
+        }
+
+        /* Floating login button styles */
+        .floating-login {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .login-btn {
+            padding: 6px 12px !important;
+            font-size: 0.75rem !important;
+            background: linear-gradient(45deg, #f8d047, #ffb347);
+            border: none;
+            border-radius: 15px;
+            color: #2a2a2a;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            min-width: 80px;
+            max-width: 100px;
+            text-align: center;
+            line-height: 1.2;
+            white-space: nowrap;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 4px 15px rgba(248, 208, 71, 0.4);
+            background: linear-gradient(45deg, #ffb347, #f8d047);
+            color: #1a1a1a;
+            text-decoration: none;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(248, 208, 71, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(248, 208, 71, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(248, 208, 71, 0); }
+        }
+
+        .login-btn:active {
+            transform: translateY(1px);
+            animation: pulse 1s;
+        }
+
+        /* Ensure button stays small on different screen sizes */
+        @media (max-width: 768px) {
+            .login-btn {
+                font-size: 0.7rem !important;
+                padding: 5px 10px !important;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .login-btn {
+                font-size: 0.75rem !important;
+                padding: 6px 12px !important;
+            }
         }
     </style>
 
 </head>
 <body>
+    {% if not user.is_authenticated %}
+    <div class="floating-login">
+        <a href="{% url 'login' %}" class="login-btn">Login</a>
+    </div>
+    {% endif %}
+
     {% comment %} Barra de navegación {% endcomment %}
     <div class="bg"></div>
     <div class="bg bg2"></div>
@@ -125,7 +183,6 @@
                             </ul>
                         </a>
                     </li>
-
                 </ul>
             </div>
         </div>
