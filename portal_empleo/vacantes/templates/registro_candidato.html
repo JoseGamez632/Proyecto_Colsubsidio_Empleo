@@ -12,7 +12,6 @@ Inicio
     
     <div class="card shadow-sm p-4" style="background-color: rgb(248, 248, 248);">
         
-        <!-- Mostrar errores de formulario aquí -->
         {% if form.errors %}
         <div class="alert alert-danger">
             <ul>
@@ -28,7 +27,6 @@ Inicio
         <form method="post">
             {% csrf_token %}
 
-            <!-- Fila para Feria y Fecha de Feria -->
             {% if request.user.is_authenticated %}
             <div class="form-row">
                 <div class="form-group col-md-6">
@@ -37,12 +35,14 @@ Inicio
                 </div>
                 <div class="form-group col-md-6">
                     <label for="fecha_feria">Fecha de Feria</label>
-                    {{ form.fecha_feria }}
+                    <input type="date" name="fecha_feria" id="fecha_feria" 
+                           class="form-control" 
+                           value="{{ form.fecha_feria.value|date:'Y-m-d' }}"
+                           {% if form.fecha_feria.field.required %}required{% endif %}>
                 </div>
             </div>
             {% endif %}   
 
-            <!-- Fila para Sexo y Tipo de Documento -->
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label for="sexo">Sexo</label>
@@ -54,7 +54,6 @@ Inicio
                 </div>
             </div>
 
-            <!-- Fila para Número de Documento y Nombres -->
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label for="numero_documento">Número de Documento</label>
@@ -66,7 +65,6 @@ Inicio
                 </div>
             </div>
 
-            <!-- Fila para Apellidos y Número de Celular -->
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label for="apellidos">Apellidos</label>
@@ -78,7 +76,6 @@ Inicio
                 </div>
             </div>
 
-            <!-- Fila para Correo Electrónico y Fecha de Nacimiento -->
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label for="correo_electronico">Correo Electrónico</label>
@@ -86,11 +83,13 @@ Inicio
                 </div>
                 <div class="form-group col-md-6">
                     <label for="fecha_nacimiento">Fecha de Nacimiento</label>
-                    {{ form.fecha_nacimiento }}
+                    <input type="date" name="fecha_nacimiento" id="fecha_nacimiento" 
+                           class="form-control" 
+                           value="{{ form.fecha_nacimiento.value|date:'Y-m-d' }}"
+                           {% if form.fecha_nacimiento.field.required %}required{% endif %}>
                 </div>
             </div>
 
-            <!-- Fila para Formación Académica y Programa Académico -->
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label for="formacion_academica">Formación Académica</label>
@@ -102,7 +101,6 @@ Inicio
                 </div>
             </div>
 
-            <!-- Fila para Experiencia Laboral e Interés Ocupacional -->
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label for="experiencia_laboral">Experiencia Laboral</label>
@@ -114,7 +112,6 @@ Inicio
                 </div>
             </div>
             
-            <!-- Fila para Localidad/Municipio y Candidato con Discapacidad -->
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label for="localidad_municipio">Localidad/Municipio</label>
@@ -126,7 +123,6 @@ Inicio
                 </div>
             </div>
 
-            <!-- Fila para Tipo de Discapacidad y Horario Interesado -->
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label for="tipo_discapacidad">Tipo de Discapacidad</label>
@@ -138,7 +134,6 @@ Inicio
                 </div>
             </div>
 
-            <!-- Fila para Aspiración Salarial y Registrado en SISE -->
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label for="aspiracion_salarial">Aspiración Salarial</label>
@@ -150,8 +145,6 @@ Inicio
                 </div>
             </div>
 
-            <!-- Fila para Técnico de Selección y Vacantes -->
-            
             <div class="form-row">
                 {% if request.user.is_authenticated %}
                 <div class="form-group col-md-6">
@@ -163,21 +156,22 @@ Inicio
                     <label for="vacantes">Vacantes disponibles</label>
                     <select id="vacantes" name="vacantes_disponibles" class="form-control" multiple="multiple">
                         {% for vacante in form.fields.vacantes_disponibles.queryset %}
-                        <option value="{{ vacante.id }}" {% if vacante in selected_vacantes %}selected{% endif %}>
-                            {{ vacante }}
-                        </option>
+                            <option value="{{ vacante.id }}" 
+                                {% if vacante in selected_vacantes %}selected{% endif %}>
+                                {{ vacante }}
+                            </option>
                         {% endfor %}
                     </select>
                 </div>
             </div>
 
-            <!-- Botón para Registrar -->
-            <button type="submit" class="btn btn-primary btn-block mt-3">Registrar</button>
+            <button type="submit" class="btn btn-primary btn-block mt-3">
+                {% if is_edit %}Actualizar{% else %}Registrar{% endif %}
+            </button>
         </form>
     </div>
 </div>
 
-{% comment %} script para preseleccionar las vacantes {% endcomment %}
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
@@ -190,12 +184,13 @@ Inicio
             allowClear: true
         });
 
-        // Preseleccionar vacantes desde la URL si están presentes
-        const urlParams = new URLSearchParams(window.location.search);
-        const selectedVacantes = urlParams.get('selected_vacantes') ? urlParams.get('selected_vacantes').split(',') : [];
-        $('#vacantes').val(selectedVacantes).trigger('change');
+        // Si estamos en modo edición, no necesitamos cargar desde URL
+        {% if not is_edit %}
+            const urlParams = new URLSearchParams(window.location.search);
+            const selectedVacantes = urlParams.get('selected_vacantes') ? urlParams.get('selected_vacantes').split(',') : [];
+            $('#vacantes').val(selectedVacantes).trigger('change');
+        {% endif %}
     });
 </script>
-
 
 {% endblock %}

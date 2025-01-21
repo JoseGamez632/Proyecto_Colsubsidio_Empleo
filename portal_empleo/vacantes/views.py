@@ -307,10 +307,9 @@ def lista_registros(request):
     }
     return render(request, 'lista_registros.html', context)
 
-# Vista para editar un registro
 def editar_registro(request, pk):
     registro = get_object_or_404(RegistroCandidato, pk=pk)
-
+    
     if request.method == 'POST':
         form = RegistroCandidatoForm(request.POST, instance=registro)
         if form.is_valid():
@@ -318,11 +317,18 @@ def editar_registro(request, pk):
             return redirect('lista_registros')
     else:
         form = RegistroCandidatoForm(instance=registro)
-
-    return render(request, 'registro_candidato.html', {'form': form})
-
-
-
+        # Formatear las fechas para el input type="date"
+        if registro.fecha_nacimiento:
+            form.fields['fecha_nacimiento'].initial = registro.fecha_nacimiento.strftime('%Y-%m-%d')
+        if registro.fecha_feria:
+            form.fields['fecha_feria'].initial = registro.fecha_feria.strftime('%Y-%m-%d')
+        
+    context = {
+        'form': form,
+        'selected_vacantes': registro.vacantes_disponibles.all(),
+        'is_edit': True
+    }
+    return render(request, 'registro_candidato.html', context)
 
 
 #def candidatos_por_vacante(request, vacante_id):

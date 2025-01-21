@@ -17,42 +17,57 @@ class RegistroCandidatoForm(forms.ModelForm):
     vacantes_disponibles = forms.ModelMultipleChoiceField(
         queryset=Vacante.objects.all(),
         widget=forms.SelectMultiple(attrs={
-            'class': 'form-control select2',  # Clase personalizada para Select2
-            'multiple': 'multiple'  # Habilita selección múltiple
+            'class': 'form-control select2',
+            'multiple': 'multiple'
         }),
         label="Vacantes disponibles",
         required=False
     )
 
-
     fecha_nacimiento = forms.DateField(
-        widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-        label="Fecha de Nacimiento"
+        widget=forms.DateInput(attrs={
+            'type': 'date',
+            'class': 'form-control'
+        }),
+        input_formats=['%Y-%m-%d']
     )
-
+    
     fecha_feria = forms.DateField(
-        widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-        label="Fecha de Feria",
-        required=False
+        widget=forms.DateInput(attrs={
+            'type': 'date',
+            'class': 'form-control'
+        }),
+        required=False,
+        input_formats=['%Y-%m-%d']
     )
 
     experiencia_laboral = forms.CharField(
-        widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Describa su experiencia laboral'}),
+        widget=forms.Textarea(attrs={
+            'class': 'form-control',
+            'placeholder': 'Describa su experiencia laboral'
+        }),
         label="Experiencia Laboral",
         required=False
     )
 
     interes_ocupacional = forms.CharField(
-        widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Describa su interés ocupacional'}),
+        widget=forms.Textarea(attrs={
+            'class': 'form-control',
+            'placeholder': 'Describa su interés ocupacional'
+        }),
         label="Interés Ocupacional",
         required=False
     )
-    
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            if not isinstance(field.widget, (forms.CheckboxInput, forms.RadioSelect)):
+                field.widget.attrs['class'] = 'form-control'
 
     class Meta:
         model = RegistroCandidato
         fields = '__all__'
-
 # def clean_vacantes_disponibles(self):
 #     vacantes = self.cleaned_data.get('vacantes_disponibles', [])
 #     return ','.join(vacantes)  # Guarda como una lista separada por comas
