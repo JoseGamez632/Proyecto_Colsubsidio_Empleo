@@ -99,15 +99,16 @@
                         <a class="nav-link" href="{% url 'inicio' %}">Inicio</a>
                     </li>
                     <li class="nav-item">
-                        {% if request.user.is_authenticated %}<a class="nav-link" href="{% url 'registro_candidato' %}">Registro Vacantes</a>{% endif %}   
+                        {% if request.user.is_authenticated %}<a class="nav-link" href="{% url 'registro_candidato' %}">Registro de Candidato</a>{% endif %}   
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'lista_vacantes' %}">Vacantes Lista</a>
+                        <a class="nav-link" href="{% url 'lista_vacantes' %}">Vacantes Disponibles</a>
                     </li>
+                    {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'lista_registros' %}">Lista de Registros</a>
+                        <a class="nav-link" href="{% url 'lista_registros' %}">Lista de Registros Candidatos</a>
                     </li>
-
+                    {% endif %}
                     <li class="nav-item">
                         <a class="nav-link" href="">
                             <ul>
