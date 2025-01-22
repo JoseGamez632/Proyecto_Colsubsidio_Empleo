@@ -1,176 +1,403 @@
-{% extends 'base.html' %} {% comment %} extiende al template base {% endcomment %}
-
+{% extends 'base.html' %}
 {% load static %}
-{% block titulo %} {% comment %} abre el bloque para titulo {% endcomment %}
-Inicio
-{% endblock %} {% comment %} cierra el bloque para titulo {% endcomment %}
 
-{% block contenido %} {% comment %} abre el bloque para contenido {% endcomment %}
-    
+{% block titulo %}
+Inicio
+{% endblock %}
+
+{% block contenido %}
 <style>
+    :root {
+        --primary: #f8d047;
+        --dark: #2a2a2a;
+        --transition: all 0.3s ease-in-out;
+    }
+
     body {
         font-family: 'Poppins', sans-serif;
+        overflow-x: hidden;
+        background-color: #ffffff;
     }
+
+    /* Animaciones generales */
+    .fade-in {
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeIn 0.6s ease-out forwards;
+    }
+
+    @keyframes fadeIn {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Header */
     header {
-        background-color: #2a2a2a;
-        color: #f8d047;
-    }
-    .btn-vacantes {
-        background-color: #f8d047;
-        color: #2a2a2a;
-        font-weight: bold;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        transition: all 0.3s;
-    }
-    .btn-vacantes:hover {
-        background-color: #2a2a2a;
-        color: #f8d047;
-    }
-    .proceso-linea {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin: 50px auto;
-    }
-    .proceso-item {
-        text-align: center;
+        background: linear-gradient(135deg, var(--dark) 0%, #3a3a3a 100%);
+        color: var(--primary);
+        padding: 4rem 1rem;
         position: relative;
-        padding: 10px 20px;
-        margin: 0 20px;
+        overflow: hidden;
+        margin-bottom: 3rem;
     }
-    .proceso-item::before {
-        content: "";
+
+    header::before {
+        content: '';
         position: absolute;
-        top: 50%;
-        left: 100%;
-        height: 4px;
-        width: 80px;
-        background-color: #f8d047;
-        transform: translateY(-50%);
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><rect width="1" height="1" fill="%23ffffff10"/></svg>');
+        opacity: 0.1;
     }
-    .proceso-item:last-child::before {
-        display: none;
+
+    .header-content {
+        position: relative;
+        z-index: 1;
+        max-width: 800px;
+        margin: 0 auto;
     }
+
+    .header-content h1 {
+        font-size: 3.5rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+    }
+
+    .header-content .lead {
+        font-size: 1.5rem;
+        margin-bottom: 2rem;
+        color: #ffffff;
+    }
+
+    /* Botones */
+    .btn-vacantes {
+        background-color: var(--primary);
+        color: var(--dark);
+        font-weight: 600;
+        padding: 1rem 2.5rem;
+        border: none;
+        border-radius: 50px;
+        transition: var(--transition);
+        display: inline-block;
+        text-decoration: none;
+        box-shadow: 0 4px 15px rgba(248, 208, 71, 0.2);
+        font-size: 1.1rem;
+    }
+
+    .btn-vacantes:hover {
+        background-color: #ffffff;
+        color: var(--dark);
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(248, 208, 71, 0.3);
+    }
+
+    /* Secciones */
+    .section-title {
+        text-align: center;
+        margin-bottom: 3rem;
+        font-weight: 700;
+        color: var(--dark);
+    }
+
+    /* Cards */
     .card-servicio {
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s;
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transition: var(--transition);
+        overflow: hidden;
+        height: 100%;
+        background-color: #ffffff;
     }
+
     .card-servicio:hover {
         transform: translateY(-10px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
     }
-    .video-section {
+
+    .card-servicio img {
+        transition: var(--transition);
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+
+    .card-servicio:hover img {
+        transform: scale(1.05);
+    }
+
+    .card-servicio .card-body {
+        padding: 2rem;
+    }
+
+    .card-servicio h4 {
+        color: var(--dark);
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+
+    .card-servicio p {
+        color: #666;
+        line-height: 1.6;
+    }
+
+    /* Proceso */
+    .proceso-section {
+        background-color: #f8f9fa;
+        padding: 4rem 0;
+        margin: 4rem 0;
+    }
+
+    .proceso-linea {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        padding: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .proceso-item {
+        background: white;
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        position: relative;
+        transition: var(--transition);
         text-align: center;
-        margin: 50px auto;
     }
-    .footer-btn {
-        background-color: #f8d047;
-        color: #2a2a2a;
+
+    .proceso-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .proceso-item h4 {
+        color: var(--dark);
+        font-weight: 600;
+        margin: 1rem 0;
+    }
+
+    .proceso-item p {
+        color: #666;
+        margin: 0;
+    }
+
+    .proceso-numero {
+        width: 40px;
+        height: 40px;
+        background: var(--primary);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         font-weight: bold;
-        border: none;
-        border-radius: 5px;
-        padding: 10px 20px;
-        transition: all 0.3s;
+        color: var(--dark);
+        margin: 0 auto;
+        margin-bottom: 1rem;
     }
-    .footer-btn:hover {
-        background-color: #2a2a2a;
-        color: #f8d047;
+
+    /* Video section */
+    .video-section {
+        padding: 4rem 0;
+        background: #ffffff;
+    }
+
+    .video-container {
+        max-width: 800px;
+        margin: 0 auto;
+        overflow: hidden;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .video-container video {
+        width: 100%;
+        display: block;
+    }
+
+    /* Animaciones scroll */
+    .scroll-animation {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: var(--transition);
+    }
+
+    .scroll-animation.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        header {
+            padding: 2rem 1rem;
+        }
+
+        .header-content h1 {
+            font-size: 2.5rem;
+        }
+
+        .header-content .lead {
+            font-size: 1.2rem;
+        }
+
+        .btn-vacantes {
+            width: 100%;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .card-servicio {
+            margin-bottom: 1rem;
+        }
+
+        .proceso-linea {
+            grid-template-columns: 1fr;
+            padding: 1rem;
+        }
+
+        .section-title {
+            font-size: 2rem;
+        }
     }
 </style>
-<body>
 
-    <!-- Encabezado -->
-    <header class="py-4 text-center" style="opacity: 95%;">
-        <h1 class="display-4">Bienvenido a la Agencia de Empleo</h1>
-        <p class="lead">Conectando talento con oportunidades</p>
-        <a href="{% url 'lista_vacantes' %}" class="btn-vacantes">Conoce las vacantes disponibles dando click acá</a>
-    </header>
+<header>
+    <div class="header-content text-center">
+        <h1 class="fade-in">Bienvenido a la Agencia de Empleo</h1>
+        <p class="lead fade-in" style="animation-delay: 0.2s">Conectando talento con oportunidades</p>
+        <a href="{% url 'lista_vacantes' %}" class="btn-vacantes fade-in" style="animation-delay: 0.4s">
+            Conoce las vacantes disponibles
+        </a>
+    </div>
+</header>
 
-    <!-- Sección de Módulos -->
-    <main style="opacity: 90%;">
-        <!-- Módulo con Imagen y Texto -->
-        <section class="container my-5">
-            <div class="row align-items-center">
-                <div class="col-md-6">
-                    <div class="card card-servicio p-4 bg-dark text-light">
+<main>
+    <!-- Módulo con Imagen y Texto -->
+    <section class="container my-5">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <div class="card card-servicio scroll-animation">
+                    <div class="card-body">
                         <h3 class="mb-3">Clubes y BLOC</h3>
                         <p>Accede a espacios donde podrás realizar actividades recreativas, deportivas, talleres y programas para todos.</p>
-                        <a href="#" class="btn btn-light">Conoce más</a>
+                        <a href="#" class="btn btn-dark">Conoce más</a>
                     </div>
                 </div>
-                <div class="col-md-6">
+            </div>
+            <div class="col-md-6">
+                <div class="scroll-animation" style="animation-delay: 0.2s">
                     <img src="https://via.placeholder.com/600x350" class="img-fluid rounded" alt="Servicios">
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- Segunda sección con Texto y Fotos -->
-        <section class="container my-5">
-            <div class="row">
-                <div class="col-md-4 mb-4">
-                    <div class="card card-servicio p-3">
-                        <img src="https://via.placeholder.com/350x200" class="img-fluid mb-3 rounded" alt="Foto1">
+    <!-- Servicios -->
+    <section class="container my-5">
+        <h2 class="section-title">Nuestros Servicios</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card card-servicio scroll-animation">
+                    <img src="https://via.placeholder.com/350x200" alt="Capacitación">
+                    <div class="card-body">
                         <h4>Capacitación</h4>
                         <p>Programas de capacitación para mejorar tus habilidades y prepararte para el mercado laboral.</p>
                     </div>
                 </div>
-                <div class="col-md-4 mb-4">
-                    <div class="card card-servicio p-3">
-                        <img src="https://via.placeholder.com/350x200" class="img-fluid mb-3 rounded" alt="Foto2">
+            </div>
+            <div class="col-md-4">
+                <div class="card card-servicio scroll-animation" style="animation-delay: 0.2s">
+                    <img src="https://via.placeholder.com/350x200" alt="Asesoría">
+                    <div class="card-body">
                         <h4>Asesoría</h4>
                         <p>Te acompañamos en la búsqueda de empleo con asesorías personalizadas y profesionales.</p>
                     </div>
                 </div>
-                <div class="col-md-4 mb-4">
-                    <div class="card card-servicio p-3">
-                        <img src="https://via.placeholder.com/350x200" class="img-fluid mb-3 rounded" alt="Foto3">
+            </div>
+            <div class="col-md-4">
+                <div class="card card-servicio scroll-animation" style="animation-delay: 0.4s">
+                    <img src="https://via.placeholder.com/350x200" alt="Oportunidades">
+                    <div class="card-body">
                         <h4>Oportunidades</h4>
                         <p>Conectamos tu perfil con las mejores oportunidades laborales disponibles.</p>
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- Línea de Proceso -->
-        <section class="container text-center my-5">
-            <h2 class="mb-4">Nuestro Proceso</h2>
+    <!-- Proceso -->
+    <section class="proceso-section">
+        <div class="container">
+            <h2 class="section-title">Nuestro Proceso</h2>
             <div class="proceso-linea">
-                <div class="proceso-item">
-                    <h4>1. Registro</h4>
-                    <p>Ingresa tus datos y perfil.</p>
+                <div class="proceso-item scroll-animation">
+                    <div class="proceso-numero">1</div>
+                    <h4>Registro</h4>
+                    <p>Ingresa tus datos y perfil profesional</p>
                 </div>
-                <div class="proceso-item">
-                    <h4>2. Evaluación</h4>
-                    <p>Analizamos tus habilidades.</p>
+                <div class="proceso-item scroll-animation" style="animation-delay: 0.2s">
+                    <div class="proceso-numero">2</div>
+                    <h4>Evaluación</h4>
+                    <p>Analizamos tus habilidades y experiencia</p>
                 </div>
-                <div class="proceso-item">
-                    <h4>3. Selección</h4>
-                    <p>Te conectamos con la mejor oferta.</p>
+                <div class="proceso-item scroll-animation" style="animation-delay: 0.4s">
+                    <div class="proceso-numero">3</div>
+                    <h4>Selección</h4>
+                    <p>Te conectamos con la mejor oferta</p>
                 </div>
-                <div class="proceso-item">
-                    <h4>4. Contratación</h4>
-                    <p>Empieza tu nuevo empleo.</p>
+                <div class="proceso-item scroll-animation" style="animation-delay: 0.6s">
+                    <div class="proceso-numero">4</div>
+                    <h4>Contratación</h4>
+                    <p>Comienza tu nuevo empleo</p>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- Sección de Video -->
-        <section class="video-section">
-            <h2 class="mb-4">Conoce más sobre nosotros</h2>
-            <video width="80%" controls>
-                <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
-                Tu navegador no soporta el video.
-            </video>
-        </section>
-        {% block footer %}
-        {% include 'footer.html' %}  <!-- Incluir el footer -->
-        {% endblock %}
-    </main>
-    <!-- Scripts de Bootstrap -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    
-</body>
+    <!-- Video -->
+    <section class="video-section">
+        <div class="container">
+            <h2 class="section-title">Conoce más sobre nosotros</h2>
+            <div class="video-container scroll-animation">
+                <video controls>
+                    <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+                    Tu navegador no soporta el video.
+                </video>
+            </div>
+        </div>
+    </section>
+</main>
 
-{% endblock %} {% comment %} cierra el bloque para contenido {% endcomment %}
+{% block footer %}
+{% include 'footer.html' %}
+{% endblock %}
 
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '50px'
+        });
+
+        document.querySelectorAll('.scroll-animation').forEach((el) => {
+            observer.observe(el);
+        });
+    });
+</script>
+
+{% endblock %}
