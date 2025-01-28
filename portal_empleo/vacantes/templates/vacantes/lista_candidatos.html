@@ -127,27 +127,27 @@ document.addEventListener('DOMContentLoaded', function() {
         {% for candidato in candidatos %}
         {
             id: {{ candidato.id }},
-            nombres: "{{ candidato.nombres }}",
-            apellidos: "{{ candidato.apellidos }}",
-            feria: "{{ candidato.feria }}",
-            fecha_feria: "{{ candidato.fecha_feria }}",
-            sexo: "{{ candidato.sexo }}",
-            tipo_documento: "{{ candidato.tipo_documento }}",
-            numero_documento: "{{ candidato.numero_documento }}",
-            numero_celular: "{{ candidato.numero_celular }}",
-            correo_electronico: "{{ candidato.correo_electronico }}",
-            fecha_nacimiento: "{{ candidato.fecha_nacimiento }}",
-            formacion_academica: "{{ candidato.formacion_academica }}",
-            programa_academico: "{{ candidato.programa_academico }}",
-            experiencia_laboral: "{{ candidato.experiencia_laboral }}",
-            interes_ocupacional: "{{ candidato.interes_ocupacional }}",
-            localidad_municipio: "{{ candidato.localidad_municipio }}",
-            candidato_discapacidad: "{{ candidato.candidato_discapacidad }}",
-            tipo_discapacidad: "{{ candidato.tipo_discapacidad }}",
-            horario_interesado: "{{ candidato.horario_interesado }}",
-            aspiracion_salarial: "{{ candidato.aspiracion_salarial }}",
-            registrado_en_sise: "{{ candidato.registrado_en_sise }}",
-            tecnico_seleccion: "{{ candidato.tecnico_seleccion }}"
+            nombres: "{{ candidato.nombres|escapejs }}",
+            apellidos: "{{ candidato.apellidos|escapejs }}",
+            feria: "{{ candidato.feria|escapejs }}",
+            fecha_feria: "{{ candidato.fecha_feria|escapejs }}",
+            sexo: "{{ candidato.sexo|escapejs }}",
+            tipo_documento: "{{ candidato.tipo_documento|escapejs }}",
+            numero_documento: "{{ candidato.numero_documento|escapejs }}",
+            numero_celular: "{{ candidato.numero_celular|escapejs }}",
+            correo_electronico: "{{ candidato.correo_electronico|escapejs }}",
+            fecha_nacimiento: "{{ candidato.fecha_nacimiento|escapejs }}",
+            formacion_academica: "{{ candidato.formacion_academica|escapejs }}",
+            programa_academico: "{{ candidato.programa_academico|escapejs }}",
+            experiencia_laboral: "{{ candidato.experiencia_laboral|escapejs }}",
+            interes_ocupacional: "{{ candidato.interes_ocupacional|escapejs }}",
+            localidad_municipio: "{{ candidato.localidad_municipio|escapejs }}",
+            candidato_discapacidad: "{{ candidato.candidato_discapacidad|escapejs }}",
+            tipo_discapacidad: "{{ candidato.tipo_discapacidad|escapejs }}",
+            horario_interesado: "{{ candidato.horario_interesado|escapejs }}",
+            aspiracion_salarial: "{{ candidato.aspiracion_salarial|escapejs }}",
+            registrado_en_sise: "{{ candidato.registrado_en_sise|escapejs }}",
+            tecnico_seleccion: "{{ candidato.tecnico_seleccion|escapejs }}"
         },
         {% endfor %}
     ];
@@ -155,45 +155,62 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentCandidatoIndex = 0;
     const modal = new bootstrap.Modal(document.getElementById('cvModal'));
 
+    // Función para sanitizar el texto antes de mostrarlo
+    function sanitizeHTML(text) {
+        if (!text) return 'No especificado';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
     // Función para mostrar la hoja de vida en el modal
     function showCV(candidato) {
+        if (!candidato) {
+            console.error('No se encontró el candidato');
+            return;
+        }
+
+        console.log('Mostrando datos del candidato:', candidato);
+
         const cvContent = document.getElementById('cvContent');
         cvContent.innerHTML = `
             <div class="cv-section">
                 <h4>Información Personal</h4>
-                <p><strong>Nombre completo:</strong> ${candidato.nombres} ${candidato.apellidos}</p>
-                <p><strong>Documento:</strong> ${candidato.tipo_documento} ${candidato.numero_documento}</p>
-                <p><strong>Fecha de nacimiento:</strong> ${candidato.fecha_nacimiento}</p>
-                <p><strong>Sexo:</strong> ${candidato.sexo}</p>
+                <p><strong>Nombre completo:</strong> ${sanitizeHTML(candidato.nombres)} ${sanitizeHTML(candidato.apellidos)}</p>
+                <p><strong>Documento:</strong> ${sanitizeHTML(candidato.tipo_documento)} ${sanitizeHTML(candidato.numero_documento)}</p>
+                <p><strong>Fecha de nacimiento:</strong> ${sanitizeHTML(candidato.fecha_nacimiento)}</p>
+                <p><strong>Sexo:</strong> ${sanitizeHTML(candidato.sexo)}</p>
             </div>
 
             <div class="cv-section">
                 <h4>Contacto</h4>
-                <p><strong>Celular:</strong> ${candidato.numero_celular}</p>
-                <p><strong>Correo:</strong> ${candidato.correo_electronico}</p>
-                <p><strong>Localidad/Municipio:</strong> ${candidato.localidad_municipio}</p>
+                <p><strong>Celular:</strong> ${sanitizeHTML(candidato.numero_celular)}</p>
+                <p><strong>Correo:</strong> ${sanitizeHTML(candidato.correo_electronico)}</p>
+                <p><strong>Localidad/Municipio:</strong> ${sanitizeHTML(candidato.localidad_municipio)}</p>
             </div>
 
             <div class="cv-section">
                 <h4>Formación y Experiencia</h4>
-                <p><strong>Formación académica:</strong> ${candidato.formacion_academica}</p>
-                <p><strong>Programa académico:</strong> ${candidato.programa_academico}</p>
-                <p><strong>Experiencia laboral:</strong> ${candidato.experiencia_laboral}</p>
+                <p><strong>Formación académica:</strong> ${sanitizeHTML(candidato.formacion_academica)}</p>
+                <p><strong>Programa académico:</strong> ${sanitizeHTML(candidato.programa_academico)}</p>
+                <p><strong>Experiencia laboral:</strong> ${sanitizeHTML(candidato.experiencia_laboral)}</p>
             </div>
 
             <div class="cv-section">
                 <h4>Información Adicional</h4>
-                <p><strong>Interés ocupacional:</strong> ${candidato.interes_ocupacional}</p>
-                <p><strong>Horario interesado:</strong> ${candidato.horario_interesado}</p>
-                <p><strong>Aspiración salarial:</strong> ${candidato.aspiracion_salarial}</p>
+                <p><strong>Interés ocupacional:</strong> ${sanitizeHTML(candidato.interes_ocupacional)}</p>
+                <p><strong>Horario interesado:</strong> ${sanitizeHTML(candidato.horario_interesado)}</p>
+                <p><strong>Aspiración salarial:</strong> ${sanitizeHTML(candidato.aspiracion_salarial)}</p>
+                <p><strong>Candidato con discapacidad:</strong> ${sanitizeHTML(candidato.candidato_discapacidad)}</p>
+                <p><strong>Tipo de discapacidad:</strong> ${sanitizeHTML(candidato.tipo_discapacidad)}</p>
             </div>
 
             <div class="cv-section">
                 <h4>Datos de la Feria</h4>
-                <p><strong>Feria:</strong> ${candidato.feria}</p>
-                <p><strong>Fecha de la feria:</strong> ${candidato.fecha_feria}</p>
-                <p><strong>Técnico de selección:</strong> ${candidato.tecnico_seleccion}</p>
-                <p><strong>Registrado en SISE:</strong> ${candidato.registrado_en_sise}</p>
+                <p><strong>Feria:</strong> ${sanitizeHTML(candidato.feria)}</p>
+                <p><strong>Fecha de la feria:</strong> ${sanitizeHTML(candidato.fecha_feria)}</p>
+                <p><strong>Técnico de selección:</strong> ${sanitizeHTML(candidato.tecnico_seleccion)}</p>
+                <p><strong>Registrado en SISE:</strong> ${sanitizeHTML(candidato.registrado_en_sise)}</p>
             </div>
         `;
     }
@@ -203,8 +220,12 @@ document.addEventListener('DOMContentLoaded', function() {
         button.addEventListener('click', function() {
             const candidatoId = parseInt(this.dataset.candidatoId);
             currentCandidatoIndex = candidatos.findIndex(c => c.id === candidatoId);
-            showCV(candidatos[currentCandidatoIndex]);
-            modal.show();
+            if (currentCandidatoIndex !== -1) {
+                showCV(candidatos[currentCandidatoIndex]);
+                modal.show();
+            } else {
+                console.error('Candidato no encontrado:', candidatoId);
+            }
         });
     });
 
