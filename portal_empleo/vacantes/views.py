@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import permission_required # Solicita login 
 import openpyxl
 from .models import RegistroCandidato
 from django.db.models.functions import Lower
+from django.db.models import Count
 
 
 
@@ -75,6 +76,9 @@ def lista_vacantes(request):
         vacantes = vacantes.filter(ciudad=ciudad)
     if rango_salarial:
         vacantes = vacantes.filter(rango_salarial=rango_salarial)
+        
+    # Agregar el conteo de candidatos aplicados a cada vacante
+    vacantes = vacantes.annotate(num_candidatos=Count('candidatos'))
 
     # Renderizar la plantilla con las vacantes filtradas y los filtros aplicados
     contexto = {

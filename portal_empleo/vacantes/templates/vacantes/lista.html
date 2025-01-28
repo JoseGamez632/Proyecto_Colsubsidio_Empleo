@@ -120,6 +120,7 @@ Inicio
                                     <span class="badge bg-warning text-dark">
                                         📍 {{ vacante.ciudad }}
                                     </span>
+                                    <p style="margin-top: 10px;">Candidatos: {{ vacante.num_candidatos }}</p>
                                 </div>
                             </div>
                             {% if request.user.is_authenticated %}
