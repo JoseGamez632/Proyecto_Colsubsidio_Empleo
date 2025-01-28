@@ -42,8 +42,13 @@ def lista_vacantes(request):
     rango_salarial = request.GET.get('rango_salarial')
 
     # Obtener todas las vacantes
-    vacantes = Vacante.objects.all()
+    # vacantes = Vacante.objects.all()
     
+    # Obtener todas las vacantes activas o todas si el usuario está autenticado
+    if request.user.is_authenticated:
+        vacantes = Vacante.objects.all()
+    else:
+        vacantes = Vacante.objects.filter(estado=True)
 
     # Filtrar por cargo (ignorando tildes y mayúsculas/minúsculas)
     if cargo:
@@ -98,6 +103,13 @@ def lista_vacantes(request):
     }
 
     return render(request, 'vacantes/lista.html', contexto)
+
+# para cambiar el estado de la vacante
+def cambiar_estado_vacante(request, vacante_id):
+    vacante = get_object_or_404(Vacante, id=vacante_id)
+    vacante.estado = not vacante.estado
+    vacante.save()
+    return redirect('lista_vacantes')
 
 
 # Create your views here.

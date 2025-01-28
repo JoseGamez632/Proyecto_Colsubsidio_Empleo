@@ -21,6 +21,7 @@ urlpatterns = [
     path('vacantes/<int:id>/candidatos/', views.lista_candidatos, name='lista_candidatos'),
     path('registros/', views.lista_registros, name='lista_registros'),
     path('editar/<int:pk>/', views.editar_registro, name='editar_registro'),
+    path('cambiar_estado_vacante/<int:vacante_id>/', views.cambiar_estado_vacante, name='cambiar_estado_vacante'),
 
 
 
