@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import permission_required # Solicita login 
 import openpyxl
 from .models import RegistroCandidato
 from django.db.models.functions import Lower
+from django.db.models import Count
 
 
 
@@ -41,8 +42,13 @@ def lista_vacantes(request):
     rango_salarial = request.GET.get('rango_salarial')
 
     # Obtener todas las vacantes
-    vacantes = Vacante.objects.all()
+    # vacantes = Vacante.objects.all()
     
+    # Obtener todas las vacantes activas o todas si el usuario está autenticado
+    if request.user.is_authenticated:
+        vacantes = Vacante.objects.all()
+    else:
+        vacantes = Vacante.objects.filter(estado=True)
 
     # Filtrar por cargo (ignorando tildes y mayúsculas/minúsculas)
     if cargo:
@@ -75,6 +81,9 @@ def lista_vacantes(request):
         vacantes = vacantes.filter(ciudad=ciudad)
     if rango_salarial:
         vacantes = vacantes.filter(rango_salarial=rango_salarial)
+        
+    # Agregar el conteo de candidatos aplicados a cada vacante
+    vacantes = vacantes.annotate(num_candidatos=Count('candidatos'))
 
     # Renderizar la plantilla con las vacantes filtradas y los filtros aplicados
     contexto = {
@@ -94,6 +103,13 @@ def lista_vacantes(request):
     }
 
     return render(request, 'vacantes/lista.html', contexto)
+
+# para cambiar el estado de la vacante
+def cambiar_estado_vacante(request, vacante_id):
+    vacante = get_object_or_404(Vacante, id=vacante_id)
+    vacante.estado = not vacante.estado
+    vacante.save()
+    return redirect('lista_vacantes')
 
 
 # Create your views here.
