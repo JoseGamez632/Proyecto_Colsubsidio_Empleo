@@ -1,0 +1,396 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block contenido %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/registration_steps.css' %}">
+{% endblock %}
+
+<style>
+    :root {
+        --primary-color: #1a1a1a;
+        --accent-color: #f8d047;
+        --text-light: #ffffff;
+        --text-dark: #1a1a1a;
+        --background-light: #ffffff;
+    }
+
+    .steps-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: var(--background-light);
+    }
+
+    .step-card {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 2rem;
+        background: var(--background-light);
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(26, 26, 26, 0.1);
+        overflow: hidden;
+        animation: slideInRight 0.3s ease both;
+        animation-play-state: paused;
+        border: 1px solid rgba(248, 208, 71, 0.2);
+    }
+
+    .step-content-wrapper {
+        padding: 25px;
+        flex: 1;
+    }
+
+    .step-image-wrapper {
+        width: 100%;
+        height: 300px;
+        overflow: hidden;
+        position: relative;
+        cursor: pointer;
+    }
+
+    .step-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    .image-hover:hover {
+        transform: scale(1.05);
+    }
+
+    /* Modal para imagen ampliada */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(26, 26, 26, 0.9);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal img {
+        max-width: 90%;
+        max-height: 90vh;
+        object-fit: contain;
+        border: 3px solid var(--accent-color);
+        border-radius: 4px;
+    }
+
+    .modal-close {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        color: var(--accent-color);
+        font-size: 30px;
+        cursor: pointer;
+        background: none;
+        border: none;
+        padding: 5px;
+    }
+
+    @media (min-width: 768px) {
+        .step-card {
+            flex-direction: row;
+        }
+
+        .step-content-wrapper {
+            width: 50%;
+        }
+
+        .step-image-wrapper {
+            width: 50%;
+            min-height: 400px;
+        }
+    }
+
+    .header {
+        text-align: center;
+        margin-bottom: 40px;
+        color: var(--primary-color);
+    }
+
+    .header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        color: var(--primary-color);
+    }
+
+    .header p {
+        color: var(--primary-color);
+        font-size: 1.1rem;
+        opacity: 0.8;
+    }
+
+    .step-number {
+        width: 40px;
+        height: 40px;
+        background-color: var(--accent-color);
+        color: var(--primary-color);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        margin-bottom: 15px;
+    }
+
+    .step-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 15px;
+        color: var(--primary-color);
+    }
+
+    .step-content {
+        color: var(--primary-color);
+        line-height: 1.6;
+        opacity: 0.8;
+    }
+
+    .step-content ul {
+        list-style-type: disc;
+        margin-left: 20px;
+        margin-top: 10px;
+    }
+
+    .step-content li {
+        margin-bottom: 5px;
+    }
+
+    .step-link {
+        display: inline-block;
+        color: var(--primary-color);
+        text-decoration: none;
+        margin-top: 10px;
+        padding: 5px 10px;
+        background-color: var(--accent-color);
+        border-radius: 4px;
+        transition: all 0.3s ease;
+    }
+
+    .step-link:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 2px 8px rgba(248, 208, 71, 0.4);
+    }
+
+    .important-note {
+        background-color: var(--accent-color);
+        padding: 15px;
+        border-radius: 4px;
+        margin: 20px 0;
+        color: var(--primary-color);
+    }
+
+    .important-note strong {
+        color: var(--primary-color);
+    }
+
+    .progress-info {
+        background-color: var(--primary-color);
+        padding: 20px;
+        border-radius: 4px;
+        margin-top: 30px;
+        color: var(--text-light);
+    }
+
+    .progress-title {
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: var(--accent-color);
+    }
+
+    .progress-item {
+        margin: 5px 0;
+        color: var(--text-light);
+        padding: 5px 0;
+        opacity: 0.9;
+    }
+
+    @keyframes slideInRight {
+        from {
+            transform: translateX(50px);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+</style>
+
+<div class="steps-container">
+    <div class="header">
+        <h1>Guía de Registro - SISE</h1>
+        <p>Sigue estos pasos para completar tu registro exitosamente</p>
+    </div>
+    
+    <div class="step-card">
+        <div class="step-content-wrapper">
+            <div class="step-number">1</div>
+            <div class="step-title">Acceso al Portal</div>
+            <div class="step-content">
+                Comienza tu proceso de registro accediendo al portal oficial del Servicio de Empleo.
+                <a href="https://www.serviciodeempleo.gov.co/portada" target="_blank" class="step-link">Ir al portal principal</a>
+                <br>
+                <a href="https://personas.serviciodeempleo.gov.co" target="_blank" class="step-link">Ir directamente al registro</a>
+            </div>
+        </div>
+        <div class="step-image-wrapper">
+            <img src="{% static 'app/imagenes/paso1.png' %}" alt="Portal de acceso" class="step-image image-hover"/>
+        </div>
+    </div>
+
+    <div class="step-card">
+        <div class="step-content-wrapper">
+            <div class="step-number">2</div>
+            <div class="step-title">Inicio del Registro</div>
+            <div class="step-content">
+                En la página principal, busca y selecciona el botón "Regístrese" en la sección "Deseo crear una cuenta".
+            </div>
+        </div>
+        <div class="step-image-wrapper">
+            <img src="{% static 'app/imagenes/paso2.png' %}" alt="Botón de registro" class="step-image image-hover"/>
+        </div>
+    </div>
+
+    <div class="step-card">
+        <div class="step-content-wrapper">
+            <div class="step-number">3</div>
+            <div class="step-title">Verificación de Correo</div>
+            <div class="step-content">
+                Ingresa tu correo electrónico dos veces para verificar que no exista una cuenta previa en el sistema.
+            </div>
+        </div>
+        <div class="step-image-wrapper">
+            <img src="{% static 'app/imagenes/paso3.png' %}" alt="Verificación de correo" class="step-image image-hover"/>
+        </div>
+    </div>
+
+    <div class="step-card">
+        <div class="step-content-wrapper">
+            <div class="step-number">4</div>
+            <div class="step-title">Datos Personales</div>
+            <div class="step-content">
+                Completa el formulario con tus datos personales:
+                <ul>
+                    <li>Nombres y apellidos</li>
+                    <li>Contraseña segura</li>
+                    <li>Fecha de nacimiento</li>
+                    <li>Información de contacto</li>
+                </ul>
+            </div>
+        </div>
+        <div class="step-image-wrapper">
+            <img src="{% static 'app/imagenes/paso4.png' %}" alt="Formulario de datos" class="step-image image-hover"/>
+        </div>
+    </div>
+
+    <div class="step-card">
+        <div class="step-content-wrapper">
+            <div class="step-number">5</div>
+            <div class="step-title">Ubicación y Preferencias</div>
+            <div class="step-content">
+                Selecciona tu ubicación y prestador de servicios:
+                <ul>
+                    <li>País de residencia</li>
+                    <li>Departamento</li>
+                    <li>Municipio</li>
+                    <li>Prestador de preferencia</li>
+                    <li>Punto de atención</li>
+                </ul>
+            </div>
+        </div>
+        <div class="step-image-wrapper">
+            <img src="{% static 'app/imagenes/paso5.png' %}" alt="Selección de ubicación" class="step-image image-hover"/>
+        </div>
+    </div>
+
+    <div class="step-card">
+        <div class="step-content-wrapper">
+            <div class="step-number">6</div>
+            <div class="step-title">Términos y Verificación</div>
+            <div class="step-content">
+                Finaliza tu registro:
+                <ul>
+                    <li>Acepta los términos y condiciones</li>
+                    <li>Completa la verificación CAPTCHA</li>
+                    <li>Revisa y confirma tus datos</li>
+                </ul>
+            </div>
+        </div>
+        <div class="step-image-wrapper">
+            <img src="{% static 'app/imagenes/paso6.png' %}" alt="Verificación final" class="step-image image-hover"/>
+        </div>
+    </div>
+
+    <div class="important-note">
+        <strong>Nota importante:</strong> Para usuarios extranjeros, está habilitada la opción de Documento Nacional de Identificación (DNI).
+    </div>
+
+    <div class="progress-info">
+        <div class="progress-title">Porcentajes de Completitud de Hoja de Vida:</div>
+        <div class="progress-item">Registro de Oferentes: 25%</div>
+        <div class="progress-item">Datos personales: 5%</div>
+        <div class="progress-item">Nivel Educativo: 30%</div>
+        <div class="progress-item">Experiencia Laboral: 30%</div>
+        <div class="progress-item">Educación informal: 10%</div>
+    </div>
+</div>
+
+<!-- Modal para mostrar imágenes -->
+<div class="modal" id="imageModal">
+    <button class="modal-close">&times;</button>
+    <img id="modalImage" src="" alt="Imagen ampliada">
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const cards = document.querySelectorAll('.step-card');
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationDelay = `${entry.target.dataset.index * 0.15}s`; // Más rápido
+                    entry.target.style.animationPlayState = 'running';
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+
+        cards.forEach((card, index) => {
+            card.dataset.index = index;
+            observer.observe(card);
+        });
+
+        // Funcionalidad del modal de imágenes
+        const modal = document.getElementById('imageModal');
+        const modalImg = document.getElementById('modalImage');
+        const closeBtn = document.querySelector('.modal-close');
+        const images = document.querySelectorAll('.step-image');
+
+        images.forEach(img => {
+            img.addEventListener('click', function() {
+                modal.style.display = 'flex';
+                modalImg.src = this.src;
+            });
+        });
+
+        closeBtn.addEventListener('click', function() {
+            modal.style.display = 'none';
+        });
+
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    });
+</script>
+{% endblock %}

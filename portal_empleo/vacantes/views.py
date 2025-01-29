@@ -18,6 +18,24 @@ from django.db.models import Count
 
 from django.db.models import Q
 import unicodedata
+from django.views.generic import TemplateView
+
+class RegistrationStepsView(TemplateView):
+    template_name = 'registration/registration_steps.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['steps_images'] = {
+            'step1': 'images/paso1.png',
+            'step2': 'images/paso2.png',
+            'step3': 'images/paso3.png',
+            'step4': 'images/paso4.png',
+            'step5': 'images/paso5.png',
+            'step6': 'images/paso6.png',
+        }
+        return context
+
+
 
 def normalizar_texto(texto):
     """
