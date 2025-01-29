@@ -9,219 +9,370 @@
 
 <style>
     :root {
-        --primary-color: #1a1a1a;
-        --accent-color: #f8d047;
-        --text-light: #ffffff;
-        --text-dark: #1a1a1a;
-        --background-light: #ffffff;
-    }
+    --primary-color: #1a1a1a;
+    --accent-color: #f8d047;
+    --text-light: #ffffff;
+    --text-dark: #1a1a1a;
+    --background-light: rgba(255, 255, 255, 0.95);
+    --card-background: rgba(255, 255, 255, 0.85);
+    --shadow-color: rgba(26, 26, 26, 0.1);
+    --accent-transparent: rgba(248, 208, 71, 0.15);
+}
 
-    .steps-container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 20px;
-        background-color: var(--background-light);
-    }
+body {
+    background: linear-gradient(135deg, rgba(26, 26, 26, 0.97), rgba(26, 26, 26, 0.95));
+    min-height: 100vh;
+}
 
+.steps-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    background: var(--background-light);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.step-card {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 2.5rem;
+    background: var(--card-background);
+    border-radius: 16px;
+    box-shadow: 0 4px 24px var(--shadow-color);
+    overflow: hidden;
+    animation: slideInRight 0.3s ease both;
+    animation-play-state: paused;
+    border: 1px solid rgba(248, 208, 71, 0.1);
+    backdrop-filter: blur(5px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.step-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 32px rgba(248, 208, 71, 0.15);
+}
+
+.step-content-wrapper {
+    padding: 30px;
+    flex: 1;
+}
+
+.step-image-wrapper {
+    width: 100%;
+    height: 300px;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+}
+
+.step-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.image-hover:hover {
+    transform: scale(1.08);
+}
+
+/* Modal mejorado */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(26, 26, 26, 0.95);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(8px);
+}
+
+.modal img {
+    max-width: 90%;
+    max-height: 90vh;
+    object-fit: contain;
+    border: 2px solid var(--accent-color);
+    border-radius: 8px;
+    box-shadow: 0 0 32px rgba(248, 208, 71, 0.2);
+}
+
+.modal-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    color: var(--accent-color);
+    font-size: 32px;
+    cursor: pointer;
+    background: rgba(26, 26, 26, 0.5);
+    border: none;
+    padding: 8px 16px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.modal-close:hover {
+    background: var(--accent-color);
+    color: var(--primary-color);
+    transform: rotate(90deg);
+}
+
+@media (min-width: 768px) {
     .step-card {
-        display: flex;
-        flex-direction: column;
-        margin-bottom: 2rem;
-        background: var(--background-light);
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(26, 26, 26, 0.1);
-        overflow: hidden;
-        animation: slideInRight 0.3s ease both;
-        animation-play-state: paused;
-        border: 1px solid rgba(248, 208, 71, 0.2);
+        flex-direction: row;
     }
 
     .step-content-wrapper {
-        padding: 25px;
-        flex: 1;
+        width: 50%;
     }
 
     .step-image-wrapper {
-        width: 100%;
-        height: 300px;
-        overflow: hidden;
-        position: relative;
-        cursor: pointer;
+        width: 50%;
+        min-height: 400px;
     }
+}
 
-    .step-image {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.3s ease;
+.header {
+    text-align: center;
+    margin-bottom: 50px;
+    padding: 20px;
+    background: var(--card-background);
+    border-radius: 16px;
+    box-shadow: 0 4px 20px var(--shadow-color);
+}
+
+.header h1 {
+    font-size: 2.8rem;
+    margin-bottom: 15px;
+    color: var(--primary-color);
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+.header p {
+    color: var(--primary-color);
+    font-size: 1.2rem;
+    opacity: 0.9;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.step-number {
+    width: 45px;
+    height: 45px;
+    background-color: var(--accent-color);
+    color: var(--primary-color);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(248, 208, 71, 0.3);
+}
+
+.step-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    color: var(--primary-color);
+    letter-spacing: -0.3px;
+}
+
+.step-content {
+    color: var(--primary-color);
+    line-height: 1.7;
+    opacity: 0.85;
+    font-size: 1.05rem;
+}
+
+.step-content ul {
+    list-style: none;
+    margin-left: 0;
+    margin-top: 15px;
+}
+
+.step-content li {
+    margin-bottom: 8px;
+    padding-left: 25px;
+    position: relative;
+}
+
+.step-content li:before {
+    content: "•";
+    color: var(--accent-color);
+    font-size: 1.5em;
+    position: absolute;
+    left: 0;
+    top: -5px;
+}
+
+.step-link {
+    display: inline-block;
+    color: var(--primary-color);
+    text-decoration: none;
+    margin-top: 15px;
+    padding: 10px 20px;
+    background-color: var(--accent-color);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(248, 208, 71, 0.2);
+}
+
+.step-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(248, 208, 71, 0.3);
+    background-color: #ffda5f;
+}
+
+.important-note {
+    background: linear-gradient(135deg, var(--accent-color), #ffe27d);
+    padding: 20px;
+    border-radius: 12px;
+    margin: 30px 0;
+    color: var(--primary-color);
+    box-shadow: 0 4px 20px rgba(248, 208, 71, 0.2);
+}
+
+.important-note strong {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.progress-info {
+    background: linear-gradient(135deg, var(--primary-color), #2a2a2a);
+    padding: 25px;
+    border-radius: 12px;
+    margin-top: 40px;
+    color: var(--text-light);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+}
+
+.progress-title {
+    font-weight: 700;
+    margin-bottom: 15px;
+    color: var(--accent-color);
+    font-size: 1.2rem;
+    letter-spacing: 0.5px;
+}
+
+.progress-item {
+    margin: 10px 0;
+    color: var(--text-light);
+    padding: 8px 0;
+    opacity: 0.9;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(248, 208, 71, 0.1);
+}
+
+.progress-item:last-child {
+    border-bottom: none;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(30px);
+        opacity: 0;
     }
-
-    .image-hover:hover {
-        transform: scale(1.05);
+    to {
+        transform: translateX(0);
+        opacity: 1;
     }
+}
 
-    /* Modal para imagen ampliada */
-    .modal {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(26, 26, 26, 0.9);
-        z-index: 1000;
+/* Glassmorphism effect */
+.glass-effect {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.download-options {
+        display: flex;
+        gap: 15px;
         justify-content: center;
-        align-items: center;
+        margin: 20px 0;
     }
 
-    .modal img {
-        max-width: 90%;
-        max-height: 90vh;
-        object-fit: contain;
-        border: 3px solid var(--accent-color);
-        border-radius: 4px;
-    }
-
-    .modal-close {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        color: var(--accent-color);
-        font-size: 30px;
-        cursor: pointer;
-        background: none;
-        border: none;
-        padding: 5px;
-    }
-
-    @media (min-width: 768px) {
-        .step-card {
-            flex-direction: row;
-        }
-
-        .step-content-wrapper {
-            width: 50%;
-        }
-
-        .step-image-wrapper {
-            width: 50%;
-            min-height: 400px;
-        }
-    }
-
-    .header {
-        text-align: center;
-        margin-bottom: 40px;
-        color: var(--primary-color);
-    }
-
-    .header h1 {
-        font-size: 2.5rem;
-        margin-bottom: 10px;
-        color: var(--primary-color);
-    }
-
-    .header p {
-        color: var(--primary-color);
-        font-size: 1.1rem;
-        opacity: 0.8;
-    }
-
-    .step-number {
-        width: 40px;
-        height: 40px;
-        background-color: var(--accent-color);
-        color: var(--primary-color);
-        border-radius: 50%;
+    .download-button {
         display: flex;
         align-items: center;
-        justify-content: center;
-        font-weight: bold;
-        margin-bottom: 15px;
-    }
-
-    .step-title {
-        font-size: 1.5rem;
-        font-weight: bold;
-        margin-bottom: 15px;
-        color: var(--primary-color);
-    }
-
-    .step-content {
-        color: var(--primary-color);
-        line-height: 1.6;
-        opacity: 0.8;
-    }
-
-    .step-content ul {
-        list-style-type: disc;
-        margin-left: 20px;
-        margin-top: 10px;
-    }
-
-    .step-content li {
-        margin-bottom: 5px;
-    }
-
-    .step-link {
-        display: inline-block;
-        color: var(--primary-color);
-        text-decoration: none;
-        margin-top: 10px;
-        padding: 5px 10px;
+        gap: 8px;
+        padding: 12px 24px;
         background-color: var(--accent-color);
-        border-radius: 4px;
+        color: var(--primary-color);
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 500;
         transition: all 0.3s ease;
+        text-decoration: none;
     }
 
-    .step-link:hover {
+    .download-button:hover {
         transform: translateY(-2px);
-        box-shadow: 0 2px 8px rgba(248, 208, 71, 0.4);
+        box-shadow: 0 4px 12px rgba(248, 208, 71, 0.3);
     }
 
-    .important-note {
-        background-color: var(--accent-color);
-        padding: 15px;
-        border-radius: 4px;
-        margin: 20px 0;
-        color: var(--primary-color);
+    .download-button i {
+        font-size: 1.2em;
     }
 
-    .important-note strong {
-        color: var(--primary-color);
-    }
-
-    .progress-info {
-        background-color: var(--primary-color);
-        padding: 20px;
-        border-radius: 4px;
-        margin-top: 30px;
-        color: var(--text-light);
-    }
-
-    .progress-title {
-        font-weight: bold;
-        margin-bottom: 10px;
-        color: var(--accent-color);
-    }
-
-    .progress-item {
-        margin: 5px 0;
-        color: var(--text-light);
-        padding: 5px 0;
-        opacity: 0.9;
-    }
-
-    @keyframes slideInRight {
-        from {
-            transform: translateX(50px);
-            opacity: 0;
+    /* Estilos para versión imprimible */
+    @media print {
+        body {
+            background: white;
+            color: black;
+            margin: 0;
+            padding: 20px;
         }
-        to {
-            transform: translateX(0);
-            opacity: 1;
+
+        .steps-container {
+            background: none;
+            box-shadow: none;
+            padding: 0;
+        }
+
+        .step-card {
+            break-inside: avoid;
+            background: none;
+            box-shadow: none;
+            border: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+
+        .step-image {
+            max-height: 200px;
+        }
+
+        .download-options,
+        .modal,
+        .step-link {
+            display: none !important;
+        }
+
+        .header h1 {
+            font-size: 24pt;
+        }
+
+        .step-title {
+            font-size: 18pt;
+        }
+
+        .step-content {
+            font-size: 12pt;
         }
     }
+
 </style>
 
 <div class="steps-container">
@@ -229,6 +380,22 @@
         <h1>Guía de Registro - SISE</h1>
         <p>Sigue estos pasos para completar tu registro exitosamente</p>
     </div>
+
+    <div class="download-options">
+        <button onclick="generatePDF()" class="download-button">
+            <i class="fas fa-file-pdf"></i>
+            Descargar PDF
+        </button>
+        <button onclick="window.print()" class="download-button">
+            <i class="fas fa-print"></i>
+            Versión para imprimir
+        </button>
+        <a href="{% static 'guia-registro-sise.pdf' %}" download class="download-button">
+            <i class="fas fa-download"></i>
+            Guía PDF pre-diseñada
+        </a>
+    </div>
+    
     
     <div class="step-card">
         <div class="step-content-wrapper">
@@ -356,7 +523,7 @@
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    entry.target.style.animationDelay = `${entry.target.dataset.index * 0.15}s`; // Más rápido
+                    entry.target.style.animationDelay = `${entry.target.dataset.index * 0.12}s`; // Aún más rápido
                     entry.target.style.animationPlayState = 'running';
                 }
             });
@@ -369,7 +536,7 @@
             observer.observe(card);
         });
 
-        // Funcionalidad del modal de imágenes
+        // Modal mejorado
         const modal = document.getElementById('imageModal');
         const modalImg = document.getElementById('modalImage');
         const closeBtn = document.querySelector('.modal-close');
@@ -379,18 +546,137 @@
             img.addEventListener('click', function() {
                 modal.style.display = 'flex';
                 modalImg.src = this.src;
+                modal.classList.add('fade-in');
             });
         });
 
         closeBtn.addEventListener('click', function() {
-            modal.style.display = 'none';
+            modal.style.opacity = '0';
+            setTimeout(() => {
+                modal.style.display = 'none';
+                modal.style.opacity = '1';
+            }, 300);
         });
 
         modal.addEventListener('click', function(e) {
             if (e.target === modal) {
-                modal.style.display = 'none';
+                modal.style.opacity = '0';
+                setTimeout(() => {
+                    modal.style.display = 'none';
+                    modal.style.opacity = '1';
+                }, 300);
             }
         });
     });
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://kit.fontawesome.com/your-font-awesome-kit.js"></script>
+
+<script>
+function generatePDF() {
+    // Mostrar indicador de carga
+    const loadingDiv = document.createElement('div');
+    loadingDiv.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+    `;
+    loadingDiv.innerHTML = '<div style="color: white; background: var(--accent-color); padding: 20px; border-radius: 8px;">Generando PDF...</div>';
+    document.body.appendChild(loadingDiv);
+
+    // Configuración para el PDF
+    const element = document.querySelector('.steps-container');
+    const opt = {
+        margin: 1,
+        filename: 'guia-registro-sise.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { 
+            scale: 2,
+            useCORS: true,
+            logging: true,
+            scrollY: -window.scrollY,
+            windowHeight: element.scrollHeight,
+            onclone: function(clonedDoc) {
+                // Asegurarse de que los elementos clonados sean visibles
+                const clonedElement = clonedDoc.querySelector('.steps-container');
+                if (clonedElement) {
+                    clonedElement.style.height = 'auto';
+                    clonedElement.style.overflow = 'visible';
+                }
+                Array.from(clonedElement.getElementsByClassName('step-card')).forEach(card => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'none';
+                    card.style.animationPlayState = 'none';
+                });
+            }
+        },
+        jsPDF: { 
+            unit: 'in', 
+            format: 'letter', 
+            orientation: 'portrait'
+        }
+    };
+
+    // Función para esperar a que todas las imágenes se carguen
+    const waitForImages = () => {
+        const images = element.getElementsByTagName('img');
+        const imagePromises = Array.from(images).map(img => {
+            if (img.complete) {
+                return Promise.resolve();
+            } else {
+                return new Promise(resolve => {
+                    img.onload = resolve;
+                    img.onerror = resolve; // Manejar también errores de carga
+                });
+            }
+        });
+        return Promise.all(imagePromises);
+    };
+
+    // Esperar a que la intersección observer termine y las imágenes se carguen
+    const ensureContentLoaded = async () => {
+        // Desactivar las animaciones temporalmente
+        const cards = element.getElementsByClassName('step-card');
+        Array.from(cards).forEach(card => {
+            card.style.opacity = '1';
+            card.style.transform = 'none';
+            card.style.animationPlayState = 'none';
+        });
+
+        // Esperar a que las imágenes se carguen
+        await waitForImages();
+
+        // Pequeña pausa para asegurar que todo esté renderizado
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        // Generar el PDF
+        try {
+            await html2pdf().set(opt).from(element).save();
+        } catch (error) {
+            console.error('Error generando PDF:', error);
+            alert('Hubo un error al generar el PDF. Por favor, intente nuevamente.');
+        } finally {
+            // Restaurar las animaciones
+            Array.from(cards).forEach(card => {
+                card.style.removeProperty('opacity');
+                card.style.removeProperty('transform');
+                card.style.removeProperty('animation-play-state');
+            });
+            document.body.removeChild(loadingDiv);
+        }
+    };
+
+    // Iniciar el proceso
+    ensureContentLoaded();
+}
+</script>
+
+
 {% endblock %}

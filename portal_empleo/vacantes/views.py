@@ -9,6 +9,8 @@ import openpyxl
 from .models import RegistroCandidato
 from django.db.models.functions import Lower
 from django.db.models import Count
+import io
+from zipfile import ZipFile
 
 
 
@@ -363,6 +365,20 @@ def editar_registro(request, pk):
         'is_edit': True
     }
     return render(request, 'registro_candidato.html', context)
+
+def download_images(request):
+    # Crear un archivo ZIP en memoria
+    zip_buffer = io.BytesIO()
+    with ZipFile(zip_buffer, 'w') as zip_file:
+        # Agregar cada imagen al ZIP
+        for i in range(1, 7):
+            image_path = f'app/imagenes/paso{i}.png'
+            zip_file.write(image_path, f'paso{i}.png')
+    
+    # Preparar la respuesta
+    response = HttpResponse(zip_buffer.getvalue(), content_type='application/zip')
+    response['Content-Disposition'] = 'attachment; filename=guia-imagenes.zip'
+    return response
 
 
 #def candidatos_por_vacante(request, vacante_id):

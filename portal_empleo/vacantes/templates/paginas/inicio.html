@@ -276,100 +276,64 @@ Inicio
         </a>
     </div>
 </header>
+<!-- Proceso -->
+<section class="proceso-section">
+    <div class="container">
+        <h2 class="section-title">Nuestro Proceso</h2>
+        <div class="proceso-linea">
+            <div class="proceso-item scroll-animation">
+                <div class="proceso-numero">1</div>
+                <h4>Vacantes</h4>
+                <p>Selecciona las vacantes que se ajusten a tu perfil</p>
+                <br>
+                <a href="{% url 'lista_vacantes' %}" class="btn btn-dark">Ver vacantes</a>
+            </div>
+            <div class="proceso-item scroll-animation" style="animation-delay: 0.2s">
+                <div class="proceso-numero">2</div>
+                <h4>Formulario</h4>
+                <p>Diligencia el formulario con los datos de tu hoja de vida</p>
+            </div>
+            <div class="proceso-item scroll-animation" style="animation-delay: 0.4s">
+                <div class="proceso-numero">3</div>
+                <h4>Asesoria</h4>
+                <p>Pasa con uno de nuestros profesionales para asesoria y terminar con la postulacion</p>
+            </div>
+            <div class="proceso-item scroll-animation" style="animation-delay: 0.6s">
+                <div class="proceso-numero">4</div>
+                <h4>Servicio de Empleo</h4>
+                <p>Registrate o actualiza tu hoja de vida en la plataforma de SISE para que las empresas te puedan contactar</p>
+                <br>
+                <a href="{% url 'registration_steps' %}" class="btn btn-dark">Paso a Paso</a>
+            </div>
+        </div>
+    </div>
+</section>
 
 <main>
     <!-- Módulo con Imagen y Texto -->
     <section class="container my-5">
         <div class="row align-items-center">
-            <div class="col-md-6">
+            <div class="col-md-15">
                 <div class="card card-servicio scroll-animation">
                     <div class="card-body">
-                        <h3 class="mb-3">Clubes y BLOC</h3>
-                        <p>Accede a espacios donde podrás realizar actividades recreativas, deportivas, talleres y programas para todos.</p>
-                        <a href="#" class="btn btn-dark">Conoce más</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="scroll-animation" style="animation-delay: 0.2s">
-                    <img src="https://via.placeholder.com/600x350" class="img-fluid rounded" alt="Servicios">
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Servicios -->
-    <section class="container my-5">
-        <h2 class="section-title">Nuestros Servicios</h2>
-        <div class="row">
-            <div class="col-md-4">
-                <div class="card card-servicio scroll-animation">
-                    <img src="https://via.placeholder.com/350x200" alt="Capacitación">
-                    <div class="card-body">
-                        <h4>Capacitación</h4>
-                        <p>Programas de capacitación para mejorar tus habilidades y prepararte para el mercado laboral.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card card-servicio scroll-animation" style="animation-delay: 0.2s">
-                    <img src="https://via.placeholder.com/350x200" alt="Asesoría">
-                    <div class="card-body">
-                        <h4>Asesoría</h4>
-                        <p>Te acompañamos en la búsqueda de empleo con asesorías personalizadas y profesionales.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card card-servicio scroll-animation" style="animation-delay: 0.4s">
-                    <img src="https://via.placeholder.com/350x200" alt="Oportunidades">
-                    <div class="card-body">
-                        <h4>Oportunidades</h4>
-                        <p>Conectamos tu perfil con las mejores oportunidades laborales disponibles.</p>
+                        <h3 class="mb-3">Registrate en el Servicio Publico de Empleo</h3>
+                        <p>Te damos el paso a paso de como realizar el registro y aplicar a las vacantes.</p>
+                        <a href="{% url 'registration_steps' %}" class="btn btn-dark">Ver paso a paso</a>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Proceso -->
-    <section class="proceso-section">
-        <div class="container">
-            <h2 class="section-title">Nuestro Proceso</h2>
-            <div class="proceso-linea">
-                <div class="proceso-item scroll-animation">
-                    <div class="proceso-numero">1</div>
-                    <h4>Registro</h4>
-                    <p>Ingresa tus datos y perfil profesional</p>
-                </div>
-                <div class="proceso-item scroll-animation" style="animation-delay: 0.2s">
-                    <div class="proceso-numero">2</div>
-                    <h4>Evaluación</h4>
-                    <p>Analizamos tus habilidades y experiencia</p>
-                </div>
-                <div class="proceso-item scroll-animation" style="animation-delay: 0.4s">
-                    <div class="proceso-numero">3</div>
-                    <h4>Selección</h4>
-                    <p>Te conectamos con la mejor oferta</p>
-                </div>
-                <div class="proceso-item scroll-animation" style="animation-delay: 0.6s">
-                    <div class="proceso-numero">4</div>
-                    <h4>Contratación</h4>
-                    <p>Comienza tu nuevo empleo</p>
-                </div>
-            </div>
-        </div>
-    </section>
+
+
 
     <!-- Video -->
     <section class="video-section">
         <div class="container">
             <h2 class="section-title">Conoce más sobre nosotros</h2>
-            <div class="video-container scroll-animation">
-                <video controls>
-                    <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
-                    Tu navegador no soporta el video.
-                </video>
+            <div class="video-container scroll-animation" >
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/2_2ap_Qe9dM?si=opB3L7Yu0GL4T8wH" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
             </div>
         </div>
     </section>
