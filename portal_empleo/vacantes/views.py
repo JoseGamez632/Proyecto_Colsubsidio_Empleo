@@ -203,7 +203,7 @@ def registro_candidato_view(request):
         form = RegistroCandidatoForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('inicio')  # Redirigir a una página de éxito
+            return redirect('registration_steps')  # Redirigir a una página de éxito
     else:
         form = RegistroCandidatoForm()
 
