@@ -237,8 +237,9 @@ Inicio
                             <div class="info-badge">
                                 🏢 {{ vacante.modalidad_trabajo }}
                             </div>
+                            {% load humanize %}
                             <div class="info-badge">
-                                💰 {{ vacante.rango_salarial }}
+                                💰 ${{ vacante.rango_salarial|intcomma }}
                             </div>
                         </div>
 
