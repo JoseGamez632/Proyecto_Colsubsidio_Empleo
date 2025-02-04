@@ -12,6 +12,7 @@ from .models import Vacante
 class VacanteForm(forms.ModelForm):
     class Meta:
         model = Vacante
+        exclude = ['usuario_publicador']  # Excluimos este campo del formulario
         fields = [
             'cargo', 'area', 'numero_puestos', 'modalidad_trabajo',
             'tipo_contrato', 'jornada_trabajo', 'descripcion_vacante',

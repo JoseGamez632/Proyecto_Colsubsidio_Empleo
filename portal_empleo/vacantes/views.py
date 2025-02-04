@@ -11,13 +11,6 @@ from django.db.models.functions import Lower
 from django.db.models import Count
 import io
 from zipfile import ZipFile
-
-
-
-# Mensaje de éxito
-
-#Agregado por Jose
-
 from django.db.models import Q
 import unicodedata
 from django.views.generic import TemplateView
@@ -132,9 +125,6 @@ def cambiar_estado_vacante(request, vacante_id):
     return redirect('lista_vacantes')
 
 
-# Create your views here.
-
-# Archivo de migración: 0005_clean_numero_puestos.py
 
 from django.db import migrations
 
@@ -178,11 +168,15 @@ def agregar_vacante(request):
     if request.method == 'POST':
         form = VacanteForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('lista_vacantes')  # Redirige a la lista de vacantes
+            vacante = form.save(commit=False)  # No guardamos inmediatamente
+            vacante.usuario_publicador = request.user  # Asignamos el usuario actual
+            vacante.save()  # Ahora sí guardamos
+            return redirect('lista_vacantes')
     else:
         form = VacanteForm()
     return render(request, 'vacantes/agregar_vacante.html', {'form': form})
+
+
 
 def inicio(request):
     return render(request, "paginas/inicio.html")

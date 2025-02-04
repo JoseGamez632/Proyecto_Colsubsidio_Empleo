@@ -2,6 +2,7 @@ from django.db import models
 from django.core.exceptions import ValidationError
 import uuid
 from datetime import date
+from django.contrib.auth.models import User
 
 def generate_unique_codigo():
     """Genera un código de vacante único de la forma COD-XXXXXXXX."""
@@ -10,6 +11,12 @@ def generate_unique_codigo():
 
 class Vacante(models.Model):
     # Datos obligatorios
+    usuario_publicador = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='vacantes_publicadas'
+    )
+
     codigo_vacante = models.CharField(
         max_length=50, 
         unique=True, 

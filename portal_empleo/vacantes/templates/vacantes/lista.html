@@ -186,6 +186,11 @@ Inicio
                                         📍 {{ vacante.ciudad }}
                                     </span>
                                     {% if request.user.is_authenticated %}
+                                    <span class="badge bg-warning text-dark">
+                                        Publicada por: {{ vacante.usuario_publicador }}
+                                    </span>
+                                    {% endif %}
+                                    {% if request.user.is_authenticated %}
                                         <p style="margin-top: 10px;">Candidatos: {{ vacante.num_candidatos }}</p>
                                     {% endif %}
                                 </div>
