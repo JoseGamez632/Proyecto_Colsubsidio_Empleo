@@ -13,7 +13,7 @@ from django.db.models import Q
 import unicodedata
 from django.http import JsonResponse
 from .models import Ciudad
-
+from django.db import migrations
 
 
 
@@ -36,7 +36,6 @@ def normalizar_texto(texto):
     ).lower()
 
 def lista_vacantes(request):
-    vacantes = Vacante.objects.all().order_by('cargo')  # Ordenar por el nombre del cargo
     # Obtener los filtros de la solicitud GET
     cargo = request.GET.get('cargo')
     area = request.GET.get('area')
@@ -48,6 +47,7 @@ def lista_vacantes(request):
     departamento = request.GET.get('departamento')
     ciudad = request.GET.get('ciudad')
     rango_salarial = request.GET.get('rango_salarial')
+    vacantes = Vacante.objects.all().order_by('cargo')
 
     # Obtener todas las vacantes
     # vacantes = Vacante.objects.all()
@@ -109,8 +109,12 @@ def lista_vacantes(request):
             'rango_salarial': rango_salarial,
         }
     }
+    
+    #ordena vacantes por cargo
+    vacantes = Vacante.objects.all().order_by("cargo")  # 🔹 Ordena las vacantes
+    return render(request, "vacantes/lista.html", {"vacantes": vacantes})
 
-    return render(request, 'vacantes/lista.html', contexto)
+    # return render(request, 'vacantes/lista.html', contexto)
 
 # para cambiar el estado de la vacante
 def cambiar_estado_vacante(request, vacante_id):
@@ -122,9 +126,11 @@ def cambiar_estado_vacante(request, vacante_id):
 
 # Create your views here.
 
+
+
 # Archivo de migración: 0005_clean_numero_puestos.py
 
-from django.db import migrations
+
 
 def limpiar_numero_puestos(apps, schema_editor):
     Vacante = apps.get_model('proyecto_negocio', 'Vacante')
