@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.http import HttpResponse
-from .models import Vacante
+from .models import Vacante, Ciudad
 from .forms import VacanteForm, RegistroCandidatoForm
 from django.contrib.auth.decorators import login_required # Solicitar ligin para ejecutar funcion
 from django.contrib.auth.decorators import permission_required # Solicita login para permisos especificos @permission_required('app_name.add_vacante')
@@ -9,6 +9,14 @@ import openpyxl
 from .models import RegistroCandidato
 from django.db.models.functions import Lower
 from django.db.models import Count
+from django.db.models import Q
+import unicodedata
+from django.http import JsonResponse
+from .models import Ciudad
+from django.db import migrations
+
+
+
 
 
 
@@ -16,8 +24,7 @@ from django.db.models import Count
 
 #Agregado por Jose
 
-from django.db.models import Q
-import unicodedata
+
 
 def normalizar_texto(texto):
     """
@@ -40,6 +47,7 @@ def lista_vacantes(request):
     departamento = request.GET.get('departamento')
     ciudad = request.GET.get('ciudad')
     rango_salarial = request.GET.get('rango_salarial')
+    vacantes = Vacante.objects.all().order_by('cargo')
 
     # Obtener todas las vacantes
     # vacantes = Vacante.objects.all()
@@ -101,8 +109,12 @@ def lista_vacantes(request):
             'rango_salarial': rango_salarial,
         }
     }
+    
+    #ordena vacantes por cargo
+    vacantes = Vacante.objects.all().order_by("cargo")  # 🔹 Ordena las vacantes
+    return render(request, "vacantes/lista.html", {"vacantes": vacantes})
 
-    return render(request, 'vacantes/lista.html', contexto)
+    # return render(request, 'vacantes/lista.html', contexto)
 
 # para cambiar el estado de la vacante
 def cambiar_estado_vacante(request, vacante_id):
@@ -114,9 +126,11 @@ def cambiar_estado_vacante(request, vacante_id):
 
 # Create your views here.
 
+
+
 # Archivo de migración: 0005_clean_numero_puestos.py
 
-from django.db import migrations
+
 
 def limpiar_numero_puestos(apps, schema_editor):
     Vacante = apps.get_model('proyecto_negocio', 'Vacante')
@@ -345,6 +359,13 @@ def editar_registro(request, pk):
         'is_edit': True
     }
     return render(request, 'registro_candidato.html', context)
+
+# para cargar ciudades por departamento
+
+def cargar_ciudades(request):
+    departamento_id = request.GET.get("departamento_id")
+    ciudades = Ciudad.objects.filter(departamento_id=departamento_id).values("id", "nombre")
+    return JsonResponse(list(ciudades), safe=False)
 
 
 #def candidatos_por_vacante(request, vacante_id):
