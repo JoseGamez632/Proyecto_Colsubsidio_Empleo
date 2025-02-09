@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.http import HttpResponse
-from .models import Vacante
+from .models import Vacante, Ciudad
 from .forms import VacanteForm, RegistroCandidatoForm
 from django.contrib.auth.decorators import login_required # Solicitar ligin para ejecutar funcion
 from django.contrib.auth.decorators import permission_required # Solicita login para permisos especificos @permission_required('app_name.add_vacante')
@@ -9,6 +9,14 @@ import openpyxl
 from .models import RegistroCandidato
 from django.db.models.functions import Lower
 from django.db.models import Count
+from django.db.models import Q
+import unicodedata
+from django.http import JsonResponse
+from .models import Ciudad
+
+
+
+
 
 
 
@@ -16,8 +24,7 @@ from django.db.models import Count
 
 #Agregado por Jose
 
-from django.db.models import Q
-import unicodedata
+
 
 def normalizar_texto(texto):
     """
@@ -29,6 +36,7 @@ def normalizar_texto(texto):
     ).lower()
 
 def lista_vacantes(request):
+    vacantes = Vacante.objects.all().order_by('cargo')  # Ordenar por el nombre del cargo
     # Obtener los filtros de la solicitud GET
     cargo = request.GET.get('cargo')
     area = request.GET.get('area')
@@ -345,6 +353,13 @@ def editar_registro(request, pk):
         'is_edit': True
     }
     return render(request, 'registro_candidato.html', context)
+
+# para cargar ciudades por departamento
+
+def cargar_ciudades(request):
+    departamento_id = request.GET.get("departamento_id")
+    ciudades = Ciudad.objects.filter(departamento_id=departamento_id).values("id", "nombre")
+    return JsonResponse(list(ciudades), safe=False)
 
 
 #def candidatos_por_vacante(request, vacante_id):

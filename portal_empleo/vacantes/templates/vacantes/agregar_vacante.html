@@ -195,4 +195,33 @@ Agregar Vacante
         </div>
     </div>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#departamento-select").change(function () {
+            var departamentoId = $(this).val();
+            if (departamentoId) {
+                $.ajax({
+                    url: "{% url 'cargar_ciudades' %}",
+                    data: { departamento_id: departamentoId },
+                    success: function (data) {
+                        var ciudadSelect = $("#ciudad-select");
+                        ciudadSelect.empty();
+                        ciudadSelect.append('<option value="">Seleccione una ciudad</option>');
+                        $.each(data, function (key, value) {
+                            ciudadSelect.append('<option value="' + value.id + '">' + value.nombre + '</option>');
+                        });
+                    }
+                });
+            } else {
+                $("#ciudad-select").empty().append('<option value="">Seleccione un departamento primero</option>');
+            }
+        });
+    });
+</script>
+
+
+
+
 {% endblock %}

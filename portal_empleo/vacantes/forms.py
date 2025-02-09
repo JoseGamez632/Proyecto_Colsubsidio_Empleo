@@ -1,5 +1,5 @@
 from django import forms
-from .models import Vacante, RegistroCandidato
+from .models import Vacante, RegistroCandidato, Departamento, Ciudad
 import json
 from django.forms import modelformset_factory
 
@@ -28,13 +28,29 @@ class VacanteForm(forms.ModelForm):
             'descripcion_vacante': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
             'tiempo_experiencia': forms.Select(attrs={'class': 'form-control'}),
             'nivel_estudios': forms.Select(attrs={'class': 'form-control'}),
-            'departamento': forms.Select(attrs={'class': 'form-control'}),
-            'ciudad': forms.Select(attrs={'class': 'form-control'}),
+            'departamento': forms.Select(attrs={'class': 'form-control', 'id': 'departamento-select'}),
+            'ciudad': forms.Select(attrs={'class': 'form-control', 'id': 'ciudad-select'}),
             'rango_salarial': forms.TextInput(attrs={'class': 'form-control'}),
             'empresa_usuaria': forms.TextInput(attrs={'class': 'form-control'}),
         }
-# Registro de candidatos
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['departamento'].queryset = Departamento.objects.all()
+        self.fields['ciudad'].queryset = Ciudad.objects.none()  # Inicialmente vacío
+
+        # Si ya hay un departamento seleccionado (edición de formulario)
+        if 'departamento' in self.data:
+            try:
+                departamento_id = int(self.data.get('departamento'))
+                self.fields['ciudad'].queryset = Ciudad.objects.filter(departamento_id=departamento_id)
+            except (ValueError, TypeError):
+                pass  # En caso de error, dejar vacío
+        elif self.instance.pk:
+            # Si estamos editando una instancia existente
+            self.fields['ciudad'].queryset = Ciudad.objects.filter(departamento_id=self.instance.departamento_id)
+            self.fields['ciudad'].initial = self.instance.ciudad
+# Registro de candidatos
 class RegistroCandidatoForm(forms.ModelForm):
     vacantes_disponibles = forms.ModelMultipleChoiceField(
         queryset=Vacante.objects.all(),
