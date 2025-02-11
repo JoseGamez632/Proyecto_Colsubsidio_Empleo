@@ -38,15 +38,17 @@ class Vacante(models.Model):
     cargo = models.CharField(max_length=100)
     area = models.CharField(
         max_length=100, 
+        null=True, 
+        blank=True, 
         choices=[
-            ('Sin asignar', 'Sin asignar'),
+    # ('Sin asignar', 'Sin asignar'),
             ('Administración', 'Administración'),
             ('Finanzas', 'Finanzas'),
             ('Tecnología', 'Tecnología'),
             ('Recursos Humanos', 'Recursos Humanos'),
             ('Ventas', 'Ventas'),
         ], 
-        default='Sin asignar'
+        #default='Sin asignar'
     )
     numero_puestos = models.IntegerField(
         null=True, 

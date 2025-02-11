@@ -1,20 +1,15 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.http import HttpResponse
-from .models import Vacante, Ciudad
+from django.http import HttpResponse, JsonResponse
+from .models import Vacante, Ciudad, Departamento, RegistroCandidato
 from .forms import VacanteForm, RegistroCandidatoForm
 from django.contrib.auth.decorators import login_required # Solicitar ligin para ejecutar funcion
 from django.contrib.auth.decorators import permission_required # Solicita login para permisos especificos @permission_required('app_name.add_vacante')
 import openpyxl
-from .models import RegistroCandidato
 from django.db.models.functions import Lower
-from django.db.models import Count
-from django.db.models import Q
+from django.db.models import Count, Q
 import unicodedata
-from django.http import JsonResponse
-from .models import Ciudad
 from django.db import migrations
-
 
 
 
@@ -29,90 +24,106 @@ from django.db import migrations
 def normalizar_texto(texto):
     """
     Elimina los acentos y normaliza el texto a minúsculas.
+    Si el texto es None, devuelve una cadena vacía.
     """
+    if texto is None:
+        return ""  # Devolver cadena vacía si el texto es None
+
     return ''.join(
         c for c in unicodedata.normalize('NFD', texto)
         if unicodedata.category(c) != 'Mn'
     ).lower()
+    
 
 def lista_vacantes(request):
     # Obtener los filtros de la solicitud GET
-    cargo = request.GET.get('cargo')
-    area = request.GET.get('area')
-    modalidad_trabajo = request.GET.get('modalidad_trabajo')
-    tipo_contrato = request.GET.get('tipo_contrato')
-    jornada_trabajo = request.GET.get('jornada_trabajo')
-    tiempo_experiencia = request.GET.get('tiempo_experiencia')
-    nivel_estudios = request.GET.get('nivel_estudios')
-    departamento = request.GET.get('departamento')
-    ciudad = request.GET.get('ciudad')
-    rango_salarial = request.GET.get('rango_salarial')
-    vacantes = Vacante.objects.all().order_by('cargo')
+    filtros = {
+        'cargo': request.GET.get('cargo'),
+        'area': request.GET.get('area'),
+        'modalidad_trabajo': request.GET.get('modalidad_trabajo'),
+        'tipo_contrato': request.GET.get('tipo_contrato'),
+        'jornada_trabajo': request.GET.get('jornada_trabajo'),
+        'tiempo_experiencia': request.GET.get('tiempo_experiencia'),
+        'nivel_estudios': request.GET.get('nivel_estudios'),
+        'departamento': request.GET.get('departamento'),
+        'ciudad': request.GET.get('ciudad'),
+        'rango_salarial': request.GET.get('rango_salarial'),
+    }
 
-    # Obtener todas las vacantes
-    # vacantes = Vacante.objects.all()
+    # Obtener el nombre de la ciudad si se ha seleccionado un ID en el filtro
+    ciudad_nombre = None
+    if filtros['ciudad']:  # Si el usuario seleccionó una ciudad
+        ciudad_obj = Ciudad.objects.filter(id=filtros['ciudad']).first()
+        if ciudad_obj:
+            ciudad_nombre = ciudad_obj.nombre
+
+    # Agregar ciudad_nombre a filtros para que esté disponible en el template
+    filtros['ciudad_nombre'] = ciudad_nombre
+
+    # Obtener todas las vacantes activas si el usuario no está autenticado
+    vacantes = Vacante.objects.filter(estado=True) if not request.user.is_authenticated else Vacante.objects.all()
+
+    # # Filtrar por cargo (ignorando tildes y mayúsculas/minúsculas)
+    # if filtros['cargo']:
+    #     palabras_clave = filtros['cargo'].split()
+    #     consulta_cargo = Q()
+    #     for palabra in palabras_clave:
+    #         palabra_normalizada = normalizar_texto(palabra)
+    #         consulta_cargo |= Q(cargo__icontains=palabra_normalizada)
+
+    #     # Filtrar manualmente en Python porque SQLite no soporta unaccent
+    #     vacantes = [v for v in vacantes if all(
+    #         normalizar_texto(palabra) in normalizar_texto(v.cargo) for palabra in palabras_clave
+    #     )]
     
-    # Obtener todas las vacantes activas o todas si el usuario está autenticado
-    if request.user.is_authenticated:
-        vacantes = Vacante.objects.all()
-    else:
-        vacantes = Vacante.objects.filter(estado=True)
+    if filtros['cargo']:
+        cargo_normalizado = normalizar_texto(filtros['cargo'])  # Normalizar la búsqueda
 
-    # Filtrar por cargo (ignorando tildes y mayúsculas/minúsculas)
-    if cargo:
-        palabras_clave = cargo.split()
-        consulta_cargo = Q()
-        for palabra in palabras_clave:
-            palabra_normalizada = normalizar_texto(palabra)
-            consulta_cargo |= Q(cargo__icontains=palabra_normalizada)
+        # Filtrar todas las vacantes activas
+        vacantes_filtradas = vacantes.filter(estado=True) if not request.user.is_authenticated else vacantes
 
-        # Filtrar manualmente en Python porque SQLite no soporta unaccent
-        vacantes = [v for v in vacantes if all(
-            normalizar_texto(palabra) in normalizar_texto(v.cargo) for palabra in palabras_clave
-        )]
-
-    if area:
-        vacantes = vacantes.filter(area=area)
-    if modalidad_trabajo:
-        vacantes = vacantes.filter(modalidad_trabajo=modalidad_trabajo)
-    if tipo_contrato:
-        vacantes = vacantes.filter(tipo_contrato=tipo_contrato)
-    if jornada_trabajo:
-        vacantes = vacantes.filter(jornada_trabajo=jornada_trabajo)
-    if tiempo_experiencia:
-        vacantes = vacantes.filter(tiempo_experiencia=tiempo_experiencia)
-    if nivel_estudios:
-        vacantes = vacantes.filter(nivel_estudios=nivel_estudios)
-    if departamento:
-        vacantes = vacantes.filter(departamento=departamento)
-    if ciudad:
-        vacantes = vacantes.filter(ciudad=ciudad)
-    if rango_salarial:
-        vacantes = vacantes.filter(rango_salarial=rango_salarial)
+        # Aplicar filtrado manual sin perder el queryset
+        ids_vacantes = [
+            v.id for v in vacantes_filtradas
+            if cargo_normalizado in normalizar_texto(v.cargo)
+        ]
         
-    # Agregar el conteo de candidatos aplicados a cada vacante
+        vacantes = vacantes.filter(id__in=ids_vacantes)  # Mantiene el QuerySet
+
+
+
+
+    # Aplicar filtros restantes directamente en la consulta
+    for campo, valor in filtros.items():
+        if valor and campo not in ['cargo', 'ciudad_nombre']:  # Cargo ya se filtró manualmente
+            vacantes = vacantes.filter(**{campo: valor})
+
+    # Agregar el conteo de candidatos aplicados
     vacantes = vacantes.annotate(num_candidatos=Count('candidatos'))
 
-    # Renderizar la plantilla con las vacantes filtradas y los filtros aplicados
-    contexto = {
-        'vacantes': vacantes,
-        'filtros': {
-            'cargo': cargo,
-            'area': area,
-            'modalidad_trabajo': modalidad_trabajo,
-            'tipo_contrato': tipo_contrato,
-            'jornada_trabajo': jornada_trabajo,
-            'tiempo_experiencia': tiempo_experiencia,
-            'nivel_estudios': nivel_estudios,
-            'departamento': departamento,
-            'ciudad': ciudad,
-            'rango_salarial': rango_salarial,
-        }
+    # Mantener el orden alfabético por cargo
+    vacantes = sorted(vacantes, key=lambda v: v.cargo.lower())
+
+    # Obtener opciones de los campos con choices
+    form = VacanteForm()
+    choices_context = {
+        'area_choices': form.fields['area'].choices,
+        'modalidad_trabajo_choices': form.fields['modalidad_trabajo'].choices,
+        'tipo_contrato_choices': form.fields['tipo_contrato'].choices,
+        'jornada_trabajo_choices': form.fields['jornada_trabajo'].choices,
+        'tiempo_experiencia_choices': form.fields['tiempo_experiencia'].choices,
+        'nivel_estudios_choices': form.fields['nivel_estudios'].choices,
+        'departamento_choices': form.fields['departamento'].choices,
+        'ciudad_choices': form.fields['ciudad'].choices,
     }
-    
-    #ordena vacantes por cargo
-    vacantes = Vacante.objects.all().order_by("cargo")  # 🔹 Ordena las vacantes
-    return render(request, "vacantes/lista.html", {"vacantes": vacantes})
+
+    # Renderizar la plantilla con las vacantes filtradas y ordenadas
+    return render(request, "vacantes/lista.html", {
+        "vacantes": vacantes,
+        "filtros": filtros,
+        **choices_context  # Pasar los choices al template
+    })
+
 
     # return render(request, 'vacantes/lista.html', contexto)
 
