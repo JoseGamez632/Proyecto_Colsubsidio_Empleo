@@ -277,42 +277,84 @@ Inicio
 
             <div class="mb-3">
                 <label for="area" class="form-label text-light">🎯 Área</label>
-                <input type="text" class="form-control" id="area" name="area" value="{{ request.GET.area }}">
+                <select class="form-control" id="area" name="area">
+                    <option value=""></option>
+                    {% for value, label in area_choices %}
+                        <option value="{{ value }}" {% if filtros.area == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
             </div>
 
             <div class="mb-3">
                 <label for="modalidad_trabajo" class="form-label text-light">🏢 Modalidad de Trabajo</label>
-                <input type="text" class="form-control" id="modalidad_trabajo" name="modalidad_trabajo" value="{{ request.GET.modalidad_trabajo }}">
+                <select class="form-control" id="modalidad_trabajo" name="modalidad_trabajo">
+                    <option value=""></option>
+                    {% for value, label in modalidad_trabajo_choices %}
+                        <option value="{{ value }}" {% if filtros.modalidad_trabajo == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
             </div>
 
             <div class="mb-3">
                 <label for="tipo_contrato" class="form-label text-light">📄 Tipo de Contrato</label>
-                <input type="text" class="form-control" id="tipo_contrato" name="tipo_contrato" value="{{ request.GET.tipo_contrato }}">
+                <select class="form-control" id="tipo_contrato" name="tipo_contrato">
+                    <option value=""></option>
+                    {% for value, label in tipo_contrato_choices %}
+                        <option value="{{ value }}" {% if filtros.tipo_contrato == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
             </div>
 
             <div class="mb-3">
                 <label for="jornada_trabajo" class="form-label text-light">⏰ Jornada de Trabajo</label>
-                <input type="text" class="form-control" id="jornada_trabajo" name="jornada_trabajo" value="{{ request.GET.jornada_trabajo }}">
+                <select class="form-control" id="jornada_trabajo" name="jornada_trabajo">
+                    <option value=""></option>
+                    {% for value, label in jornada_trabajo_choices %}
+                        <option value="{{ value }}" {% if filtros.jornada_trabajo == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
             </div>
 
             <div class="mb-3">
                 <label for="tiempo_experiencia" class="form-label text-light">⌛ Tiempo de Experiencia</label>
-                <input type="text" class="form-control" id="tiempo_experiencia" name="tiempo_experiencia" value="{{ request.GET.tiempo_experiencia }}">
+                <select class="form-control" id="tiempo_experiencia" name="tiempo_experiencia">
+                    <option value=""></option>
+                    {% for value, label in tiempo_experiencia_choices %}
+                        <option value="{{ value }}" {% if filtros.tiempo_experiencia == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
             </div>
 
             <div class="mb-3">
                 <label for="nivel_estudios" class="form-label text-light">🎓 Nivel de Estudios</label>
-                <input type="text" class="form-control" id="nivel_estudios" name="nivel_estudios" value="{{ request.GET.nivel_estudios }}">
+                <select class="form-control" id="nivel_estudios" name="nivel_estudios">
+                    <option value=""></option>
+                    {% for value, label in nivel_estudios_choices %}
+                        <option value="{{ value }}" {% if filtros.nivel_estudios == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
             </div>
 
             <div class="mb-3">
                 <label for="departamento" class="form-label text-light">🌍 Departamento</label>
-                <input type="text" class="form-control" id="departamento" name="departamento" value="{{ request.GET.departamento }}">
+                <select class="form-control" id="departamento" name="departamento">
+                    <option value=""></option>
+                    {% for value, label in departamento_choices %}
+                        <option value="{{ value }}" {% if filtros.departamento == value|stringformat:"s" %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                    {% endfor %}
+                </select>
             </div>
-
+            
             <div class="mb-3">
                 <label for="ciudad" class="form-label text-light">📍 Ciudad</label>
-                <input type="text" class="form-control" id="ciudad" name="ciudad" value="{{ request.GET.ciudad }}">
+                <select class="form-control" id="ciudad" name="ciudad">
+                    <option value=""></option>
+                    {% if filtros.ciudad_nombre %}
+                        <option value="{{ filtros.ciudad }}" selected>{{ filtros.ciudad_nombre }}</option>
+                    {% endif %}
+                </select>
             </div>
 
             <div class="mb-3">
@@ -331,6 +373,7 @@ Inicio
         </form>
     </div>
 </div>
+
 
 <script>
 let selectedVacantes = [];
@@ -393,4 +436,47 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
+
+<script>
+    //para mostrar las ciudades de acuerdo al departamento seleccionado
+    document.addEventListener("DOMContentLoaded", function () {
+        const departamentoSelect = document.getElementById("departamento");
+        const ciudadSelect = document.getElementById("ciudad");
+    
+        departamentoSelect.addEventListener("change", function () {
+            const departamentoId = this.value;
+            ciudadSelect.innerHTML = '<option value="">-- Selecciona una ciudad --</option>';
+    
+            if (departamentoId) {
+                fetch(`/cargar-ciudades/?departamento_id=${departamentoId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        data.forEach(ciudad => {
+                            const option = document.createElement("option");
+                            option.value = ciudad.id;
+                            option.textContent = ciudad.nombre;
+                            ciudadSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error("Error cargando ciudades:", error));
+            }
+        });
+    });
+    // Cargar ciudades si hay un departamento seleccionado al recargar la página
+    if (departamentoSelect.value) {
+        cargarCiudades(departamentoSelect.value, ciudadSeleccionada);
+    }
+
+
+    </script>
+
+    <script>
+        function clearFilters() {
+            // Redirigir a la misma página pero sin parámetros en la URL, para borrar los filtros
+            window.location.href = window.location.pathname;
+        }
+        </script>
+        
+
+
 {% endblock %}
