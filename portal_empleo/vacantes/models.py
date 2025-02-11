@@ -8,6 +8,26 @@ def generate_unique_codigo():
     """Genera un código de vacante único de la forma COD-XXXXXXXX."""
     return f'COD-{uuid.uuid4().hex[:8].upper()}'
 
+# Modelos para departamentos y ciudades
+
+class Departamento(models.Model):
+    nombre = models.CharField(max_length=100, unique=True)
+    
+    class Meta:
+        ordering = ["nombre"]  # Ordenar siempre por nombre alfabéticamente
+
+    def __str__(self):
+        return self.nombre
+
+class Ciudad(models.Model):
+    nombre = models.CharField(max_length=100)
+    departamento = models.ForeignKey(Departamento, on_delete=models.CASCADE, related_name="ciudades")
+    
+    class Meta:
+        ordering = ["nombre"]  # Ordenar siempre por nombre alfabéticamente
+
+    def __str__(self):
+        return self.nombre
 
 class Vacante(models.Model):
     # Datos obligatorios
@@ -25,15 +45,17 @@ class Vacante(models.Model):
     cargo = models.CharField(max_length=100)
     area = models.CharField(
         max_length=100, 
+        null=True, 
+        blank=True, 
         choices=[
-            ('Sin asignar', 'Sin asignar'),
+    # ('Sin asignar', 'Sin asignar'),
             ('Administración', 'Administración'),
             ('Finanzas', 'Finanzas'),
             ('Tecnología', 'Tecnología'),
             ('Recursos Humanos', 'Recursos Humanos'),
             ('Ventas', 'Ventas'),
         ], 
-        default='Sin asignar'
+        #default='Sin asignar'
     )
     numero_puestos = models.IntegerField(
         null=True, 
@@ -77,7 +99,7 @@ class Vacante(models.Model):
         ]
     )
     nivel_estudios = models.CharField(
-        max_length=50, 
+        max_length=50,  
         choices=[
             ('Secundaria', 'Secundaria'),
             ('Técnico', 'Técnico'),
@@ -86,26 +108,30 @@ class Vacante(models.Model):
             ('Postgrado', 'Postgrado'),
         ]
     )
-    departamento = models.CharField(
-        max_length=100, 
-        choices=[
-            ('Sin asignar', 'Sin asignar'),
-            ('Antioquia', 'Antioquia'),
-            ('Bogotá', 'Bogotá'),
-            ('Valle del Cauca', 'Valle del Cauca'),
-            ('Cundinamarca', 'Cundinamarca'),
-        ], 
-        default='Sin asignar'
-    )
-    ciudad = models.CharField(
-        max_length=100, 
-        choices=[
-            ('Medellín', 'Medellín'),
-            ('Bogotá', 'Bogotá'),
-            ('Cali', 'Cali'),
-            ('Barranquilla', 'Barranquilla'),
-        ]
-    )
+    # departamento = models.CharField(
+    #     max_length=100,
+    #     null=True, 
+    #     blank=True, 
+    #     choices=[
+    #         ('Antioquia', 'Antioquia'),
+    #         ('Bogotá', 'Bogotá'),
+    #         ('Valle del Cauca', 'Valle del Cauca'),
+    #         ('Cundinamarca', 'Cundinamarca'),
+    #     ], 
+    # )
+    # ciudad = models.CharField(
+    #     max_length=100, 
+    #     null=True, 
+    #     blank=True,
+    #     choices=[
+    #         ('Medellín', 'Medellín'),
+    #         ('Bogotá', 'Bogotá'),
+    #         ('Cali', 'Cali'),
+    #         ('Barranquilla', 'Barranquilla'),
+    #     ]
+    # )
+    departamento = models.ForeignKey(Departamento, on_delete=models.SET_NULL, null=True, blank=True)
+    ciudad = models.ForeignKey(Ciudad, on_delete=models.SET_NULL, null=True, blank=True)
     rango_salarial = models.CharField(
         max_length=50, 
         blank=True, 
@@ -121,11 +147,19 @@ class Vacante(models.Model):
     class Meta:
         verbose_name = "Vacante"
         verbose_name_plural = "Vacantes"
+        
 
     def __str__(self):
         """Representación legible del objeto."""
         return f"[{self.codigo_vacante}] {self.cargo} ({self.area})"
     
+    
+    def __str__(self):
+        return f"Vacante en {self.ciudad} ({self.departamento})"
+    
+    
+
+
 
 
 # ✅ Registro de candidatos
