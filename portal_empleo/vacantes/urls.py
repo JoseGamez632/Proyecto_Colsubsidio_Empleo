@@ -4,8 +4,8 @@ from . import views
 from django.conf import settings
 from django.contrib.staticfiles.urls import static
 from django.contrib.auth import views as auth_views
-from .views import registro_candidato_view, RegistrationStepsView
-
+from .views import registro_candidato_view
+from .views import cargar_ciudades
 
 
 urlpatterns = [
@@ -22,7 +22,7 @@ urlpatterns = [
     path('registros/', views.lista_registros, name='lista_registros'),
     path('editar/<int:pk>/', views.editar_registro, name='editar_registro'),
     path('cambiar_estado_vacante/<int:vacante_id>/', views.cambiar_estado_vacante, name='cambiar_estado_vacante'),
-    path('registration-steps/', RegistrationStepsView.as_view(), name='registration_steps'),
+    path('cargar-ciudades/', cargar_ciudades, name="cargar_ciudades"),
 
 
 

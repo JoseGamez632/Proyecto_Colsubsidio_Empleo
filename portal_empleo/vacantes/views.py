@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.http import HttpResponse
-from .models import Vacante
+from .models import Vacante, Ciudad
 from .forms import VacanteForm, RegistroCandidatoForm
 from django.contrib.auth.decorators import login_required # Solicitar ligin para ejecutar funcion
 from django.contrib.auth.decorators import permission_required # Solicita login para permisos especificos @permission_required('app_name.add_vacante')
@@ -9,26 +9,20 @@ import openpyxl
 from .models import RegistroCandidato
 from django.db.models.functions import Lower
 from django.db.models import Count
-import io
-from zipfile import ZipFile
 from django.db.models import Q
 import unicodedata
-from django.views.generic import TemplateView
+from django.http import JsonResponse
+from .models import Ciudad
+from django.db import migrations
 
-class RegistrationStepsView(TemplateView):
-    template_name = 'registration/registration_steps.html'
-    
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['steps_images'] = {
-            'step1': 'images/paso1.png',
-            'step2': 'images/paso2.png',
-            'step3': 'images/paso3.png',
-            'step4': 'images/paso4.png',
-            'step5': 'images/paso5.png',
-            'step6': 'images/paso6.png',
-        }
-        return context
+
+
+
+
+
+# Mensaje de éxito
+
+#Agregado por Jose
 
 
 
@@ -53,6 +47,7 @@ def lista_vacantes(request):
     departamento = request.GET.get('departamento')
     ciudad = request.GET.get('ciudad')
     rango_salarial = request.GET.get('rango_salarial')
+    vacantes = Vacante.objects.all().order_by('cargo')
 
     # Obtener todas las vacantes
     # vacantes = Vacante.objects.all()
@@ -114,8 +109,12 @@ def lista_vacantes(request):
             'rango_salarial': rango_salarial,
         }
     }
+    
+    #ordena vacantes por cargo
+    vacantes = Vacante.objects.all().order_by("cargo")  # 🔹 Ordena las vacantes
+    return render(request, "vacantes/lista.html", {"vacantes": vacantes})
 
-    return render(request, 'vacantes/lista.html', contexto)
+    # return render(request, 'vacantes/lista.html', contexto)
 
 # para cambiar el estado de la vacante
 def cambiar_estado_vacante(request, vacante_id):
@@ -125,8 +124,13 @@ def cambiar_estado_vacante(request, vacante_id):
     return redirect('lista_vacantes')
 
 
+# Create your views here.
 
-from django.db import migrations
+
+
+# Archivo de migración: 0005_clean_numero_puestos.py
+
+
 
 def limpiar_numero_puestos(apps, schema_editor):
     Vacante = apps.get_model('proyecto_negocio', 'Vacante')
@@ -168,15 +172,11 @@ def agregar_vacante(request):
     if request.method == 'POST':
         form = VacanteForm(request.POST)
         if form.is_valid():
-            vacante = form.save(commit=False)  # No guardamos inmediatamente
-            vacante.usuario_publicador = request.user  # Asignamos el usuario actual
-            vacante.save()  # Ahora sí guardamos
-            return redirect('lista_vacantes')
+            form.save()
+            return redirect('lista_vacantes')  # Redirige a la lista de vacantes
     else:
         form = VacanteForm()
     return render(request, 'vacantes/agregar_vacante.html', {'form': form})
-
-
 
 def inicio(request):
     return render(request, "paginas/inicio.html")
@@ -203,7 +203,7 @@ def registro_candidato_view(request):
         form = RegistroCandidatoForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('registration_steps')  # Redirigir a una página de éxito
+            return redirect('inicio')  # Redirigir a una página de éxito
     else:
         form = RegistroCandidatoForm()
 
@@ -360,19 +360,12 @@ def editar_registro(request, pk):
     }
     return render(request, 'registro_candidato.html', context)
 
-def download_images(request):
-    # Crear un archivo ZIP en memoria
-    zip_buffer = io.BytesIO()
-    with ZipFile(zip_buffer, 'w') as zip_file:
-        # Agregar cada imagen al ZIP
-        for i in range(1, 7):
-            image_path = f'app/imagenes/paso{i}.png'
-            zip_file.write(image_path, f'paso{i}.png')
-    
-    # Preparar la respuesta
-    response = HttpResponse(zip_buffer.getvalue(), content_type='application/zip')
-    response['Content-Disposition'] = 'attachment; filename=guia-imagenes.zip'
-    return response
+# para cargar ciudades por departamento
+
+def cargar_ciudades(request):
+    departamento_id = request.GET.get("departamento_id")
+    ciudades = Ciudad.objects.filter(departamento_id=departamento_id).values("id", "nombre")
+    return JsonResponse(list(ciudades), safe=False)
 
 
 #def candidatos_por_vacante(request, vacante_id):

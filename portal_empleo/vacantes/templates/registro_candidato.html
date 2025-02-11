@@ -210,21 +210,11 @@ Inicio
                 </div>
             </div>
             
+
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label for="localidad_municipio">Localidad/Municipio</label>
                     {{ form.localidad_municipio }}
-                </div>
-                <div class="form-group col-md-6">
-                    <label for="candidato_discapacidad">¿Es candidato con discapacidad?</label>
-                    {{ form.candidato_discapacidad }}
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group col-md-6">
-                    <label for="tipo_discapacidad">Tipo de Discapacidad</label>
-                    {{ form.tipo_discapacidad }}
                 </div>
                 <div class="form-group col-md-6">
                     <label for="horario_interesado">Horario de Interés</label>
@@ -241,6 +231,7 @@ Inicio
                     <label for="registrado_en_sise">¿Está registrado en SISE?</label>
                     {{ form.registrado_en_sise }}
                 </div>
+                
             </div>
 
             <div class="form-row">
@@ -249,7 +240,7 @@ Inicio
                     <label for="tecnico_seleccion">Técnico de Selección</label>
                     {{ form.tecnico_seleccion }}
                 </div>
-                {% endif %}   
+                {% endif %}
                 <div class="form-group col-md-6">
                     <label for="vacantes">Vacantes disponibles</label>
                     <select id="vacantes" name="vacantes_disponibles" class="form-control" multiple="multiple" >
@@ -260,6 +251,18 @@ Inicio
                             </option>
                         {% endfor %}
                     </select>
+                </div>   
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="candidato_discapacidad">¿Es candidato con discapacidad?</label>
+                    {{ form.candidato_discapacidad }}
+                </div>
+
+                <div class="form-group col-md-6" id="tipo_discapacidad_container" style="display: none;">
+                    <label for="tipo_discapacidad">Tipo de Discapacidad</label>
+                    {{ form.tipo_discapacidad }}
                 </div>
             </div>
 
@@ -290,5 +293,30 @@ Inicio
         {% endif %}
     });
 </script>
+
+
+{% comment %} script para mostrar el campo tipo_discapacidad cuando se selecciona la opción SI en candidato_discapacidad {% endcomment %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const discapacidadField = document.querySelector('[name="candidato_discapacidad"]');
+        const tipoDiscapacidadContainer = document.getElementById('tipo_discapacidad_container');
+    
+        function toggleTipoDiscapacidad() {
+            if (discapacidadField.value === 'SI') {
+                tipoDiscapacidadContainer.style.display = 'block';
+            } else {
+                tipoDiscapacidadContainer.style.display = 'none';
+            }
+        }
+    
+        discapacidadField.addEventListener('change', toggleTipoDiscapacidad);
+    
+        // Inicializar el estado del campo al cargar la página
+        toggleTipoDiscapacidad();
+    });
+    </script>
+
+
 
 {% endblock %}
