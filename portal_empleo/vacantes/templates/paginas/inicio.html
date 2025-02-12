@@ -283,27 +283,29 @@ Inicio
     <!-- Proceso -->
     <section class="proceso-section">
         <div class="container">
-            <h2 class="section-title">Nuestro Proceso</h2>
+            <h2 class="section-title">Conoce El Paso a Paso <br> Para Aplicar a Las Vacantes</h2>
             <div class="proceso-linea">
                 <div class="proceso-item scroll-animation">
                     <div class="proceso-numero">1</div>
-                    <h4>Registro</h4>
-                    <p>Ingresa tus datos y perfil profesional</p>
+                    <h4>Vacantes</h4>
+                    <p>Selecciona las vacantes a las que quieres aplicar</p><br>
+                    <a href="{% url 'lista_vacantes' %}" type="button" class="btn btn-outline-warning">Conoce las Vacantes</a>
                 </div>
                 <div class="proceso-item scroll-animation" style="animation-delay: 0.2s">
                     <div class="proceso-numero">2</div>
-                    <h4>Evaluación</h4>
-                    <p>Analizamos tus habilidades y experiencia</p>
+                    <h4>Registro</h4>
+                    <p>Diligencia el formulario con la informacion de tu hoja de vida</p>
                 </div>
                 <div class="proceso-item scroll-animation" style="animation-delay: 0.4s">
                     <div class="proceso-numero">3</div>
-                    <h4>Selección</h4>
-                    <p>Te conectamos con la mejor oferta</p>
+                    <h4>Asesoria</h4>
+                    <p>Acercate a uno de los profesionales para finalizar con la aplicacion a la vacante</p>
                 </div>
                 <div class="proceso-item scroll-animation" style="animation-delay: 0.6s">
                     <div class="proceso-numero">4</div>
-                    <h4>Contratación</h4>
-                    <p>Comienza tu nuevo empleo</p>
+                    <h4>Servicio de Empleo</h4>
+                    <p>Realiza el registro o actualiza tu hoja de vida en la plataforma del Servicio Publico de Empleo</p><br>
+                    <a href="{% url 'registration_guide' %}" type="button" class="btn btn-outline-warning">Guia de Registro SISE</a>
                 </div>
             </div>
         </div>
@@ -313,9 +315,10 @@ Inicio
     <section class="container my-5">
         <div class="card card-servicio scroll-animation">
             <div class="card-body">
-                <h3 class="mb-6">Clubes y BLOC</h3>
-                <p>Accede a espacios donde podrás realizar actividades recreativas, deportivas, talleres y programas para todos.</p>
-                <a href="#" class="btn btn-dark">Conoce más</a>
+                <h3 class="mb-6">Guia de Registro Servicio Publico de Empleo</h3><br>
+                <p>Recuerda que la unica hoja de vida valida es la registrada en la plataforma del Servicio Publico de Empleo, <br>por esto te aconsejamos actualizarla o registrarte en la plataforma.</p>
+                <br>
+                <a href="{% url 'registration_guide' %}" class="btn btn-dark">Guia de Registro SISE</a>
             </div>
         </div>
     </section>
@@ -325,10 +328,7 @@ Inicio
         <div class="container">
             <h2 class="section-title">Conoce más sobre nosotros</h2>
             <div class="video-container scroll-animation">
-                <video controls>
-                    <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
-                    Tu navegador no soporta el video.
-                </video>
+                <iframe width="800" height="500" src="https://www.youtube.com/embed/2_2ap_Qe9dM?si=sVrPwQjEze5KjNgh" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
             </div>
         </div>
     </section>
