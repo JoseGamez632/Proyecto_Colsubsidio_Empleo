@@ -10,6 +10,8 @@ from django.db.models.functions import Lower
 from django.db.models import Count, Q
 import unicodedata
 from django.db import migrations
+from django.views.generic import TemplateView
+
 
 
 
@@ -383,3 +385,7 @@ def cargar_ciudades(request):
 #    vacante = get_object_or_404(Vacante, id=vacante_id)
 #    candidatos = vacante.candidatos.all()
 #    return render(request, 'candidatos_por_vacante.html', {'vacante': vacante, 'candidatos': candidatos})
+
+
+class RegistrationGuideView(TemplateView):
+    template_name = 'registration/guide.html'
