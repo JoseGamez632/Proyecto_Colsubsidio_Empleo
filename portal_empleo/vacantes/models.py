@@ -157,6 +157,10 @@ class Vacante(models.Model):
 
 # ✅ Registro de candidatos
 
+def validar_aspiracion_salarial(value):
+    if value < 1000000:
+        raise ValidationError("La aspiración salarial debe ser mayor a 1,000,000.")
+
 class RegistroCandidato(models.Model):
     # Opciones para los campos
     SEX_CHOICES = [
@@ -194,18 +198,6 @@ class RegistroCandidato(models.Model):
         ('WE', 'FINES DE SEMANA'),
     ]
 
-    SALARY_CHOICES = [
-        ('<1', 'Menos de 1 SMMLV'),
-        ('1-2', '1 a 2 SMMLV'),
-        ('2-4', '2 a 4 SMMLV'),
-        ('4-6', '4 a 6 SMMLV'),
-        ('6-9', '6 a 9 SMMLV'),
-        ('9-12', '9 a 12 SMMLV'),
-        ('12-15', '12 a 15 SMMLV'),
-        ('15-19', '15 a 19 SMMLV'),
-        ('>20', '20 SMMLV en adelante'),
-    ]
-
     DISABILITY_CHOICES = [
         ('SI', 'Sí'),
         ('NO', 'No'),
@@ -221,7 +213,6 @@ class RegistroCandidato(models.Model):
         ('AAM', 'Angel Andres Moyano Molano'),
         ('DAP', 'Diego Alejandro Parra Pinto'),
         ('EJC', 'Erika Julieth Cristancho Pérez'),
-        # Agrega el resto de nombres
     ]
 
     # Campos
@@ -243,10 +234,16 @@ class RegistroCandidato(models.Model):
     candidato_discapacidad = models.CharField(max_length=2, choices=DISABILITY_CHOICES)
     tipo_discapacidad = models.CharField(max_length=100, blank=True, null=True)
     horario_interesado = models.CharField(max_length=2, choices=SCHEDULE_CHOICES)
-    aspiracion_salarial = models.CharField(max_length=5, choices=SALARY_CHOICES)
+
+    # Aspiración salarial como número entero con validación
+    aspiracion_salarial = models.IntegerField(
+        validators=[validar_aspiracion_salarial],
+        help_text="Ingrese un valor numérico mayor a 1,000,000."
+    )
+
     registrado_en_sise = models.CharField(max_length=2, choices=SISE_CHOICES)
-    tecnico_seleccion = models.CharField(max_length=3, choices=RECRUITER_CHOICES,blank=True, null=True)
-    vacantes_disponibles = models.ManyToManyField(Vacante, related_name="candidatos", blank=True)
+    tecnico_seleccion = models.CharField(max_length=3, choices=RECRUITER_CHOICES, blank=True, null=True)
+    vacantes_disponibles = models.ManyToManyField("Vacante", related_name="candidatos", blank=True)
 
     class Meta:
         verbose_name = "Registro de Candidato"
@@ -254,4 +251,3 @@ class RegistroCandidato(models.Model):
 
     def __str__(self):
         return f"{self.nombres} {self.apellidos} - {self.tipo_documento}: {self.numero_documento}"
-
