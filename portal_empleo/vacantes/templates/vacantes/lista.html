@@ -185,10 +185,14 @@ Inicio
                                     <span class="badge bg-warning text-dark">
                                         📍 {{ vacante.ciudad }}
                                     </span>
+                                    <br>
                                     {% if request.user.is_authenticated %}
 
                                     <span class="badge bg-warning text-dark">
-                                        🧑‍💼 Creado por: {{ vacante.usuario_publicador.username|default:"No asignado" }}
+                                        🧑‍💼 Creado: {{ vacante.usuario_publicador.username|default:"No asignado" }} {{ vacante.fecha_creacion|date:"d/m/Y" }}
+                                    </span>
+                                    <span class="badge bg-warning text-dark">
+                                        🔁 Actualizado: {{ vacante.usuario_actualizador.username|default:"" }} {{ vacante.fecha_actualizacion|date:"d/m/Y" }}
                                     </span>
                                         <p style="margin-top: 10px;">Candidatos: {{ vacante.num_candidatos }}</p>
                                     {% endif %}

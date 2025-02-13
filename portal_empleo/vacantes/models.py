@@ -3,6 +3,8 @@ from django.core.exceptions import ValidationError
 import uuid
 from datetime import date
 from django.contrib.auth.models import User  # Importa el modelo User
+from django.utils.timezone import now
+
 
 
 def generate_unique_codigo():
@@ -53,7 +55,7 @@ class Vacante(models.Model):
     numero_puestos = models.IntegerField(
         null=True, 
         blank=True, 
-        default=1  # ✅ Se asigna 1 por defecto, ya que 0 no tendría sentido.
+        default=1  
     )
     modalidad_trabajo = models.CharField(
         max_length=50, 
@@ -111,14 +113,33 @@ class Vacante(models.Model):
     empresa_usuaria = models.CharField(max_length=100)
     candidatos_registrados = models.ManyToManyField('RegistroCandidato', related_name='vacantes', blank=True)
     estado = models.BooleanField(default=True)  # True para activa, False para inactiva
-    
-    # Nuevo campo para almacenar el usuario que publica la vacante
-    usuario_publicador = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
-    
+
+    # Datos de auditoría
+    usuario_publicador = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='vacantes_publicadas')
+    usuario_actualizador = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='vacantes_actualizadas')
+    fecha_creacion = models.DateTimeField(auto_now_add=True)  # Solo se guarda al crear
+    fecha_actualizacion = models.DateTimeField(null=True, blank=True)  # Se actualizará manualmente
+
     class Meta:
         verbose_name = "Vacante"
         verbose_name_plural = "Vacantes"
-        
+
+    def save(self, *args, **kwargs):
+        """ Sobrescribir save para actualizar fecha_actualizacion solo si hubo cambios """
+        if self.pk:  # Si ya existe en la base de datos
+            vacante_anterior = Vacante.objects.get(pk=self.pk)
+            if any([
+                getattr(vacante_anterior, field) != getattr(self, field)
+                for field in [
+                    'cargo', 'area', 'numero_puestos', 'modalidad_trabajo',
+                    'tipo_contrato', 'jornada_trabajo', 'descripcion_vacante',
+                    'tiempo_experiencia', 'nivel_estudios', 'departamento',
+                    'ciudad', 'rango_salarial', 'empresa_usuaria', 'estado'
+                ]
+            ]):
+                self.fecha_actualizacion = now()
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"[{self.codigo_vacante}] {self.cargo} - Publicado por {self.usuario_publicador.username if self.usuario_publicador else 'Desconocido'}"
 

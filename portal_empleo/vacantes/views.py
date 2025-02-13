@@ -200,13 +200,18 @@ def inicio(request):
 @login_required
 def editar_vacante(request, id):
     vacante = get_object_or_404(Vacante, id=id)
+    
     if request.method == 'POST':
         form = VacanteForm(request.POST, instance=vacante)
         if form.is_valid():
-            form.save()
+            vacante = form.save(commit=False)  # No guardamos aún
+            vacante.usuario_actualizador = request.user  # Guardamos quién actualiza
+            vacante.save()  # Guardamos la vacante con el usuario actualizador
             return redirect('lista_vacantes')
+
     else:
         form = VacanteForm(instance=vacante)
+    
     return render(request, 'vacantes/editar_vacante.html', {'form': form, 'vacante': vacante})
 
 
