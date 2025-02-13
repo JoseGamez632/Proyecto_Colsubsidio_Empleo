@@ -183,12 +183,15 @@ def eliminar_vacante(request, id):
 @login_required
 def agregar_vacante(request):
     if request.method == 'POST':
-        form = VacanteForm(request.POST)
+        form = VacanteForm(request.POST, user=request.user)  # Pasamos el usuario
         if form.is_valid():
-            form.save()
+            vacante = form.save(commit=False)  # No guardamos aún en la BD
+            vacante.usuario_publicador = request.user  # Asignamos el usuario
+            vacante.save()  # Ahora sí guardamos
             return redirect('lista_vacantes')  # Redirige a la lista de vacantes
     else:
-        form = VacanteForm()
+        form = VacanteForm(user=request.user)  # Pasamos el usuario también en GET
+
     return render(request, 'vacantes/agregar_vacante.html', {'form': form})
 
 def inicio(request):
@@ -389,3 +392,5 @@ def cargar_ciudades(request):
 
 class RegistrationGuideView(TemplateView):
     template_name = 'registration/guide.html'
+    
+    

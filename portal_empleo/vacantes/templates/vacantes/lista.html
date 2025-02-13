@@ -186,6 +186,10 @@ Inicio
                                         📍 {{ vacante.ciudad }}
                                     </span>
                                     {% if request.user.is_authenticated %}
+
+                                    <span class="badge bg-warning text-dark">
+                                        🧑‍💼 Creado por: {{ vacante.usuario_publicador.username|default:"No asignado" }}
+                                    </span>
                                         <p style="margin-top: 10px;">Candidatos: {{ vacante.num_candidatos }}</p>
                                     {% endif %}
                                 </div>

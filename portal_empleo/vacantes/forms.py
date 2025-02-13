@@ -16,7 +16,7 @@ class VacanteForm(forms.ModelForm):
             'cargo', 'area', 'numero_puestos', 'modalidad_trabajo',
             'tipo_contrato', 'jornada_trabajo', 'descripcion_vacante',
             'tiempo_experiencia', 'nivel_estudios', 'departamento',
-            'ciudad', 'rango_salarial', 'empresa_usuaria'
+            'ciudad', 'rango_salarial', 'empresa_usuaria', 'usuario_publicador'
         ]
         widgets = {
             'cargo': forms.TextInput(attrs={'class': 'form-control'}),
@@ -33,11 +33,15 @@ class VacanteForm(forms.ModelForm):
             'rango_salarial': forms.TextInput(attrs={'class': 'form-control'}),
             'empresa_usuaria': forms.TextInput(attrs={'class': 'form-control'}),
         }
-
+    
     def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)  # Recibir el usuario como argumento
         super().__init__(*args, **kwargs)
         self.fields['departamento'].queryset = Departamento.objects.all()
         self.fields['ciudad'].queryset = Ciudad.objects.none()  # Inicialmente vacío
+
+        if user:
+            self.instance.usuario_publicador = user  # Asignar usuario al crear
 
         # Si ya hay un departamento seleccionado (edición de formulario)
         if 'departamento' in self.data:
@@ -50,6 +54,7 @@ class VacanteForm(forms.ModelForm):
             # Si estamos editando una instancia existente
             self.fields['ciudad'].queryset = Ciudad.objects.filter(departamento_id=self.instance.departamento_id)
             self.fields['ciudad'].initial = self.instance.ciudad
+
 # Registro de candidatos
 class RegistroCandidatoForm(forms.ModelForm):
     vacantes_disponibles = forms.ModelMultipleChoiceField(
