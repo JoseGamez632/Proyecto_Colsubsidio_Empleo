@@ -10,6 +10,8 @@ from django.db.models.functions import Lower
 from django.db.models import Count, Q
 import unicodedata
 from django.db import migrations
+from django.views.generic import TemplateView
+
 
 
 
@@ -181,12 +183,15 @@ def eliminar_vacante(request, id):
 @login_required
 def agregar_vacante(request):
     if request.method == 'POST':
-        form = VacanteForm(request.POST)
+        form = VacanteForm(request.POST, user=request.user)  # Pasamos el usuario
         if form.is_valid():
-            form.save()
+            vacante = form.save(commit=False)  # No guardamos aún en la BD
+            vacante.usuario_publicador = request.user  # Asignamos el usuario
+            vacante.save()  # Ahora sí guardamos
             return redirect('lista_vacantes')  # Redirige a la lista de vacantes
     else:
-        form = VacanteForm()
+        form = VacanteForm(user=request.user)  # Pasamos el usuario también en GET
+
     return render(request, 'vacantes/agregar_vacante.html', {'form': form})
 
 def inicio(request):
@@ -195,13 +200,18 @@ def inicio(request):
 @login_required
 def editar_vacante(request, id):
     vacante = get_object_or_404(Vacante, id=id)
+    
     if request.method == 'POST':
         form = VacanteForm(request.POST, instance=vacante)
         if form.is_valid():
-            form.save()
+            vacante = form.save(commit=False)  # No guardamos aún
+            vacante.usuario_actualizador = request.user  # Guardamos quién actualiza
+            vacante.save()  # Guardamos la vacante con el usuario actualizador
             return redirect('lista_vacantes')
+
     else:
         form = VacanteForm(instance=vacante)
+    
     return render(request, 'vacantes/editar_vacante.html', {'form': form, 'vacante': vacante})
 
 
@@ -383,3 +393,9 @@ def cargar_ciudades(request):
 #    vacante = get_object_or_404(Vacante, id=vacante_id)
 #    candidatos = vacante.candidatos.all()
 #    return render(request, 'candidatos_por_vacante.html', {'vacante': vacante, 'candidatos': candidatos})
+
+
+class RegistrationGuideView(TemplateView):
+    template_name = 'registration/guide.html'
+    
+    

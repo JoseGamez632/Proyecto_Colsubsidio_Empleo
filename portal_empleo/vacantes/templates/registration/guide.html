@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block contenido %}
+<div class="min-h-screen bg-gradient-to-b from-blue-50 to-white py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-4xl mx-auto">
+        <!-- Header Section -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-900 mb-4">Guía de Registro</h1>
+            <p class="text-xl text-gray-600">Sistema de Información del Servicio Público de Empleo</p>
+        </div>
+
+        <!-- Steps Section -->
+        <div class="space-y-8">
+            <!-- Step 1 -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transition-transform hover:scale-[1.02]">
+                <div class="p-6">
+                    <div class="flex items-center mb-4">
+                        <span class="flex-shrink-0 w-10 h-10 bg-yellow-400 text-white rounded-full flex items-center justify-center font-bold text-lg">1</span>
+                        <h2 class="ml-4 text-2xl font-semibold text-gray-900">Acceso al Portal Web</h2>
+                    </div>
+                    <div class="mb-6">
+                        <div class="bg-gray-100 rounded-lg p-4 h-48 flex items-center justify-center">
+                            <p class="text-gray-500"><img src="{% static 'app/imagenes/pas1.png' %}" alt="Paso 1" class="w-full h-48 object-cover rounded-lg"></p>
+                        </div>
+                    </div>
+                    <div class="prose max-w-none text-gray-600">
+                        <p>Para acceder a la plataforma SISE, ingresa a:</p>
+                        <ul class="list-disc pl-5 mt-2">
+                            <li><a href="https://personas.serviciodeempleo.gov.co/" class="text-blue-600 hover:underline">www.personas.serviciodeempleo.gov.co</a></li>
+                            <li>Selecciona la sección "Personas"</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transition-transform hover:scale-[1.02]">
+                <div class="p-6">
+                    <div class="flex items-center mb-4">
+                        <span class="flex-shrink-0 w-10 h-10 bg-yellow-400 text-white rounded-full flex items-center justify-center font-bold text-lg">2</span>
+                        <h2 class="ml-4 text-2xl font-semibold text-gray-900">Registro Inicial</h2>
+                    </div>
+                    <div class="mb-6">
+                        <div class="bg-gray-100 rounded-lg p-4 h-48 flex items-center justify-center">
+                            <p class="text-gray-500"><img src="{% static 'app/imagenes/pas2.png' %}" alt="Paso 1" class="w-full h-48 object-cover rounded-lg"></p>
+                        </div>
+                    </div>
+                    <div class="prose max-w-none text-gray-600">
+                        <p>En la pantalla principal:</p>
+                        <ul class="list-disc pl-5 mt-2">
+                            <li>Busca la opción "Deseo crear una cuenta"</li>
+                            <li>Haz clic en el botón "Regístrese"</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transition-transform hover:scale-[1.02]">
+                <div class="p-6">
+                    <div class="flex items-center mb-4">
+                        <span class="flex-shrink-0 w-10 h-10 bg-yellow-400 text-white rounded-full flex items-center justify-center font-bold text-lg">3</span>
+                        <h2 class="ml-4 text-2xl font-semibold text-gray-900">Verificación de Correo</h2>
+                    </div>
+                    <div class="mb-6">
+                        <div class="bg-gray-100 rounded-lg p-4 h-48 flex items-center justify-center">
+                            <p class="text-gray-500"><img src="{% static 'app/imagenes/pas3.png' %}" alt="Paso 1" class="w-full h-48 object-cover rounded-lg"></p>
+                        </div>
+                    </div>
+                    <div class="prose max-w-none text-gray-600">
+                        <p>En esta etapa deberás:</p>
+                        <ul class="list-disc pl-5 mt-2">
+                            <li>Ingresar tu correo electrónico dos veces</li>
+                            <li>El sistema verificará que no exista una cuenta previa</li>
+                            <li>Si el correo ya existe, podrás recuperar tu cuenta</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transition-transform hover:scale-[1.02]">
+                <div class="p-6">
+                    <div class="flex items-center mb-4">
+                        <span class="flex-shrink-0 w-10 h-10 bg-yellow-400 text-white rounded-full flex items-center justify-center font-bold text-lg">4</span>
+                        <h2 class="ml-4 text-2xl font-semibold text-gray-900">Datos Personales</h2>
+                    </div>
+                    <div class="mb-6">
+                        <div class="bg-gray-100 rounded-lg p-4 h-48 flex items-center justify-center">
+                            <p class="text-gray-500"><img src="{% static 'app/imagenes/pas4.png' %}" alt="Paso 1" class="w-full h-48 object-cover rounded-lg"></p>
+                        </div>
+                    </div>
+                    <div class="prose max-w-none text-gray-600">
+                        <p>Completa los siguientes datos obligatorios:</p>
+                        <ul class="list-disc pl-5 mt-2">
+                            <li>Nombres y apellidos completos</li>
+                            <li>Tipo y número de documento</li>
+                            <li>Fecha de nacimiento</li>
+                            <li>Teléfono de contacto</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 5 -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transition-transform hover:scale-[1.02]">
+                <div class="p-6">
+                    <div class="flex items-center mb-4">
+                        <span class="flex-shrink-0 w-10 h-10 bg-yellow-400 text-white rounded-full flex items-center justify-center font-bold text-lg">5</span>
+                        <h2 class="ml-4 text-2xl font-semibold text-gray-900">Ubicación y Preferencias</h2>
+                    </div>
+                    <div class="mb-6">
+                        <div class="bg-gray-100 rounded-lg p-4 h-48 flex items-center justify-center">
+                            <p class="text-gray-500"><img src="{% static 'app/imagenes/pas5.png' %}" alt="Paso 1" class="w-full h-48 object-cover rounded-lg"></p>
+                        </div>
+                    </div>
+                    <div class="prose max-w-none text-gray-600">
+                        <p>Selecciona tu ubicación:</p>
+                        <ul class="list-disc pl-5 mt-2">
+                            <li>País de residencia</li>
+                            <li>Departamento</li>
+                            <li>Municipio</li>
+                            <li>Prestador de preferencia</li>
+                            <li>Punto de atención</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 6 -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transition-transform hover:scale-[1.02]">
+                <div class="p-6">
+                    <div class="flex items-center mb-4">
+                        <span class="flex-shrink-0 w-10 h-10 bg-yellow-400 text-white rounded-full flex items-center justify-center font-bold text-lg">6</span>
+                        <h2 class="ml-4 text-2xl font-semibold text-gray-900">Términos y Condiciones</h2>
+                    </div>
+                    <div class="mb-6">
+                        <div class="bg-gray-100 rounded-lg p-4 h-48 flex items-center justify-center">
+                            <p class="text-gray-500"><img src="{% static 'app/imagenes/pas6.png' %}" alt="Paso 1" class="w-full h-48 object-cover rounded-lg"></p>
+                        </div>
+                    </div>
+                    <div class="prose max-w-none text-gray-600">
+                        <p>Lee y acepta:</p>
+                        <ul class="list-disc pl-5 mt-2">
+                            <li>Términos y condiciones del servicio</li>
+                            <li>Autorización para tratamiento de datos personales</li>
+                            <li>Completa la verificación CAPTCHA</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Final Step -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transition-transform hover:scale-[1.02]">
+                <div class="p-6">
+                    <div class="flex items-center mb-4">
+                        <span class="flex-shrink-0 w-10 h-10 bg-yellow-400 text-white rounded-full flex items-center justify-center font-bold text-lg">7</span>
+                        <h2 class="ml-4 text-2xl font-semibold text-gray-900">¡Listo!</h2>
+                    </div>
+                    <div class="prose max-w-none text-gray-600">
+                        <p>Una vez completados todos los pasos:</p>
+                        <ul class="list-disc pl-5 mt-2">
+                            <li>Verifica que todos los datos sean correctos</li>
+                            <li>Haz clic en "Crear cuenta"</li>
+                            <li>Recibirás una confirmación de registro exitoso</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Call to Action -->
+        <div class="mt-12 text-center">
+            <a href="https://personas.serviciodeempleo.gov.co" 
+               class="inline-flex items-center px-8 py-4 border border-transparent text-lg font-medium rounded-full text-white bg-yellow-400 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
+                Comenzar mi Registro
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .hover\:scale-\[1\.02\]:hover {
+        transform: scale(1.02);
+    }
+    .transition-transform {
+        transition: transform 0.2s ease-in-out;
+    }
+</style>
+{% endblock %}

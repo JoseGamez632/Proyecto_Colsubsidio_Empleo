@@ -2,6 +2,10 @@ from django.db import models
 from django.core.exceptions import ValidationError
 import uuid
 from datetime import date
+from django.contrib.auth.models import User  # Importa el modelo User
+from django.utils.timezone import now
+
+
 
 def generate_unique_codigo():
     """Genera un código de vacante único de la forma COD-XXXXXXXX."""
@@ -41,21 +45,18 @@ class Vacante(models.Model):
         null=True, 
         blank=True, 
         choices=[
-    # ('Sin asignar', 'Sin asignar'),
             ('Administración', 'Administración'),
             ('Finanzas', 'Finanzas'),
             ('Tecnología', 'Tecnología'),
             ('Recursos Humanos', 'Recursos Humanos'),
             ('Ventas', 'Ventas'),
-        ], 
-        #default='Sin asignar'
+        ]
     )
     numero_puestos = models.IntegerField(
         null=True, 
         blank=True, 
-        default=1  # ✅ Se asigna 1 por defecto, ya que 0 no tendría sentido.
+        default=1  
     )
-
     modalidad_trabajo = models.CharField(
         max_length=50, 
         choices=[
@@ -101,28 +102,6 @@ class Vacante(models.Model):
             ('Postgrado', 'Postgrado'),
         ]
     )
-    # departamento = models.CharField(
-    #     max_length=100,
-    #     null=True, 
-    #     blank=True, 
-    #     choices=[
-    #         ('Antioquia', 'Antioquia'),
-    #         ('Bogotá', 'Bogotá'),
-    #         ('Valle del Cauca', 'Valle del Cauca'),
-    #         ('Cundinamarca', 'Cundinamarca'),
-    #     ], 
-    # )
-    # ciudad = models.CharField(
-    #     max_length=100, 
-    #     null=True, 
-    #     blank=True,
-    #     choices=[
-    #         ('Medellín', 'Medellín'),
-    #         ('Bogotá', 'Bogotá'),
-    #         ('Cali', 'Cali'),
-    #         ('Barranquilla', 'Barranquilla'),
-    #     ]
-    # )
     departamento = models.ForeignKey(Departamento, on_delete=models.SET_NULL, null=True, blank=True)
     ciudad = models.ForeignKey(Ciudad, on_delete=models.SET_NULL, null=True, blank=True)
     rango_salarial = models.CharField(
@@ -134,28 +113,45 @@ class Vacante(models.Model):
     empresa_usuaria = models.CharField(max_length=100)
     candidatos_registrados = models.ManyToManyField('RegistroCandidato', related_name='vacantes', blank=True)
     estado = models.BooleanField(default=True)  # True para activa, False para inactiva
-    
 
-    
+    # Datos de auditoría
+    usuario_publicador = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='vacantes_publicadas')
+    usuario_actualizador = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='vacantes_actualizadas')
+    fecha_creacion = models.DateTimeField(auto_now_add=True)  # Solo se guarda al crear
+    fecha_actualizacion = models.DateTimeField(null=True, blank=True)  # Se actualizará manualmente
+
     class Meta:
         verbose_name = "Vacante"
         verbose_name_plural = "Vacantes"
-        
+
+    def save(self, *args, **kwargs):
+        """ Sobrescribir save para actualizar fecha_actualizacion solo si hubo cambios """
+        if self.pk:  # Si ya existe en la base de datos
+            vacante_anterior = Vacante.objects.get(pk=self.pk)
+            if any([
+                getattr(vacante_anterior, field) != getattr(self, field)
+                for field in [
+                    'cargo', 'area', 'numero_puestos', 'modalidad_trabajo',
+                    'tipo_contrato', 'jornada_trabajo', 'descripcion_vacante',
+                    'tiempo_experiencia', 'nivel_estudios', 'departamento',
+                    'ciudad', 'rango_salarial', 'empresa_usuaria', 'estado'
+                ]
+            ]):
+                self.fecha_actualizacion = now()
+        super().save(*args, **kwargs)
 
     def __str__(self):
-        """Representación legible del objeto."""
-        return f"[{self.codigo_vacante}] {self.cargo} ({self.area})"
-    
-    
-    def __str__(self):
-        return f"Vacante en {self.ciudad} ({self.departamento})"
-    
-    
+        return f"[{self.codigo_vacante}] {self.cargo} - Publicado por {self.usuario_publicador.username if self.usuario_publicador else 'Desconocido'}"
+
 
 
 
 
 # ✅ Registro de candidatos
+
+def validar_aspiracion_salarial(value):
+    if value < 1000000:
+        raise ValidationError("La aspiración salarial debe ser mayor a 1,000,000.")
 
 class RegistroCandidato(models.Model):
     # Opciones para los campos
@@ -194,18 +190,6 @@ class RegistroCandidato(models.Model):
         ('WE', 'FINES DE SEMANA'),
     ]
 
-    SALARY_CHOICES = [
-        ('<1', 'Menos de 1 SMMLV'),
-        ('1-2', '1 a 2 SMMLV'),
-        ('2-4', '2 a 4 SMMLV'),
-        ('4-6', '4 a 6 SMMLV'),
-        ('6-9', '6 a 9 SMMLV'),
-        ('9-12', '9 a 12 SMMLV'),
-        ('12-15', '12 a 15 SMMLV'),
-        ('15-19', '15 a 19 SMMLV'),
-        ('>20', '20 SMMLV en adelante'),
-    ]
-
     DISABILITY_CHOICES = [
         ('SI', 'Sí'),
         ('NO', 'No'),
@@ -221,7 +205,6 @@ class RegistroCandidato(models.Model):
         ('AAM', 'Angel Andres Moyano Molano'),
         ('DAP', 'Diego Alejandro Parra Pinto'),
         ('EJC', 'Erika Julieth Cristancho Pérez'),
-        # Agrega el resto de nombres
     ]
 
     # Campos
@@ -243,10 +226,16 @@ class RegistroCandidato(models.Model):
     candidato_discapacidad = models.CharField(max_length=2, choices=DISABILITY_CHOICES)
     tipo_discapacidad = models.CharField(max_length=100, blank=True, null=True)
     horario_interesado = models.CharField(max_length=2, choices=SCHEDULE_CHOICES)
-    aspiracion_salarial = models.CharField(max_length=5, choices=SALARY_CHOICES)
+
+    # Aspiración salarial como número entero con validación
+    aspiracion_salarial = models.IntegerField(
+        validators=[validar_aspiracion_salarial],
+        help_text="Ingrese un valor numérico mayor a 1,000,000."
+    )
+
     registrado_en_sise = models.CharField(max_length=2, choices=SISE_CHOICES)
-    tecnico_seleccion = models.CharField(max_length=3, choices=RECRUITER_CHOICES,blank=True, null=True)
-    vacantes_disponibles = models.ManyToManyField(Vacante, related_name="candidatos", blank=True)
+    tecnico_seleccion = models.CharField(max_length=3, choices=RECRUITER_CHOICES, blank=True, null=True)
+    vacantes_disponibles = models.ManyToManyField("Vacante", related_name="candidatos", blank=True)
 
     class Meta:
         verbose_name = "Registro de Candidato"
@@ -254,4 +243,3 @@ class RegistroCandidato(models.Model):
 
     def __str__(self):
         return f"{self.nombres} {self.apellidos} - {self.tipo_documento}: {self.numero_documento}"
-
