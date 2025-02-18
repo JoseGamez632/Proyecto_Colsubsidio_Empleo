@@ -13,16 +13,21 @@ Inicio
         min-height: 100vh;
     }
     
-    .card {
+    .vacante-card {
         background: rgba(33, 37, 41, 0.8);
         backdrop-filter: blur(5px);
         border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
         transition: all 0.3s ease;
+        padding: 20px;
+        margin-bottom: 20px;
+        position: relative;
+        color: white;
     }
     
-    .card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    .vacante-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
     }
     
     .floating-button {
@@ -59,6 +64,13 @@ Inicio
         box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.1);
     }
 
+    .badge-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 15px;
+    }
+
     .info-badge {
         background: rgba(255, 255, 255, 0.1);
         padding: 0.5rem 1rem;
@@ -66,8 +78,8 @@ Inicio
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        margin: 0.25rem;
         transition: all 0.3s ease;
+        color: white;
     }
 
     .info-badge:hover {
@@ -79,7 +91,6 @@ Inicio
         font-size: 1.2rem;
         margin-right: 0.5rem;
     }
-
 
     .switch {
         position: relative;
@@ -107,7 +118,7 @@ Inicio
         align-items: center;
         justify-content: center;
         color: white;
-        font-size: 12px
+        font-size: 12px;
     }
     
     .slider:before {
@@ -142,8 +153,161 @@ Inicio
         width: 100%;
         text-align: center;
         pointer-events: none;
-      }
+    }
 
+    .vacante-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+
+    .vacante-info {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .vacante-actions {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .vacante-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #ffc107;
+        margin-bottom: 5px;
+    }
+
+    .vacante-location {
+        font-size: 0.9rem;
+        color: #ddd;
+    }
+
+    /* Estilos actualizados del modal */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1050;
+        overflow-x: hidden;
+        overflow-y: auto;
+        outline: 0;
+    }
+    
+    .modal-dialog {
+        position: relative;
+        width: auto;
+        margin: 0;
+        pointer-events: none;
+        display: flex;
+        align-items: center;
+        min-height: 100vh;
+        padding: 1.75rem;
+    }
+    
+    .modal-dialog-centered {
+        display: flex;
+        align-items: center;
+    }
+    
+    .modal.show .modal-dialog {
+        transform: none;
+    }
+    
+    .modal-content {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        pointer-events: auto;
+        background: rgba(33, 37, 41, 0.95);
+        backdrop-filter: blur(10px);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 0.5rem;
+        outline: 0;
+        max-height: calc(100vh - 3.5rem);
+        overflow-y: auto;
+    }
+    
+    .modal-backdrop {
+        display: none !important;
+    }
+    
+    .modal-open {
+        overflow: hidden;
+        padding-right: 0 !important;
+    }
+    
+    .modal-header {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 1rem;
+    }
+
+    .modal-body {
+        position: relative;
+        flex: 1 1 auto;
+        padding: 1rem;
+    }
+
+    .modal-footer {
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 1rem;
+    }
+
+    @media (min-width: 576px) {
+        .modal-dialog {
+            max-width: 800px;
+            margin: 1.75rem auto;
+        }
+    }
+
+    .selection-checkbox {
+        width: 22px;
+        height: 22px;
+        margin-right: 15px;
+    }
+
+    .checkbox-container {
+        display: flex;
+        align-items: center;
+    }
+
+    .vacante-details-btn {
+        border: none;
+        background: transparent;
+        color: #ffc107;
+        text-decoration: underline;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        padding: 10px 0;
+        text-align: left;
+    }
+
+    .vacante-details-btn:hover {
+        color: #ffca2c;
+    }
+
+    .grid-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+        gap: 20px;
+    }
+
+    .list-group-item {
+        background-color: transparent !important;
+        color: white !important;
+    }
+    
+    .btn-close-white {
+        filter: invert(1) grayscale(100%) brightness(200%);
+    }
 </style>
 
 <div class="gradient-bg">
@@ -168,96 +332,141 @@ Inicio
         </div>
 
         <!-- Job Listings -->
-        <div class="row g-4">
+        <div class="grid-container">
             {% for vacante in vacantes %}
-            <div class="col-12">
-                <div class="card text-light">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start mb-3">
-                            <div class="d-flex align-items-center gap-3">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="{{ vacante.id }}" 
-                                           id="check{{ vacante.id }}" onchange="handleVacanteSelection('{{ vacante.id }}')">
-                                </div>
-                                <div>
-                                    <h3 class="card-title h5 mb-1">
-                                        💼 {{ vacante.cargo }}
-                                    </h3>
-                                    <span class="badge bg-warning text-dark">
-                                        📍 {{ vacante.ciudad }}
-                                    </span>
-                                    <br>
-                                    {% if request.user.is_authenticated %}
-
-                                    <span class="badge bg-warning text-dark">
-                                        🧑‍💼 Creado: {{ vacante.usuario_publicador.username|default:"No asignado" }} {{ vacante.fecha_creacion|date:"d/m/Y" }}
-                                    </span>
-                                    <span class="badge bg-warning text-dark">
-                                        🔁 Actualizado: {{ vacante.usuario_actualizador.username|default:"" }} {{ vacante.fecha_actualizacion|date:"d/m/Y" }}
-                                    </span>
-                                        <p style="margin-top: 10px;">Candidatos: {{ vacante.num_candidatos }}</p>
-                                    {% endif %}
-                                </div>
-                            </div>
+            <div class="vacante-card">
+                <div class="vacante-header">
+                    <div class="checkbox-container">
+                        <input class="selection-checkbox" type="checkbox" value="{{ vacante.id }}" 
+                               id="check{{ vacante.id }}" onchange="handleVacanteSelection('{{ vacante.id }}')">
+                        <div class="vacante-info">
+                            <div class="vacante-title">{{ vacante.cargo }}</div>
+                            <div class="vacante-location">📍 {{ vacante.ciudad }}</div>
                             {% if request.user.is_authenticated %}
-                            <div class="d-flex gap-2">
-                                <form action="{% url 'eliminar_vacante' vacante.id %}" method="POST" class="d-inline" 
-                                      onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta vacante?');">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-outline-danger btn-sm">
-                                        🗑️
-                                    </button>
-                                </form>
-                                <a href="{% url 'editar_vacante' vacante.id %}" class="btn btn-outline-info btn-sm">
-                                    ✏️
-                                </a>
-                                <a href="{% url 'lista_candidatos' vacante.id %}" class="btn btn-outline-primary btn-sm">
-                                    👥
-                                </a>
-                                <form action="{% url 'cambiar_estado_vacante' vacante.id %}" method="POST" style="display: inline;">
-                                    {% csrf_token %}
-                                    <label class="switch">
-                                        <input type="checkbox" onchange="this.form.submit()" {% if vacante.estado %}checked{% endif %}>
-                                        <span class="slider round">
-                                            <span class="switch-text">{% if vacante.estado %}Activa{% else %}Inactiva{% endif %}</span>
-                                        </span>
-                                    </label>
-                                </form>
+                            <div class="vacante-meta">
+                                <small>🧑‍💼 Creado: {{ vacante.usuario_publicador.username|default:"No asignado" }} ({{ vacante.fecha_creacion|date:"d/m/Y" }})</small><br>
+                                <small>🔁 Actualizado: {{ vacante.usuario_actualizador.username|default:"" }} ({{ vacante.fecha_actualizacion|date:"d/m/Y" }})</small><br>
+                                <small>👥 Candidatos: {{ vacante.num_candidatos }}</small>
                             </div>
                             {% endif %}
                         </div>
+                    </div>
+                    
+                    {% if request.user.is_authenticated %}
+                    <div class="vacante-actions">
+                        <form action="{% url 'eliminar_vacante' vacante.id %}" method="POST" class="d-inline" 
+                              onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta vacante?');">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-danger btn-sm">
+                                🗑️
+                            </button>
+                        </form>
+                        <a href="{% url 'editar_vacante' vacante.id %}" class="btn btn-outline-info btn-sm">
+                            ✏️
+                        </a>
+                        <a href="{% url 'lista_candidatos' vacante.id %}" class="btn btn-outline-primary btn-sm">
+                            👥
+                        </a>
+                        <form action="{% url 'cambiar_estado_vacante' vacante.id %}" method="POST" style="display: inline;">
+                            {% csrf_token %}
+                            <label class="switch">
+                                <input type="checkbox" onchange="this.form.submit()" {% if vacante.estado %}checked{% endif %}>
+                                <span class="slider round">
+                                    <span class="switch-text">{% if vacante.estado %}Activa{% else %}Inactiva{% endif %}</span>
+                                </span>
+                            </label>
+                        </form>
+                    </div>
+                    {% endif %}
+                </div>
 
-                        <div class="d-flex flex-wrap gap-2 mb-3">
-                            <div class="info-badge">
-                                👥 {{ vacante.numero_puestos }} vacantes
-                            </div>
-                            <div class="info-badge">
-                                ⏳ {{ vacante.tiempo_experiencia }}
-                            </div>
-                            <div class="info-badge">
-                                🎓 {{ vacante.nivel_estudios }}
-                            </div>
-                            <div class="info-badge">
-                                🏢 {{ vacante.modalidad_trabajo }}
-                            </div>
-                            <div class="info-badge">
-                                💰 {{ vacante.rango_salarial }}
+                <div class="badge-container">
+                    <div class="info-badge">
+                        👥 {{ vacante.numero_puestos }} vacantes
+                    </div>
+                    <div class="info-badge">
+                        ⏳ {{ vacante.tiempo_experiencia }}
+                    </div>
+                    <div class="info-badge">
+                        🎓 {{ vacante.nivel_estudios }}
+                    </div>
+                    <div class="info-badge">
+                        🏢 {{ vacante.modalidad_trabajo }}
+                    </div>
+                    <div class="info-badge">
+                        💰 {{ vacante.rango_salarial }}
+                    </div>
+                </div>
+
+                <button class="vacante-details-btn" 
+                        type="button"
+                        data-bs-toggle="modal" 
+                        data-bs-target="#modal-{{ vacante.id }}">
+                    📄 Ver más detalles
+                </button>
+            </div>
+
+            <!-- Modal para detalles de vacante -->
+            <div class="modal fade" id="modal-{{ vacante.id }}" tabindex="-1" role="dialog" aria-labelledby="modalLabel-{{ vacante.id }}" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modalLabel-{{ vacante.id }}">Detalles de la Vacante: {{ vacante.cargo }}</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-12 mb-4">
+                                    <h6 class="text-warning mb-3">📝 Descripción de la Vacante</h6>
+                                    <p>{{ vacante.descripcion_vacante }}</p>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <h6 class="text-warning mb-3">📊 Información General</h6>
+                                    <ul class="list-group list-group-flush bg-transparent">
+                                        <li class="list-group-item bg-transparent border-secondary">
+                                            <strong>👥 Número de puestos:</strong> {{ vacante.numero_puestos }}
+                                        </li>
+                                        <li class="list-group-item bg-transparent border-secondary">
+                                            <strong>⏳ Experiencia requerida:</strong> {{ vacante.tiempo_experiencia }}
+                                        </li>
+                                        <li class="list-group-item bg-transparent border-secondary">
+                                            <strong>🎓 Nivel de estudios:</strong> {{ vacante.nivel_estudios }}
+                                        </li>
+                                        <li class="list-group-item bg-transparent border-secondary">
+                                            <strong>📍 Ubicación:</strong> {{ vacante.ciudad }}
+                                        </li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <h6 class="text-warning mb-3">💼 Condiciones Laborales</h6>
+                                    <ul class="list-group list-group-flush bg-transparent">
+                                        <li class="list-group-item bg-transparent border-secondary">
+                                            <strong>🏢 Modalidad:</strong> {{ vacante.modalidad_trabajo }}
+                                        </li>
+                                        <li class="list-group-item bg-transparent border-secondary">
+                                            <strong>📄 Tipo de contrato:</strong> {{ vacante.tipo_contrato }}
+                                        </li>
+                                        <li class="list-group-item bg-transparent border-secondary">
+                                            <strong>⏰ Jornada:</strong> {{ vacante.jornada_trabajo }}
+                                        </li>
+                                        <li class="list-group-item bg-transparent border-secondary">
+                                            <strong>💰 Rango salarial:</strong> {{ vacante.rango_salarial }}
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
-
-                        <div class="collapse" id="collapse-{{ vacante.id }}">
-                            <div class="card card-body bg-dark bg-opacity-50 text-light border-0">
-                                📝 {{ vacante.descripcion_vacante }}
+                        <div class="modal-footer">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="modal-check{{ vacante.id }}" 
+                                       value="{{ vacante.id }}" onchange="handleModalSelection('{{ vacante.id }}')" 
+                                       {% if vacante.id in selected_vacantes %}checked{% endif %}>
+                                <label class="form-check-label" for="modal-check{{ vacante.id }}">Seleccionar vacante</label>
                             </div>
+                            <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cerrar</button>
                         </div>
-
-                        <button class="btn btn-link text-warning text-decoration-none p-0" 
-                                type="button"
-                                data-bs-toggle="collapse" 
-                                data-bs-target="#collapse-{{ vacante.id }}"
-                                aria-expanded="false">
-                            📄 Ver más detalles
-                        </button>
                     </div>
                 </div>
             </div>
@@ -383,20 +592,38 @@ Inicio
     </div>
 </div>
 
-
 <script>
 let selectedVacantes = [];
 
 function handleVacanteSelection(vacanteId) {
     const checkbox = document.getElementById('check' + vacanteId);
-    const button = document.getElementById('registroButton');
+    const modalCheckbox = document.getElementById('modal-check' + vacanteId);
     
     if (checkbox.checked) {
         if (!selectedVacantes.includes(vacanteId)) {
             selectedVacantes.push(vacanteId);
         }
+        if (modalCheckbox) modalCheckbox.checked = true;
     } else {
         selectedVacantes = selectedVacantes.filter(id => id !== vacanteId);
+        if (modalCheckbox) modalCheckbox.checked = false;
+    }
+    
+    updateFloatingButton();
+}
+
+function handleModalSelection(vacanteId) {
+    const modalCheckbox = document.getElementById('modal-check' + vacanteId);
+    const checkbox = document.getElementById('check' + vacanteId);
+    
+    if (modalCheckbox.checked) {
+        if (!selectedVacantes.includes(vacanteId)) {
+            selectedVacantes.push(vacanteId);
+        }
+        checkbox.checked = true;
+    } else {
+        selectedVacantes = selectedVacantes.filter(id => id !== vacanteId);
+        checkbox.checked = false;
     }
     
     updateFloatingButton();
@@ -421,8 +648,13 @@ function updateFloatingButton() {
 }
 
 function clearFilters() {
-    const formElements = document.querySelectorAll('.offcanvas-body form input');
-    formElements.forEach(input => input.value = '');
+    const formElements = document.querySelectorAll('.offcanvas-body form input, .offcanvas-body form select');
+    formElements.forEach(input => {
+        if (input.type === 'text' || input.tagName === 'SELECT') {
+            input.value = '';
+        }
+    });
+    window.location.href = window.location.pathname;
 }
 
 function redirectToRegistro(event) {
@@ -432,30 +664,40 @@ function redirectToRegistro(event) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Inicializar modales de Bootstrap
+    const modales = document.querySelectorAll('.modal');
+    modales.forEach(modal => {
+        new bootstrap.Modal(modal, {
+            backdrop: true,
+            keyboard: true,
+            focus: true
+        });
+    });
+
+    // Cargar selecciones guardadas
     const stored = localStorage.getItem('selectedVacantes');
     if (stored) {
         selectedVacantes = JSON.parse(stored);
         selectedVacantes.forEach(id => {
             const checkbox = document.getElementById('check' + id);
+            const modalCheckbox = document.getElementById('modal-check' + id);
             if (checkbox) checkbox.checked = true;
+            if (modalCheckbox) modalCheckbox.checked = true;
         });
         updateFloatingButton();
     } else {
         document.getElementById('registroButton').classList.remove('d-none');
     }
-});
-</script>
 
-<script>
-    //para mostrar las ciudades de acuerdo al departamento seleccionado
-    document.addEventListener("DOMContentLoaded", function () {
-        const departamentoSelect = document.getElementById("departamento");
-        const ciudadSelect = document.getElementById("ciudad");
-    
-        departamentoSelect.addEventListener("change", function () {
+    // Manejar los departamentos y ciudades
+    const departamentoSelect = document.getElementById("departamento");
+    const ciudadSelect = document.getElementById("ciudad");
+
+    if (departamentoSelect) {
+        departamentoSelect.addEventListener("change", function() {
             const departamentoId = this.value;
             ciudadSelect.innerHTML = '<option value="">-- Selecciona una ciudad --</option>';
-    
+
             if (departamentoId) {
                 fetch(`/cargar-ciudades/?departamento_id=${departamentoId}`)
                     .then(response => response.json())
@@ -470,22 +712,34 @@ document.addEventListener('DOMContentLoaded', function() {
                     .catch(error => console.error("Error cargando ciudades:", error));
             }
         });
-    });
-    // Cargar ciudades si hay un departamento seleccionado al recargar la página
-    if (departamentoSelect.value) {
-        cargarCiudades(departamentoSelect.value, ciudadSeleccionada);
-    }
 
-
-    </script>
-
-    <script>
-        function clearFilters() {
-            // Redirigir a la misma página pero sin parámetros en la URL, para borrar los filtros
-            window.location.href = window.location.pathname;
+        // Cargar ciudades si hay un departamento seleccionado al cargar la página
+        if (departamentoSelect.value) {
+            cargarCiudades(departamentoSelect.value, '{{ filtros.ciudad }}');
         }
-        </script>
-        
+    }
+});
 
-
+function cargarCiudades(departamentoId, ciudadSeleccionada) {
+    const ciudadSelect = document.getElementById("ciudad");
+    
+    if (departamentoId && ciudadSelect) {
+        fetch(`/cargar-ciudades/?departamento_id=${departamentoId}`)
+            .then(response => response.json())
+            .then(data => {
+                ciudadSelect.innerHTML = '<option value="">-- Selecciona una ciudad --</option>';
+                data.forEach(ciudad => {
+                    const option = document.createElement("option");
+                    option.value = ciudad.id;
+                    option.textContent = ciudad.nombre;
+                    if (ciudad.id == ciudadSeleccionada) {
+                        option.selected = true;
+                    }
+                    ciudadSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error("Error cargando ciudades:", error));
+    }
+}
+</script>
 {% endblock %}
