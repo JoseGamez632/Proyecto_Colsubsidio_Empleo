@@ -7,6 +7,126 @@ Inicio
 
 {% block contenido %}
 <style>
+    .tutorial-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 2000;
+    animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .tutorial-content {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(33, 37, 41, 0.95);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        width: 90%;
+        max-width: 600px;
+        color: white;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .tutorial-header {
+        padding: 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .tutorial-header h4 {
+        margin: 0;
+        color: #ffc107;
+    }
+
+    .tutorial-close {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 24px;
+        cursor: pointer;
+        padding: 0 8px;
+    }
+
+    .tutorial-body {
+        padding: 20px;
+    }
+
+    .tutorial-step {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 20px;
+        background: rgba(255, 255, 255, 0.05);
+        padding: 15px;
+        border-radius: 8px;
+    }
+
+    .step-number {
+        background: #ffc107;
+        color: black;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        margin-right: 15px;
+        flex-shrink: 0;
+    }
+
+    .tutorial-note {
+        background: rgba(255, 193, 7, 0.1);
+        padding: 15px;
+        border-radius: 8px;
+        border-left: 4px solid #ffc107;
+        margin-top: 20px;
+    }
+
+    .tutorial-footer {
+        padding: 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .no-show-again {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #adb5bd;
+    }
+
+    .tutorial-button {
+        background: #ffc107;
+        color: black;
+        border: none;
+        padding: 8px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s ease;
+    }
+
+    .tutorial-button:hover {
+        background: #ffca2c;
+        transform: translateY(-1px);
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
     .gradient-bg {
         background: linear-gradient(135deg, rgba(33, 37, 41, 0.97), rgba(33, 37, 41, 0.95));
         backdrop-filter: blur(10px);
@@ -309,6 +429,37 @@ Inicio
         filter: invert(1) grayscale(100%) brightness(200%);
     }
 </style>
+<div class="tutorial-modal" id="tutorialModal">
+    <div class="tutorial-content">
+        <div class="tutorial-header">
+            <h4>✨ ¡Bienvenido al Portal de Vacantes! ✨</h4>
+            <button class="tutorial-close" onclick="closeTutorial()">×</button>
+        </div>
+        <div class="tutorial-body">
+            <div class="tutorial-step">
+                <span class="step-number">1</span>
+                <p>Realiza los filtros correspondientes según lo requiera tu perfil.</p>
+            </div>
+            <div class="tutorial-step">
+                <span class="step-number">2</span>
+                <p>Revisa las vacantes y ve seleccionando todas las vacantes que te interesen.</p>
+            </div>
+            <div class="tutorial-step">
+                <span class="step-number">3</span>
+                <p>Cuando finalices de seleccionar las vacantes de tu interés oprime el botón "Aplicar a # vacantes".</p>
+            </div>
+            <div class="tutorial-note">
+                <strong>Nota:</strong> En caso de no aplicar a ninguna de las vacantes oprime el botón "Registrar mis datos" para tenerte en cuenta en futuras vacantes.
+            </div>
+        </div>
+        <div class="tutorial-footer">
+            <label class="no-show-again">
+                <input type="checkbox" id="noShowAgain"> No mostrar de nuevo
+            </label>
+            <button class="tutorial-button" onclick="closeTutorial()">¡Entendido!</button>
+        </div>
+    </div>
+</div>
 
 <div class="gradient-bg">
     <div class="container py-5">
@@ -328,6 +479,9 @@ Inicio
                 </a>
                 <a href="{% url 'descargar_excel' %}" class="btn btn-success">Descargar Excel Vacantes</a>
                 {% endif %}
+                <button type="button" class="btn btn-outline-light" onclick="desmarcarVacantes()">
+                    ❌ Desmarcar Selección
+                </button>
             </div>
         </div>
 
@@ -397,12 +551,12 @@ Inicio
                         💰 {{ vacante.rango_salarial }}
                     </div>
                 </div>
-
-                <button class="vacante-details-btn" 
+                <br>
+                <button class="btn btn-outline-warning" 
                         type="button"
                         data-bs-toggle="modal" 
                         data-bs-target="#modal-{{ vacante.id }}">
-                    📄 Ver más detalles
+                    Descripcion Vacante
                 </button>
             </div>
 
@@ -466,7 +620,10 @@ Inicio
                                 <label class="form-check-label" for="modal-check{{ vacante.id }}">Seleccionar vacante</label>
                             </div>
                             <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cerrar</button>
+                            <br><br><br>
                         </div>
+                        <hr>
+                        <hr>
                     </div>
                 </div>
             </div>
@@ -740,6 +897,50 @@ function cargarCiudades(departamentoId, ciudadSeleccionada) {
             })
             .catch(error => console.error("Error cargando ciudades:", error));
     }
+    }
+    function desmarcarVacantes() {
+        // Limpiar el array de vacantes seleccionadas
+        selectedVacantes = [];
+        
+        // Desmarcar todos los checkboxes principales
+        const checkboxes = document.querySelectorAll('.selection-checkbox');
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = false;
+        });
+        
+        // Desmarcar todos los checkboxes en los modales
+        const modalCheckboxes = document.querySelectorAll('[id^="modal-check"]');
+        modalCheckboxes.forEach(checkbox => {
+            checkbox.checked = false;
+        });
+        
+        // Limpiar el localStorage
+        localStorage.removeItem('selectedVacantes');
+        
+        // Actualizar el botón flotante
+        updateFloatingButton();
+    }
+    function showTutorial() {
+    const noShow = localStorage.getItem('noShowTutorial');
+    if (!noShow) {
+        document.getElementById('tutorialModal').style.display = 'block';
+    }
 }
+
+function closeTutorial() {
+    document.getElementById('tutorialModal').style.display = 'none';
+    if (document.getElementById('noShowAgain').checked) {
+        localStorage.setItem('noShowTutorial', 'true');
+    }
+}
+
+// Añade esto al final del DOMContentLoaded existente
+document.addEventListener('DOMContentLoaded', function() {
+    // ... código existente ...
+    
+    // Mostrar el tutorial
+    showTutorial();
+});
+
 </script>
 {% endblock %}
