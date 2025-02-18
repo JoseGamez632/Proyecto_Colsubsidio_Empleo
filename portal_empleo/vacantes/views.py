@@ -11,6 +11,8 @@ from django.db.models import Count, Q
 import unicodedata
 from django.db import migrations
 from django.views.generic import TemplateView
+import datetime
+
 
 
 
@@ -256,71 +258,55 @@ def registro_candidato_view(request):
 #Descargar Excel
 
 def descargar_excel(request):
-    # Crear un libro de trabajo y una hoja de trabajo
+    """Genera y descarga un archivo Excel con los datos de las vacantes."""
+
+    # Crear un nuevo libro de trabajo y hoja
     wb = openpyxl.Workbook()
     ws = wb.active
-    ws.title = "Candidatos Registrados"
+    ws.title = "Vacantes"
 
-    # Escribir los encabezados de las columnas
+    # Encabezados de la tabla
     headers = [
-        'Feria', 'Fecha de Feria', 'Sexo', 'Tipo de Documento', 'Número de Documento', 'Nombres', 
-        'Apellidos', 'Número de Celular', 'Correo Electrónico', 'Fecha de Nacimiento', 'Formación Académica', 
-        'Programa Académico', 'Experiencia Laboral', 'Interés Ocupacional', 'Localidad/Municipio', 
-        'Candidato con Discapacidad', 'Tipo de Discapacidad', 'Horario Interesado', 'Aspiración Salarial', 
-        'Registrado en SISE', 'Técnico de Selección', 'Vacantes Disponibles'
+        "Código Vacante", "Cargo", "Área", "Número de Puestos", 
+        "Modalidad Trabajo", "Tipo Contrato", "Jornada Trabajo",
+        "Descripción", "Experiencia", "Nivel Estudios",
+        "Departamento", "Ciudad", "Rango Salarial",
+        "Empresa", "Estado", "Fecha Publicación"
     ]
     ws.append(headers)
 
-    # Obtener todos los candidatos registrados de la base de datos
-    candidatos = RegistroCandidato.objects.all()
+    # Obtener todas las vacantes activas
+    vacantes = Vacante.objects.all()
 
-    # Mapeo de las opciones para hacer más legible la salida en Excel
-    SEX_CHOICES = dict(RegistroCandidato.SEX_CHOICES)
-    DOCUMENT_TYPE_CHOICES = dict(RegistroCandidato.DOCUMENT_TYPE_CHOICES)
-    EDUCATION_LEVEL_CHOICES = dict(RegistroCandidato.EDUCATION_LEVEL_CHOICES)
-    SCHEDULE_CHOICES = dict(RegistroCandidato.SCHEDULE_CHOICES)
-    SALARY_CHOICES = dict(RegistroCandidato.SALARY_CHOICES)
-    DISABILITY_CHOICES = dict(RegistroCandidato.DISABILITY_CHOICES)
-    SISE_CHOICES = dict(RegistroCandidato.SISE_CHOICES)
-    RECRUITER_CHOICES = dict(RegistroCandidato.RECRUITER_CHOICES)
+    # Agregar los datos de cada vacante
+    for vacante in vacantes:
+        ws.append([
+            vacante.codigo_vacante,
+            vacante.cargo,
+            vacante.area if vacante.area else "No especificado",
+            vacante.numero_puestos if vacante.numero_puestos else "No especificado",
+            vacante.modalidad_trabajo,
+            vacante.tipo_contrato,
+            vacante.jornada_trabajo,
+            vacante.descripcion_vacante[:100] + "..." if len(vacante.descripcion_vacante) > 100 else vacante.descripcion_vacante,
+            vacante.tiempo_experiencia,
+            vacante.nivel_estudios,
+            vacante.departamento.nombre if vacante.departamento else "No especificado",
+            vacante.ciudad.nombre if vacante.ciudad else "No especificado",
+            vacante.rango_salarial if vacante.rango_salarial else "No especificado",
+            vacante.empresa_usuaria,
+            "Activa" if vacante.estado else "Inactiva",
+            vacante.fecha_publicacion.strftime("%d/%m/%Y")
+        ])
 
-    # Escribir los datos de cada candidato en las filas
-    for candidato in candidatos:
-        vacantes_disponibles = candidato.vacantes_disponibles.all()  # Relación ManyToMany, obtenemos las vacantes
-        vacantes_str = ', '.join([vacante.codigo_vacante for vacante in vacantes_disponibles]) if vacantes_disponibles else 'N/A'
+    # Configurar la respuesta HTTP
+    response = HttpResponse(
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+    response["Content-Disposition"] = 'attachment; filename="vacantes.xlsx"'
 
-        # Agregar la fila con todos los datos
-        row = [
-            candidato.feria,
-            candidato.fecha_feria,
-            SEX_CHOICES.get(candidato.sexo, candidato.sexo),
-            DOCUMENT_TYPE_CHOICES.get(candidato.tipo_documento, candidato.tipo_documento),
-            candidato.numero_documento,
-            candidato.nombres,
-            candidato.apellidos,
-            candidato.numero_celular,
-            candidato.correo_electronico,
-            candidato.fecha_nacimiento,
-            EDUCATION_LEVEL_CHOICES.get(candidato.formacion_academica, candidato.formacion_academica),
-            candidato.programa_academico,
-            str(candidato.experiencia_laboral),  # Convertir el JSON a cadena para guardarlo
-            str(candidato.interes_ocupacional),  # Convertir el JSON a cadena para guardarlo
-            candidato.localidad_municipio,
-            DISABILITY_CHOICES.get(candidato.candidato_discapacidad, candidato.candidato_discapacidad),
-            candidato.tipo_discapacidad or 'N/A',  # Si no tiene tipo de discapacidad, colocar "N/A"
-            SCHEDULE_CHOICES.get(candidato.horario_interesado, candidato.horario_interesado),
-            SALARY_CHOICES.get(candidato.aspiracion_salarial, candidato.aspiracion_salarial),
-            SISE_CHOICES.get(candidato.registrado_en_sise, candidato.registrado_en_sise),
-            RECRUITER_CHOICES.get(candidato.tecnico_seleccion, candidato.tecnico_seleccion),
-            vacantes_str  # Vacantes disponibles
-        ]
-        ws.append(row)
-
-    # Crear una respuesta HTTP con el archivo Excel
-    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    response['Content-Disposition'] = 'attachment; filename=candidatos_registrados.xlsx'
+    # Guardar el libro en la respuesta
     wb.save(response)
-
     return response
 
 
@@ -398,4 +384,61 @@ def cargar_ciudades(request):
 class RegistrationGuideView(TemplateView):
     template_name = 'registration/guide.html'
     
+def exportar_candidatos_excel(request):
+    """Genera y descarga un archivo Excel con la lista de candidatos registrados."""
     
+    # Crear un nuevo libro de trabajo y una hoja de Excel
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "Candidatos"
+
+    # Definir los encabezados de las columnas
+    columnas = [
+        "Feria", "Fecha Feria", "Sexo", "Tipo Documento", "Número Documento", 
+        "Nombres", "Apellidos", "Número Celular", "Correo Electrónico", 
+        "Fecha Nacimiento", "Formación Académica", "Programa Académico", 
+        "Experiencia Laboral", "Interés Ocupacional", "Localidad/Municipio", 
+        "Discapacidad", "Tipo Discapacidad", "Horario Interesado", 
+        "Aspiración Salarial", "Registrado en SISE", "Técnico Selección"
+    ]
+    
+    ws.append(columnas)  # Agregar encabezados a la hoja
+
+    # Obtener los datos de los candidatos
+    candidatos = RegistroCandidato.objects.all()
+
+    for candidato in candidatos:
+        ws.append([
+            candidato.feria,
+            candidato.fecha_feria.strftime("%Y-%m-%d") if candidato.fecha_feria else "",
+            candidato.get_sexo_display(),
+            candidato.get_tipo_documento_display(),
+            candidato.numero_documento,
+            candidato.nombres,
+            candidato.apellidos,
+            candidato.numero_celular,
+            candidato.correo_electronico,
+            candidato.fecha_nacimiento.strftime("%Y-%m-%d"),
+            candidato.get_formacion_academica_display(),
+            candidato.programa_academico,
+            candidato.experiencia_laboral,
+            candidato.interes_ocupacional,
+            candidato.localidad_municipio,
+            candidato.get_candidato_discapacidad_display(),
+            candidato.tipo_discapacidad,
+            candidato.get_horario_interesado_display(),
+            candidato.aspiracion_salarial,
+            candidato.get_registrado_en_sise_display(),
+            candidato.get_tecnico_seleccion_display()
+        ])
+
+    # Crear la respuesta HTTP con el archivo Excel
+    response = HttpResponse(
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+    response["Content-Disposition"] = f'attachment; filename="candidatos_{datetime.datetime.now().strftime("%Y%m%d_%H%M%S")}.xlsx"'
+    
+    # Guardar el archivo en la respuesta
+    wb.save(response)
+
+    return response

@@ -11,8 +11,7 @@
             <input class="text-white bg-dark" type="text" name="q" value="{{ query }}" class="form-control" placeholder="Busca cedula o nombre">
             <div class="input-group-append">
                 <button class="btn btn-primary" type="submit">🔍</button>
-                <a href="{% url 'descargar_excel' %}" class="btn btn-success">Descargar Excel</a>
-
+                <a href="{% url 'exportar_candidatos' %}" class="btn btn-success">Descargar Listado de Candidatos</a>
             </div>
         </div>
     </form>

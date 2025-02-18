@@ -5,7 +5,7 @@ from django.conf import settings
 from django.contrib.staticfiles.urls import static
 from django.contrib.auth import views as auth_views
 from .views import registro_candidato_view
-from .views import cargar_ciudades, RegistrationGuideView
+from .views import cargar_ciudades, RegistrationGuideView, exportar_candidatos_excel
 
 
 urlpatterns = [
@@ -24,6 +24,8 @@ urlpatterns = [
     path('cambiar_estado_vacante/<int:vacante_id>/', views.cambiar_estado_vacante, name='cambiar_estado_vacante'),
     path('cargar-ciudades/', cargar_ciudades, name="cargar_ciudades"),
     path('registration-guide/', RegistrationGuideView.as_view(), name='registration_guide'),
+    path("exportar-candidatos/", exportar_candidatos_excel, name="exportar_candidatos"),
+
 
 
 
