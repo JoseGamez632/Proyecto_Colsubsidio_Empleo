@@ -348,6 +348,7 @@ Inicio
         to { opacity: 1; transform: translateY(0); }
     }
 </style>
+{% if not user.is_authenticated %}
 <div class="tutorial-modal" id="tutorialModal">
     <div class="tutorial-content">
         <div class="tutorial-header">
@@ -431,6 +432,7 @@ Inicio
         </div>
     </div>
 </div>
+{% endif %}
 <div class="authorization-modal" id="authorizationModal">
     <div class="authorization-content">
         <div class="authorization-header">
