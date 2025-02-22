@@ -8,6 +8,250 @@ Inicio
 {% block contenido %}
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
 <style>
+    .authorization-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        z-index: 2001;
+        animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .authorization-content {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: linear-gradient(145deg, #1a1a1a, #2d2d2d);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        width: 90%;
+        max-width: 600px;
+        color: white;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .authorization-header {
+        padding: 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 12px 12px 0 0;
+    }
+
+    .authorization-header h4 {
+        margin: 0;
+        color: #f8d047;
+        font-size: 1.5rem;
+    }
+
+    .authorization-body {
+        padding: 25px;
+        font-size: 1.1em;
+        line-height: 1.6;
+        max-height: 60vh;
+        overflow-y: auto;
+    }
+
+    .authorization-footer {
+        padding: 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        justify-content: flex-end;
+        gap: 15px;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 0 0 12px 12px;
+    }
+
+    .auth-button {
+        padding: 12px 25px;
+        border-radius: 8px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        border: none;
+    }
+
+    .auth-accept {
+        background: linear-gradient(145deg, #f8d047, #f8b947);
+        color: black;
+    }
+
+    .auth-decline {
+        background: transparent;
+        color: #ffffff;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .auth-button:hover {
+        transform: translateY(-2px);
+    }
+
+    .auth-accept:hover {
+        box-shadow: 0 5px 15px rgba(248, 208, 71, 0.3);
+    }
+
+    .auth-decline:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translate(-50%, -48%); }
+        to { opacity: 1; transform: translate(-50%, -50%); }
+    }
+
+    .tutorial-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 2000;
+    animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .tutorial-content {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: linear-gradient(145deg, #1a1a1a, #2d2d2d);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        width: 90%;
+        max-width: 700px;
+        color: white;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    .tutorial-header {
+        padding: 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(0, 0, 0, 0.2);
+    }
+
+    .tutorial-header h4 {
+        margin: 0;
+        color: #f8d047;
+    }
+
+    .tutorial-body {
+        padding: 20px;
+    }
+
+    .tutorial-step {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 20px;
+        background: rgba(255, 255, 255, 0.05);
+        padding: 15px;
+        border-radius: 8px;
+        transition: transform 0.2s;
+    }
+
+    .tutorial-step:hover {
+        transform: translateX(5px);
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+    .step-number {
+        background: #f8d047;
+        color: black;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        margin-right: 15px;
+        flex-shrink: 0;
+    }
+
+    .step-content {
+        flex: 1;
+    }
+
+    .step-content h6 {
+        color: #f8d047;
+        margin-bottom: 8px;
+    }
+
+    .step-content ul {
+        margin: 5px 0;
+        padding-left: 20px;
+    }
+
+    .example-box {
+        background: rgba(248, 208, 71, 0.1);
+        border-left: 3px solid #f8d047;
+        padding: 8px 12px;
+        margin-top: 5px;
+        border-radius: 0 4px 4px 0;
+        font-size: 0.9em;
+    }
+
+    .tutorial-footer {
+        padding: 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(0, 0, 0, 0.2);
+    }
+
+    .tutorial-button {
+        background: #f8d047;
+        color: black;
+        border: none;
+        padding: 8px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s ease;
+    }
+
+    .tutorial-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(248, 208, 71, 0.3);
+    }
+
+    .no-show-again {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #adb5bd;
+    }
+
+    .tutorial-close {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 24px;
+        cursor: pointer;
+        padding: 0 8px;
+    }
+
+    .tutorial-close:hover {
+        color: #f8d047;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
     /* Estilos generales del formulario */
     .card {
         border-radius: 15px;
@@ -104,6 +348,117 @@ Inicio
         to { opacity: 1; transform: translateY(0); }
     }
 </style>
+{% if not user.is_authenticated %}
+<div class="tutorial-modal" id="tutorialModal">
+    <div class="tutorial-content">
+        <div class="tutorial-header">
+            <h4>📝 Guía de Registro de Hoja de Vida</h4>
+            <button class="tutorial-close" onclick="closeTutorial()">×</button>
+        </div>
+        <div class="tutorial-body">
+            <div class="tutorial-step">
+                <span class="step-number">1</span>
+                <div class="step-content">
+                    <h6>Datos Personales</h6>
+                    <p>Diligencia tus datos personales:</p>
+                    <ul>
+                        <li>Sexo</li>
+                        <li>Tipo de Documento</li>
+                        <li>Número de Documento</li>
+                        <li>Nombres y Apellidos</li>
+                        <li>Número de Celular</li>
+                        <li>Demás información personal</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="tutorial-step">
+                <span class="step-number">2</span>
+                <div class="step-content">
+                    <h6>Formación Académica</h6>
+                    <p>Registra tu nivel de formación académica y el programa académico más relevante que hayas alcanzado.</p>
+                </div>
+            </div>
+            
+            <div class="tutorial-step">
+                <span class="step-number">3</span>
+                <div class="step-content">
+                    <h6>Experiencia Laboral</h6>
+                    <p>Registra tus últimas 3 experiencias laborales con el siguiente formato:</p>
+                    <div class="example-box">
+                        Último cargo - Fecha inicio a Fecha fin - Empresa
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tutorial-step">
+                <span class="step-number">4</span>
+                <div class="step-content">
+                    <h6>Interés Ocupacional</h6>
+                    <p>Registra los tipos de cargos que te interesan para futuras oportunidades, por ejemplo:</p>
+                    <div class="example-box">
+                        Auxiliar de bodega, Call center, Operario de producción
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tutorial-step">
+                <span class="step-number">5</span>
+                <div class="step-content">
+                    <h6>Perfil Laboral</h6>
+                    <p>Completa los datos adicionales de tu perfil:</p>
+                    <ul>
+                        <li>Localidad/Municipio</li>
+                        <li>Horario de Interés</li>
+                        <li>Aspiración Salarial</li>
+                        <li>Demás información requerida</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="tutorial-step">
+                <span class="step-number">6</span>
+                <div class="step-content">
+                    <h6>Confirmar Vacantes</h6>
+                    <p>Selecciona las vacantes a las que deseas aplicar en "Vacantes disponibles" y presiona el botón registrar.</p>
+                </div>
+            </div>
+        </div>
+        <div class="tutorial-footer">
+            <label class="no-show-again">
+                <input type="checkbox" id="noShowAgain"> No mostrar de nuevo
+            </label>
+            <button class="tutorial-button" onclick="closeTutorial()">¡Comenzar Registro!</button>
+        </div>
+    </div>
+</div>
+{% endif %}
+<div class="authorization-modal" id="authorizationModal">
+    <div class="authorization-content">
+        <div class="authorization-header">
+            <h4>🔒 Autorización de Tratamiento de Datos</h4>
+        </div>
+        <div class="authorization-body">
+            <p>De conformidad con la Ley Estatutaria 1581 de 2012 de Protección de Datos y normas concordantes, autorizo como titular de los datos personales para que sean tratados de acuerdo a la política de protección de datos personales que incluye:</p>
+            
+            <ul style="margin-top: 15px; margin-bottom: 15px;">
+                <li>Recolección de información personal</li>
+                <li>Almacenamiento seguro de los datos</li>
+                <li>Uso de la información para procesos de selección</li>
+                <li>Transferencia a terceros cuando sea necesario</li>
+                <li>Comunicación de oportunidades laborales</li>
+            </ul>
+
+            <p>Entiendo que puedo ejercer mis derechos de conocer, actualizar, rectificar y suprimir mi información personal, así como el derecho a revocar el consentimiento otorgado para el tratamiento de datos personales.</p>
+        </div>
+        <div class="authorization-footer">
+            <button class="auth-button auth-decline" onclick="declineAuthorization()">No Autorizo</button>
+            <button class="auth-button auth-accept" onclick="acceptAuthorization()">Autorizo</button>
+        </div>
+    </div>
+</div>
+
+
 <div class="container mt-5" style="text-align: center;">
     
     <h1 class="text-center">Formulario de Registro de Candidato</h1>
@@ -291,7 +646,29 @@ Inicio
             const selectedVacantes = urlParams.get('selected_vacantes') ? urlParams.get('selected_vacantes').split(',') : [];
             $('#vacantes').val(selectedVacantes).trigger('change');
         {% endif %}
+        });
+        function showTutorial() {
+        const noShow = localStorage.getItem('noShowRegistrationTutorial');
+        if (!noShow) {
+            document.getElementById('tutorialModal').style.display = 'block';
+        }
+    }
+
+    function closeTutorial() {
+        document.getElementById('tutorialModal').style.display = 'none';
+        if (document.getElementById('noShowAgain').checked) {
+            localStorage.setItem('noShowRegistrationTutorial', 'true');
+        }
+    }
+
+    // Añade esto al final del DOMContentLoaded existente
+    document.addEventListener('DOMContentLoaded', function() {
+        // ... código existente ...
+        
+        // Mostrar el tutorial
+        showTutorial();
     });
+
 </script>
 
 
@@ -315,6 +692,71 @@ Inicio
         // Inicializar el estado del campo al cargar la página
         toggleTipoDiscapacidad();
     });
+    // Función para mostrar el tutorial
+function showTutorial() {
+    const noShow = localStorage.getItem('noShowRegistrationTutorial');
+    if (!noShow) {
+        document.getElementById('tutorialModal').style.display = 'block';
+    } else {
+        // Si el usuario eligió no mostrar el tutorial, mostrar directamente el modal de autorización
+        document.getElementById('authorizationModal').style.display = 'block';
+    }
+}
+
+// Función para cerrar el tutorial y mostrar la autorización
+function closeTutorial() {
+    document.getElementById('tutorialModal').style.display = 'none';
+    if (document.getElementById('noShowAgain').checked) {
+        localStorage.setItem('noShowRegistrationTutorial', 'true');
+    }
+    // Mostrar el modal de autorización después de cerrar el tutorial
+    document.getElementById('authorizationModal').style.display = 'block';
+}
+
+// Funciones para manejar la autorización
+function acceptAuthorization() {
+    document.getElementById('authorizationModal').style.display = 'none';
+    // Continuar con el formulario
+}
+
+function declineAuthorization() {
+    // Redirigir a la página de inicio
+    window.location.href = '/';
+}
+
+// Inicialización cuando el DOM está listo
+document.addEventListener('DOMContentLoaded', function() {
+    // Inicializar Select2 en el campo de vacantes
+    $('#vacantes').select2({
+        placeholder: "Seleccione vacantes",
+        allowClear: true
+    });
+
+    // Cargar vacantes seleccionadas si no estamos en modo edición
+    {% if not is_edit %}
+        const urlParams = new URLSearchParams(window.location.search);
+        const selectedVacantes = urlParams.get('selected_vacantes') ? urlParams.get('selected_vacantes').split(',') : [];
+        $('#vacantes').val(selectedVacantes).trigger('change');
+    {% endif %}
+
+    // Inicializar el manejo de discapacidad
+    const discapacidadField = document.querySelector('[name="candidato_discapacidad"]');
+    const tipoDiscapacidadContainer = document.getElementById('tipo_discapacidad_container');
+    
+    function toggleTipoDiscapacidad() {
+        if (discapacidadField.value === 'SI') {
+            tipoDiscapacidadContainer.style.display = 'block';
+        } else {
+            tipoDiscapacidadContainer.style.display = 'none';
+        }
+    }
+    
+    discapacidadField.addEventListener('change', toggleTipoDiscapacidad);
+    toggleTipoDiscapacidad();
+
+    // Mostrar el tutorial o el modal de autorización
+    showTutorial();
+});
     </script>
 
 

@@ -429,6 +429,7 @@ Inicio
         filter: invert(1) grayscale(100%) brightness(200%);
     }
 </style>
+{% if not user.is_authenticated %}
 <div class="tutorial-modal" id="tutorialModal">
     <div class="tutorial-content">
         <div class="tutorial-header">
@@ -460,6 +461,7 @@ Inicio
         </div>
     </div>
 </div>
+{% endif %}
 
 <div class="gradient-bg">
     <div class="container py-5">
