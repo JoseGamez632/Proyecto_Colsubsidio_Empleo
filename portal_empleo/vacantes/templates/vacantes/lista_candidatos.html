@@ -231,6 +231,158 @@ Candidatos para la Vacante
         // Inicializar conteo
         updateSelectedCount();
     });
+    document.addEventListener('DOMContentLoaded', function() {
+        const candidatos = [
+            {% for candidato in candidatos %}
+            {
+                id: {{ candidato.id }},
+                nombres: "{{ candidato.nombres|escapejs }}",
+                apellidos: "{{ candidato.apellidos|escapejs }}",
+                feria: "{{ candidato.feria|escapejs }}",
+                fecha_feria: "{{ candidato.fecha_feria|escapejs }}",
+                sexo: "{{ candidato.sexo|escapejs }}",
+                tipo_documento: "{{ candidato.tipo_documento|escapejs }}",
+                numero_documento: "{{ candidato.numero_documento|escapejs }}",
+                numero_celular: "{{ candidato.numero_celular|escapejs }}",
+                correo_electronico: "{{ candidato.correo_electronico|escapejs }}",
+                fecha_nacimiento: "{{ candidato.fecha_nacimiento|escapejs }}",
+                formacion_academica: "{{ candidato.formacion_academica|escapejs }}",
+                programa_academico: "{{ candidato.programa_academico|escapejs }}",
+                experiencia_laboral: "{{ candidato.experiencia_laboral|escapejs }}",
+                interes_ocupacional: "{{ candidato.interes_ocupacional|escapejs }}",
+                localidad_municipio: "{{ candidato.localidad_municipio|escapejs }}",
+                candidato_discapacidad: "{{ candidato.candidato_discapacidad|escapejs }}",
+                tipo_discapacidad: "{{ candidato.tipo_discapacidad|escapejs }}",
+                horario_interesado: "{{ candidato.horario_interesado|escapejs }}",
+                aspiracion_salarial: "{{ candidato.aspiracion_salarial|escapejs }}",
+                registrado_en_sise: "{{ candidato.registrado_en_sise|escapejs }}",
+                tecnico_seleccion: "{{ candidato.tecnico_seleccion|escapejs }}"
+            },
+            {% endfor %}
+        ];
+    
+        let currentCandidatoIndex = 0;
+        const modal = new bootstrap.Modal(document.getElementById('cvModal'));
+    
+        // Función para sanitizar el texto antes de mostrarlo
+        function sanitizeHTML(text) {
+            if (!text) return 'No especificado';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    
+        // Función para mostrar la hoja de vida en el modal
+        function showCV(candidato) {
+            if (!candidato) {
+                console.error('No se encontró el candidato');
+                return;
+            }
+    
+            console.log('Mostrando datos del candidato:', candidato);
+    
+            const cvContent = document.getElementById('cvContent');
+            cvContent.innerHTML = `
+                <div class="cv-section">
+                    <h4>Información Personal</h4>
+                    <p><strong>Nombre completo:</strong> ${sanitizeHTML(candidato.nombres)} ${sanitizeHTML(candidato.apellidos)}</p>
+                    <p><strong>Documento:</strong> ${sanitizeHTML(candidato.tipo_documento)} ${sanitizeHTML(candidato.numero_documento)}</p>
+                    <p><strong>Fecha de nacimiento:</strong> ${sanitizeHTML(candidato.fecha_nacimiento)}</p>
+                    <p><strong>Sexo:</strong> ${sanitizeHTML(candidato.sexo)}</p>
+                </div>
+    
+                <div class="cv-section">
+                    <h4>Contacto</h4>
+                    <p><strong>Celular:</strong> ${sanitizeHTML(candidato.numero_celular)}</p>
+                    <p><strong>Correo:</strong> ${sanitizeHTML(candidato.correo_electronico)}</p>
+                    <p><strong>Localidad/Municipio:</strong> ${sanitizeHTML(candidato.localidad_municipio)}</p>
+                </div>
+    
+                <div class="cv-section">
+                    <h4>Formación y Experiencia</h4>
+                    <p><strong>Formación académica:</strong> ${sanitizeHTML(candidato.formacion_academica)}</p>
+                    <p><strong>Programa académico:</strong> ${sanitizeHTML(candidato.programa_academico)}</p>
+                    <p><strong>Experiencia laboral:</strong> ${sanitizeHTML(candidato.experiencia_laboral)}</p>
+                </div>
+    
+                <div class="cv-section">
+                    <h4>Información Adicional</h4>
+                    <p><strong>Interés ocupacional:</strong> ${sanitizeHTML(candidato.interes_ocupacional)}</p>
+                    <p><strong>Horario interesado:</strong> ${sanitizeHTML(candidato.horario_interesado)}</p>
+                    <p><strong>Aspiración salarial:</strong> ${sanitizeHTML(candidato.aspiracion_salarial)}</p>
+                    <p><strong>Candidato con discapacidad:</strong> ${sanitizeHTML(candidato.candidato_discapacidad)}</p>
+                    <p><strong>Tipo de discapacidad:</strong> ${sanitizeHTML(candidato.tipo_discapacidad)}</p>
+                </div>
+    
+                <div class="cv-section">
+                    <h4>Datos de la Feria</h4>
+                    <p><strong>Feria:</strong> ${sanitizeHTML(candidato.feria)}</p>
+                    <p><strong>Fecha de la feria:</strong> ${sanitizeHTML(candidato.fecha_feria)}</p>
+                    <p><strong>Técnico de selección:</strong> ${sanitizeHTML(candidato.tecnico_seleccion)}</p>
+                    <p><strong>Registrado en SISE:</strong> ${sanitizeHTML(candidato.registrado_en_sise)}</p>
+                </div>
+            `;
+        }
+    
+        // Event listeners para los botones de navegación
+        document.querySelectorAll('.view-details').forEach(button => {
+            button.addEventListener('click', function() {
+                const candidatoId = parseInt(this.dataset.candidatoId);
+                currentCandidatoIndex = candidatos.findIndex(c => c.id === candidatoId);
+                if (currentCandidatoIndex !== -1) {
+                    showCV(candidatos[currentCandidatoIndex]);
+                    modal.show();
+                } else {
+                    console.error('Candidato no encontrado:', candidatoId);
+                }
+            });
+        });
+    
+        document.getElementById('prevCandidate').addEventListener('click', function() {
+            if (currentCandidatoIndex > 0) {
+                currentCandidatoIndex--;
+                showCV(candidatos[currentCandidatoIndex]);
+            }
+        });
+    
+        document.getElementById('nextCandidate').addEventListener('click', function() {
+            if (currentCandidatoIndex < candidatos.length - 1) {
+                currentCandidatoIndex++;
+                showCV(candidatos[currentCandidatoIndex]);
+            }
+        });
+    
+        // Funciones de filtrado
+        function filterCandidatos() {
+            const searchNombre = document.getElementById('searchNombre').value.toLowerCase();
+            const searchCiudad = document.getElementById('searchCiudad').value.toLowerCase();
+            const searchDocumento = document.getElementById('searchDocumento').value.toLowerCase();
+    
+            document.querySelectorAll('.candidato-card').forEach(card => {
+                const nombre = card.dataset.nombre.toLowerCase();
+                const ciudad = card.dataset.ciudad.toLowerCase();
+                const documento = card.dataset.documento.toLowerCase();
+    
+                const matchesNombre = nombre.includes(searchNombre);
+                const matchesCiudad = ciudad.includes(searchCiudad);
+                const matchesDocumento = documento.includes(searchDocumento);
+    
+                card.style.display = (matchesNombre && matchesCiudad && matchesDocumento) ? 'block' : 'none';
+            });
+        }
+    
+        // Event listeners para los filtros
+        document.getElementById('searchNombre').addEventListener('input', filterCandidatos);
+        document.getElementById('searchCiudad').addEventListener('input', filterCandidatos);
+        document.getElementById('searchDocumento').addEventListener('input', filterCandidatos);
+        
+        document.getElementById('clearFilters').addEventListener('click', function() {
+            document.getElementById('searchNombre').value = '';
+            document.getElementById('searchCiudad').value = '';
+            document.getElementById('searchDocumento').value = '';
+            filterCandidatos();
+        });
+    });
     
 </script>
 {% endblock %}
