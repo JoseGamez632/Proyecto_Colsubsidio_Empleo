@@ -12,7 +12,13 @@ import unicodedata
 from django.db import migrations
 from django.views.generic import TemplateView
 import datetime
-
+import json
+import csv
+from django.views.decorators.http import require_POST
+from datetime import datetime
+from openpyxl import Workbook
+from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+from openpyxl.utils import get_column_letter
 
 
 
@@ -441,4 +447,103 @@ def exportar_candidatos_excel(request):
     # Guardar el archivo en la respuesta
     wb.save(response)
 
+    return response
+
+@require_POST
+@require_POST
+def descargar_candidatos(request):
+    # Obtener IDs de candidatos seleccionados
+    selected_ids = json.loads(request.POST.get('selected_candidates', '[]'))
+    
+    if not selected_ids:
+        return HttpResponse('No se seleccionaron candidatos', status=400)
+    
+    # Obtener candidatos seleccionados
+    candidatos = RegistroCandidato.objects.filter(id__in=selected_ids)
+    
+    # Crear nuevo workbook
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Candidatos"
+    
+    # Definir estilos
+    header_font = Font(bold=True, color="FFFFFF")
+    header_fill = PatternFill(start_color="366092", end_color="366092", fill_type="solid")
+    centrado = Alignment(horizontal="center", vertical="center")
+    borde = Border(
+        left=Side(style='thin'),
+        right=Side(style='thin'),
+        top=Side(style='thin'),
+        bottom=Side(style='thin')
+    )
+    
+    # Definir encabezados
+    headers = [
+        'Nombres', 'Apellidos', 'Tipo Documento', 'Número Documento',
+        'Fecha Nacimiento', 'Sexo', 'Celular', 'Correo',
+        'Localidad/Municipio', 'Formación Académica', 'Programa Académico',
+        'Experiencia Laboral', 'Interés Ocupacional', 'Horario Interesado',
+        'Aspiración Salarial', 'Candidato Discapacidad', 'Tipo Discapacidad',
+        'Registrado en SISE', 'Técnico Selección', 'Feria', 'Fecha Feria'
+    ]
+    
+    # Escribir encabezados
+    for col, header in enumerate(headers, 1):
+        cell = ws.cell(row=1, column=col, value=header)
+        cell.font = header_font
+        cell.fill = header_fill
+        cell.alignment = centrado
+        cell.border = borde
+    
+    # Escribir datos
+    for row, candidato in enumerate(candidatos, 2):
+        datos = [
+            candidato.nombres,
+            candidato.apellidos,
+            candidato.get_tipo_documento_display(),
+            candidato.numero_documento,
+            candidato.fecha_nacimiento.strftime('%Y-%m-%d') if candidato.fecha_nacimiento else '',
+            candidato.get_sexo_display(),
+            candidato.numero_celular,
+            candidato.correo_electronico,
+            candidato.localidad_municipio,
+            candidato.get_formacion_academica_display(),
+            candidato.programa_academico,
+            candidato.experiencia_laboral,
+            candidato.interes_ocupacional,
+            candidato.get_horario_interesado_display(),
+            candidato.aspiracion_salarial,
+            candidato.get_candidato_discapacidad_display(),
+            candidato.tipo_discapacidad,
+            candidato.get_registrado_en_sise_display(),
+            candidato.get_tecnico_seleccion_display(),
+            candidato.feria,
+            candidato.fecha_feria.strftime('%Y-%m-%d') if candidato.fecha_feria else ''
+        ]
+        
+        for col, valor in enumerate(datos, 1):
+            cell = ws.cell(row=row, column=col, value=valor)
+            cell.alignment = centrado
+            cell.border = borde
+    
+    # Ajustar ancho de columnas
+    for col in range(1, len(headers) + 1):
+        ws.column_dimensions[get_column_letter(col)].width = 15
+    
+    # Columnas más anchas para campos de texto largo
+    ws.column_dimensions['L'].width = 30  # Experiencia Laboral
+    ws.column_dimensions['M'].width = 30  # Interés Ocupacional
+    
+    # Congelar panel superior
+    ws.freeze_panes = 'A2'
+    
+    # Crear respuesta HTTP
+    response = HttpResponse(
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        headers={'Content-Disposition': f'attachment; filename="candidatos_{datetime.now().strftime("%Y%m%d_%H%M%S")}.xlsx"'},
+    )
+    
+    # Guardar el archivo
+    wb.save(response)
+    
     return response
