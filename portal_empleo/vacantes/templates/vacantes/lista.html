@@ -737,8 +737,8 @@ Inicio
             <div class="mb-3">
                 <label class="form-label text-light">💰 Rango Salarial</label>
                 <div class="d-flex gap-2">
-                    <input type="number" class="form-control" placeholder="Desde" id="rango_salarial_min" name="rango_salarial_min" value="{{ request.GET.rango_salarial_min }}">
-                    <input type="number" class="form-control" placeholder="Hasta" id="rango_salarial_max" name="rango_salarial_max" value="{{ request.GET.rango_salarial_max }}">
+                    <input type="text" class="form-control" placeholder="Desde" id="rango_salarial_min" name="rango_salarial_min">
+                    <input type="text" class="form-control" placeholder="Hasta" id="rango_salarial_max" name="rango_salarial_max">
                 </div>
             </div>
             
@@ -756,6 +756,25 @@ Inicio
 </div>
 
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('.offcanvas-body form');
+        
+        form.addEventListener('submit', function(event) {
+            // Obtener los inputs
+            const minInput = document.getElementById('rango_salarial_min');
+            const maxInput = document.getElementById('rango_salarial_max');
+    
+            // Remover puntos antes de enviar
+            if (minInput.value) {
+                minInput.value = minInput.value.replace(/\./g, '');
+            }
+            if (maxInput.value) {
+                maxInput.value = maxInput.value.replace(/\./g, '');
+            }
+        });
+    });
+    
+    
 let selectedVacantes = [];
 
 function handleVacanteSelection(vacanteId) {
