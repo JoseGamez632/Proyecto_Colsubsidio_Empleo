@@ -468,20 +468,20 @@ Inicio
         <!-- Header Section -->
         <div class="mb-5">
             <h1 class="text-warning mb-4 fw-bold">Listado de Vacantes Activas</h1>
-            <div class="d-flex flex-wrap gap-2">
-                <button type="button" class="btn btn-outline-light" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample">
+            <div class="d-flex flex-wrap gap-2 justify-content-center">
+                <button type="button" class="btn btn-outline-light btn-sm" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample">
                     🔍 Filtrar Vacantes
                 </button>
-                <button type="button" class="btn btn-outline-light" onclick="clearFilters()">
+                <button type="button" class="btn btn-outline-light btn-sm" onclick="clearFilters()">
                     🧹 Borrar Filtros
                 </button>
                 {% if request.user.is_authenticated %}
-                <a class="btn btn-outline-warning" href="{% url 'agregar_vacante' %}">
+                <a class="btn btn-outline-warning btn-sm" href="{% url 'agregar_vacante' %}">
                     ➕ Agregar Vacante
                 </a>
-                <a href="{% url 'descargar_excel' %}" class="btn btn-success">Descargar Excel Vacantes</a>
+                <a href="{% url 'descargar_excel' %}" class="btn btn-success btn-sm">Descargar Excel Vacantes</a>
                 {% endif %}
-                <button type="button" class="btn btn-outline-light" onclick="desmarcarVacantes()">
+                <button type="button" class="btn btn-outline-light btn-sm" onclick="desmarcarVacantes()">
                     ❌ Desmarcar Selección
                 </button>
             </div>
@@ -503,7 +503,7 @@ Inicio
                                 <small>🧑‍💼 Creado: {{ vacante.usuario_publicador.username|default:"No asignado" }} ({{ vacante.fecha_creacion|date:"d/m/Y" }})</small><br>
                                 <small>🔁 Actualizado: {{ vacante.usuario_actualizador.username|default:"" }} ({{ vacante.fecha_actualizacion|date:"d/m/Y" }})</small><br>
                                 <small>👥 Candidatos: {{ vacante.num_candidatos }}</small><br>
-                                <small>ID Vacante: {{ vacante.codigo_vacante|default:"No asignado" }}</small><br>
+                                <small>ID Vacante: {{ vacante.codigo_vacante|default:"No asignado" }}</small>
 
                             </div>
                             {% endif %}
@@ -556,12 +556,15 @@ Inicio
                     </div>
                 </div>
                 <br>
-                <button class="btn btn-outline-warning" 
-                        type="button"
-                        data-bs-toggle="modal" 
-                        data-bs-target="#modal-{{ vacante.id }}">
-                    Descripcion Vacante
-                </button>
+                <!-- Botón de Descripción Vacante - Ocupa toda la parte inferior -->
+                <div class="mt-auto">
+                    <button class="btn btn-outline-warning w-100 toggle-info d-flex align-items-center justify-content-center" 
+                            type="button"
+                            data-bs-toggle="modal" 
+                            data-bs-target="#modal-{{ vacante.id }}">
+                        Descripción Vacante <i class="fas fa-chevron-down toggle-icon ms-2"></i>
+                    </button>
+                </div>
             </div>
 
             <!-- Modal para detalles de vacante -->
@@ -610,7 +613,7 @@ Inicio
                                             <strong>⏰ Jornada:</strong> {{ vacante.jornada_trabajo }}
                                         </li>
                                         <li class="list-group-item bg-transparent border-secondary">
-                                            <strong>💰 Rango salarial:</strong> {{ vacante.rango_salarial }}
+                                            <strong>💰 Rango salarial: $</strong> {{ vacante.rango_salarial|intcomma }}
                                         </li>
                                     </ul>
                                 </div>
