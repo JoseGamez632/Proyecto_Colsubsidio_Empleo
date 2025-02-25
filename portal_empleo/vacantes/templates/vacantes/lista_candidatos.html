@@ -90,6 +90,11 @@ Candidatos para la Vacante
                             <button class="btn btn-primary btn-sm w-100 view-details d-flex align-items-center justify-content-center gap-2" data-candidato-id="{{ candidato.id }}">
                                 <i class="fas fa-eye"></i>Ver Hoja de Vida
                             </button>
+                            <a class="btn btn-success btn-sm w-100 d-flex align-items-center justify-content-center gap-2" 
+                            href="https://wa.me/?text=Cordial%20Saludo%20{{ candidato.nombres }}%20{{ candidato.apellidos }},%0ATe%20escribimos%20de%20la%20Agencia%20de%20Empleo%20Colsubsidio%20ya%20que%20aplicaste%20al%20cargo%20de%20{{ vacante.cargo }}%20en%20una%20de%20nuestras%20ferias%20de%20empleo." 
+                            target="_blank">
+                                <i class="fab fa-whatsapp"></i> Contactar por WhatsApp
+                            </a>
                         </div>
                     </div>
                 </div>
