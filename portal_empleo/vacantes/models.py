@@ -104,11 +104,7 @@ class Vacante(models.Model):
     )
     departamento = models.ForeignKey(Departamento, on_delete=models.SET_NULL, null=True, blank=True)
     ciudad = models.ForeignKey(Ciudad, on_delete=models.SET_NULL, null=True, blank=True)
-    rango_salarial = models.CharField(
-        max_length=50, 
-        blank=True, 
-        null=True
-    )
+    rango_salarial = models.IntegerField(null=True, blank=True)
     fecha_publicacion = models.DateField(auto_now_add=True)
     empresa_usuaria = models.CharField(max_length=100)
     candidatos_registrados = models.ManyToManyField('RegistroCandidato', related_name='vacantes', blank=True)

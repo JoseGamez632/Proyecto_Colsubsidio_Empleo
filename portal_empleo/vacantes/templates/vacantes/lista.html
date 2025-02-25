@@ -735,9 +735,13 @@ Inicio
             </div>
 
             <div class="mb-3">
-                <label for="rango_salarial" class="form-label text-light">💰 Rango Salarial</label>
-                <input type="text" class="form-control" id="rango_salarial" name="rango_salarial" value="{{ request.GET.rango_salarial }}">
+                <label class="form-label text-light">💰 Rango Salarial</label>
+                <div class="d-flex gap-2">
+                    <input type="number" class="form-control" placeholder="Desde" id="rango_salarial_min" name="rango_salarial_min" value="{{ request.GET.rango_salarial_min }}">
+                    <input type="number" class="form-control" placeholder="Hasta" id="rango_salarial_max" name="rango_salarial_max" value="{{ request.GET.rango_salarial_max }}">
+                </div>
             </div>
+            
 
             <div class="d-grid gap-2">
                 <button type="submit" class="btn btn-primary">
