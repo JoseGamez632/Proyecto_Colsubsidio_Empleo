@@ -647,13 +647,19 @@ Inicio
         <h5 class="offcanvas-title text-light">🔍 Filtrar Vacantes</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
     </div>
+    
     <div class="offcanvas-body">
         <form action="" method="GET">
+            {% if request.user.is_authenticated %}
+            <div class="mb-3">
+                <label for="codigo_vacante" class="form-label text-light">🔎 ID Vacante</label>
+                <input type="text" class="form-control" id="codigo_vacante" name="codigo_vacante" value="{{ request.GET.codigo_vacante }}">
+            </div>
+            {% endif %}
             <div class="mb-3">
                 <label for="cargo" class="form-label text-light">💼 Cargo</label>
                 <input type="text" class="form-control" id="cargo" name="cargo" value="{{ request.GET.cargo }}">
             </div>
-
             <div class="mb-3">
                 <label for="area" class="form-label text-light">🎯 Área</label>
                 <select class="form-control" id="area" name="area">

@@ -24,18 +24,6 @@ from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 
 
-
-
-
-
-
-
-# Mensaje de éxito
-
-#Agregado por Jose
-
-
-
 def normalizar_texto(texto):
     """
     Elimina los acentos y normaliza el texto a minúsculas.
@@ -64,35 +52,20 @@ def lista_vacantes(request):
         'ciudad': request.GET.get('ciudad'),
         'rango_salarial_min': request.GET.get('rango_salarial_min'),
         'rango_salarial_max': request.GET.get('rango_salarial_max'),
+        'codigo_vacante': request.GET.get('codigo_vacante'),  # Agregado para filtrar por ID Cargo
     }
-
-    # Obtener el nombre de la ciudad si se ha seleccionado un ID en el filtro
-    ciudad_nombre = None
-    if filtros['ciudad']:  # Si el usuario seleccionó una ciudad
-        ciudad_obj = Ciudad.objects.filter(id=filtros['ciudad']).first()
-        if ciudad_obj:
-            ciudad_nombre = ciudad_obj.nombre
-
-    # Agregar ciudad_nombre a filtros para que esté disponible en el template
-    filtros['ciudad_nombre'] = ciudad_nombre
 
     # Obtener todas las vacantes activas si el usuario no está autenticado
     vacantes = Vacante.objects.filter(estado=True) if not request.user.is_authenticated else Vacante.objects.all()
 
-    # Filtrado manual para el cargo (normalizando texto)
-    if filtros['cargo']:
-        cargo_normalizado = normalizar_texto(filtros['cargo'])  # Normalizar la búsqueda
+    # Filtro para Codigo Vacante (ID Cargo)
+    if filtros['codigo_vacante']:
+        vacantes = vacantes.filter(codigo_vacante__icontains=filtros['codigo_vacante'].strip())
 
-        # Filtrar todas las vacantes activas
-        vacantes_filtradas = vacantes.filter(estado=True) if not request.user.is_authenticated else vacantes
-
-        # Aplicar filtrado manual sin perder el queryset
-        ids_vacantes = [
-            v.id for v in vacantes_filtradas
-            if cargo_normalizado in normalizar_texto(v.cargo)
-        ]
-        
-        vacantes = vacantes.filter(id__in=ids_vacantes)  # Mantiene el QuerySet
+    # Aplicar filtros restantes directamente en la consulta
+    for campo, valor in filtros.items():
+        if valor and campo not in ['cargo', 'codigo_vacante', 'rango_salarial_min', 'rango_salarial_max']:
+            vacantes = vacantes.filter(**{campo: valor})
 
     # Filtro para Rango Salarial
     rango_salarial_min = filtros['rango_salarial_min']
@@ -108,11 +81,6 @@ def lista_vacantes(request):
     elif rango_salarial_max:
         vacantes = vacantes.filter(rango_salarial__lte=rango_salarial_max)
 
-    # Aplicar filtros restantes directamente en la consulta
-    for campo, valor in filtros.items():
-        if valor and campo not in ['cargo', 'ciudad_nombre', 'rango_salarial_min', 'rango_salarial_max']:  # Cargo ya se filtró manualmente
-            vacantes = vacantes.filter(**{campo: valor})
-
     # Agregar el conteo de candidatos aplicados
     vacantes = vacantes.annotate(num_candidatos=Count('candidatos'))
 
@@ -138,96 +106,6 @@ def lista_vacantes(request):
         "filtros": filtros,
         **choices_context  # Pasar los choices al template
     })
-    # Obtener los filtros de la solicitud GET
-    filtros = {
-        'cargo': request.GET.get('cargo'),
-        'area': request.GET.get('area'),
-        'modalidad_trabajo': request.GET.get('modalidad_trabajo'),
-        'tipo_contrato': request.GET.get('tipo_contrato'),
-        'jornada_trabajo': request.GET.get('jornada_trabajo'),
-        'tiempo_experiencia': request.GET.get('tiempo_experiencia'),
-        'nivel_estudios': request.GET.get('nivel_estudios'),
-        'departamento': request.GET.get('departamento'),
-        'ciudad': request.GET.get('ciudad'),
-        'rango_salarial': request.GET.get('rango_salarial'),
-    }
-
-    # Obtener el nombre de la ciudad si se ha seleccionado un ID en el filtro
-    ciudad_nombre = None
-    if filtros['ciudad']:  # Si el usuario seleccionó una ciudad
-        ciudad_obj = Ciudad.objects.filter(id=filtros['ciudad']).first()
-        if ciudad_obj:
-            ciudad_nombre = ciudad_obj.nombre
-
-    # Agregar ciudad_nombre a filtros para que esté disponible en el template
-    filtros['ciudad_nombre'] = ciudad_nombre
-
-    # Obtener todas las vacantes activas si el usuario no está autenticado
-    vacantes = Vacante.objects.filter(estado=True) if not request.user.is_authenticated else Vacante.objects.all()
-
-    # # Filtrar por cargo (ignorando tildes y mayúsculas/minúsculas)
-    # if filtros['cargo']:
-    #     palabras_clave = filtros['cargo'].split()
-    #     consulta_cargo = Q()
-    #     for palabra in palabras_clave:
-    #         palabra_normalizada = normalizar_texto(palabra)
-    #         consulta_cargo |= Q(cargo__icontains=palabra_normalizada)
-
-    #     # Filtrar manualmente en Python porque SQLite no soporta unaccent
-    #     vacantes = [v for v in vacantes if all(
-    #         normalizar_texto(palabra) in normalizar_texto(v.cargo) for palabra in palabras_clave
-    #     )]
-    
-    if filtros['cargo']:
-        cargo_normalizado = normalizar_texto(filtros['cargo'])  # Normalizar la búsqueda
-
-        # Filtrar todas las vacantes activas
-        vacantes_filtradas = vacantes.filter(estado=True) if not request.user.is_authenticated else vacantes
-
-        # Aplicar filtrado manual sin perder el queryset
-        ids_vacantes = [
-            v.id for v in vacantes_filtradas
-            if cargo_normalizado in normalizar_texto(v.cargo)
-        ]
-        
-        vacantes = vacantes.filter(id__in=ids_vacantes)  # Mantiene el QuerySet
-
-
-
-
-    # Aplicar filtros restantes directamente en la consulta
-    for campo, valor in filtros.items():
-        if valor and campo not in ['cargo', 'ciudad_nombre']:  # Cargo ya se filtró manualmente
-            vacantes = vacantes.filter(**{campo: valor})
-
-    # Agregar el conteo de candidatos aplicados
-    vacantes = vacantes.annotate(num_candidatos=Count('candidatos'))
-
-    # Mantener el orden alfabético por cargo
-    vacantes = sorted(vacantes, key=lambda v: v.cargo.lower())
-
-    # Obtener opciones de los campos con choices
-    form = VacanteForm()
-    choices_context = {
-        'area_choices': form.fields['area'].choices,
-        'modalidad_trabajo_choices': form.fields['modalidad_trabajo'].choices,
-        'tipo_contrato_choices': form.fields['tipo_contrato'].choices,
-        'jornada_trabajo_choices': form.fields['jornada_trabajo'].choices,
-        'tiempo_experiencia_choices': form.fields['tiempo_experiencia'].choices,
-        'nivel_estudios_choices': form.fields['nivel_estudios'].choices,
-        'departamento_choices': form.fields['departamento'].choices,
-        'ciudad_choices': form.fields['ciudad'].choices,
-    }
-
-    # Renderizar la plantilla con las vacantes filtradas y ordenadas
-    return render(request, "vacantes/lista.html", {
-        "vacantes": vacantes,
-        "filtros": filtros,
-        **choices_context  # Pasar los choices al template
-    })
-
-
-    # return render(request, 'vacantes/lista.html', contexto)
 
 # para cambiar el estado de la vacante
 def cambiar_estado_vacante(request, vacante_id):
