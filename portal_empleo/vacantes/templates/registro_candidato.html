@@ -568,9 +568,17 @@ Inicio
 
             <div class="form-row">
                 <div class="form-group col-md-6">
-                    <label for="localidad_municipio">Localidad/Municipio</label>
-                    {{ form.localidad_municipio }}
+                    <label for="{{ form.departamento.id_for_label }}">Departamento</label>
+                    {{ form.departamento }}
                 </div>
+                <div class="form-group col-md-6">
+                    <label for="{{ form.ciudad.id_for_label }}">Ciudad o Municipio</label>
+                    {{ form.ciudad }}
+                </div>
+            </div>
+            
+
+            <div class="form-row">
                 <div class="form-group col-md-6">
                     <label for="horario_interesado">Horario de Interés</label>
                     {{ form.horario_interesado }}
@@ -758,6 +766,31 @@ document.addEventListener('DOMContentLoaded', function() {
     showTutorial();
 });
     </script>
+
+    <script>
+        //para desplegar ciudades por departamento
+        $(document).ready(function () {
+            $("#departamento-select").change(function () {
+                var departamentoId = $(this).val();
+                var ciudadSelect = $("#ciudad-select");
+    
+                ciudadSelect.empty().append('<option value="">Seleccione una ciudad</option>');
+    
+                if (departamentoId) {
+                    $.ajax({
+                        url: "{% url 'cargar_ciudades' %}",
+                        data: { departamento_id: departamentoId },
+                        success: function (data) {
+                            $.each(data, function (key, value) {
+                                ciudadSelect.append('<option value="' + value.id + '">' + value.nombre + '</option>');
+                            });
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+    
 
 
 

@@ -101,6 +101,37 @@ class RegistroCandidatoForm(forms.ModelForm):
         label="Interés Ocupacional",
         required=False
     )
+    
+    departamento = forms.ModelChoiceField(
+        queryset=Departamento.objects.all(),
+        widget=forms.Select(attrs={'class': 'form-control', 'id': 'departamento-select'}),
+        required=False
+    )
+
+    ciudad = forms.ModelChoiceField(
+        queryset=Ciudad.objects.none(),  # Inicialmente vacío
+        widget=forms.Select(attrs={'class': 'form-control', 'id': 'ciudad-select'}),
+        required=False
+    )
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields['departamento'].queryset = Departamento.objects.all()
+        self.fields['ciudad'].queryset = Ciudad.objects.none()  # Inicialmente vacío
+
+        # Si se envió un departamento en el formulario
+        if 'departamento' in self.data:
+            try:
+                departamento_id = int(self.data.get('departamento'))
+                self.fields['ciudad'].queryset = Ciudad.objects.filter(departamento_id=departamento_id)
+            except (ValueError, TypeError):
+                pass  # Si hay un error, se deja vacío
+
+        # Si estamos editando un candidato con un departamento ya asignado
+        elif self.instance.pk:
+            self.fields['ciudad'].queryset = Ciudad.objects.filter(departamento=self.instance.departamento)
+            self.fields['ciudad'].initial = self.instance.ciudad
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -111,6 +142,11 @@ class RegistroCandidatoForm(forms.ModelForm):
     class Meta:
         model = RegistroCandidato
         fields = '__all__'
+        
+        
+#registro de ciudad y departamento
+        
+
 # def clean_vacantes_disponibles(self):
 #     vacantes = self.cleaned_data.get('vacantes_disponibles', [])
 #     return ','.join(vacantes)  # Guarda como una lista separada por comas
