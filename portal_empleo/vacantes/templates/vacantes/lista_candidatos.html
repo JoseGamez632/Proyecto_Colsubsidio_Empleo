@@ -70,6 +70,14 @@ Candidatos para la Vacante
                                     Seleccionar
                                 </label>
                             </div>
+                                <span class="badge 
+                                    {% if candidato.estado_aplicacion == 'No visto' %}bg-secondary
+                                    {% elif candidato.estado_aplicacion == 'Visto' %}bg-info
+                                    {% elif candidato.estado_aplicacion == 'Descartado' %}bg-danger
+                                    {% endif %}">
+                                    Estado: {{ candidato.estado_aplicacion }}
+                                </span>
+        
                             <h5 class="card-title text-warning mb-3">
                                 {{ candidato.nombres }} {{ candidato.apellidos }}
                             </h5>
@@ -87,15 +95,49 @@ Candidatos para la Vacante
                                     <span class="ms-2">Feria: {{ candidato.fecha_feria }}</span>
                                 </div>
                             </div>
-                            <button class="btn btn-primary btn-sm w-100 view-details d-flex align-items-center justify-content-center gap-2" data-candidato-id="{{ candidato.id }}">
-                                <i class="fas fa-eye"></i>Ver Hoja de Vida
-                            </button>
-                            <a class="btn btn-success btn-sm w-100 d-flex align-items-center justify-content-center gap-2" 
-                            href="https://wa.me/?text=Cordial%20Saludo%20{{ candidato.nombres }}%20{{ candidato.apellidos }},%0ATe%20escribimos%20de%20la%20Agencia%20de%20Empleo%20Colsubsidio%20ya%20que%20aplicaste%20al%20cargo%20de%20{{ vacante.cargo }}%20en%20una%20de%20nuestras%20ferias%20de%20empleo." 
-                            target="_blank">
-                                <i class="fab fa-whatsapp"></i> Contactar por WhatsApp
-                            </a>
-                        </div>
+                            <div class="d-flex gap-2 justify-content-center mb-2">
+                                <!-- Botón para No Visto -->
+                                <form action="{% url 'cambiar_estado_aplicacion' vacante.id candidato.id 'No visto' %}" method="POST">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-secondary btn-sm" 
+                                        {% if candidato.estado_aplicacion == 'No visto' %}disabled{% endif %}>
+                                        No visto
+                                    </button>
+                                </form>
+    
+                                <!-- Botón para Visto -->
+                                <form action="{% url 'cambiar_estado_aplicacion' vacante.id candidato.id 'Visto' %}" method="POST">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-info btn-sm" 
+                                        {% if candidato.estado_aplicacion == 'Visto' %}disabled{% endif %}>
+                                        Visto
+                                    </button>
+                                </form>
+    
+                                <!-- Botón para Descartado -->
+                                <form action="{% url 'cambiar_estado_aplicacion' vacante.id candidato.id 'Descartado' %}" method="POST">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger btn-sm" 
+                                        {% if candidato.estado_aplicacion == 'Descartado' %}disabled{% endif %}>
+                                        Descartado
+                                    </button>
+                                </form>
+                            </div>
+    
+    
+                            <button class="btn btn-primary btn-sm w-100 view-details d-flex align-items-center justify-content-center gap-2" 
+                            data-candidato-id="{{ candidato.id }}"
+                            data-estado-actual="{{ candidato.estado_aplicacion }}"
+                            onclick="verHojaDeVida({{ vacante.id }}, {{ candidato.id }}, this)">
+                            <i class="fas fa-eye"></i> Ver Hoja de Vida
+                        </button>
+                        <a class="btn btn-success btn-sm w-100 d-flex align-items-center justify-content-center gap-2" 
+                        href="https://wa.me/?text=Cordial%20Saludo%20{{ candidato.nombres }}%20{{ candidato.apellidos }},%0ATe%20escribimos%20de%20la%20Agencia%20de%20Empleo%20Colsubsidio%20ya%20que%20aplicaste%20al%20cargo%20de%20{{ vacante.cargo }}%20en%20una%20de%20nuestras%20ferias%20de%20empleo." 
+                        target="_blank">
+                            <i class="fab fa-whatsapp"></i> Contactar por WhatsApp
+                        </a>
+
+                            </div>
                     </div>
                 </div>
                 {% empty %}
@@ -447,6 +489,67 @@ Candidatos para la Vacante
 </style>
 
 <script>
+    function verHojaDeVida(vacanteId, candidatoId, boton) {
+        // Obtener el estado actual del botón
+        const estadoActual = boton.getAttribute("data-estado-actual");
+    
+        // Verificar si el estado es "No visto"
+        if (estadoActual === "No visto") {
+            // Obtener el token CSRF de las cookies
+            const csrftoken = getCSRFToken();
+    
+            // Hacer una petición POST para cambiar el estado a "Visto"
+            fetch(`/vacantes/${vacanteId}/candidatos/${candidatoId}/cambiar_a_visto/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => response.json())
+              .then(data => {
+                if (data.success) {
+                    // Cambiar el texto y color del estado en la tarjeta
+                    const estadoElemento = document.getElementById(`estado-${candidatoId}`);
+                    estadoElemento.textContent = "Estado: Visto";
+                    estadoElemento.classList.remove("bg-secondary");
+                    estadoElemento.classList.add("bg-info");
+    
+                    // Actualizar el atributo data-estado-actual
+                    boton.setAttribute("data-estado-actual", "Visto");
+    
+                    // Acción personalizada: Mostrar Hoja de Vida
+                    mostrarHojaDeVida(candidatoId);
+                } else {
+                    console.log("No se cambió el estado:", data.message);
+                    mostrarHojaDeVida(candidatoId);
+                }
+            }).catch(error => {
+                console.error("Error en la petición:", error);
+            });
+        } else {
+            // Si el estado no es "No visto", solo muestra la Hoja de Vida
+            mostrarHojaDeVida(candidatoId);
+        }
+    }
+    
+    // Función para mostrar la Hoja de Vida
+    function mostrarHojaDeVida(candidatoId) {
+    }
+    
+    // Función para obtener el token CSRF de las cookies
+    function getCSRFToken() {
+        let csrfToken = null;
+        const cookies = document.cookie.split(';');
+        cookies.forEach(cookie => {
+            const [name, value] = cookie.trim().split('=');
+            if (name === 'csrftoken') {
+                csrfToken = value;
+            }
+        });
+        return csrfToken;
+    }
+    
+
 document.addEventListener('DOMContentLoaded', function() {
     // Inicialización de variables
     let candidatos = [

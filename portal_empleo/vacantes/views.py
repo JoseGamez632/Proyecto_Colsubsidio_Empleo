@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.http import HttpResponse, JsonResponse
-from .models import Vacante, Ciudad, Departamento, RegistroCandidato
+from .models import Vacante, Ciudad, Departamento, RegistroCandidato, EstadoAplicacion
 from .forms import VacanteForm, RegistroCandidatoForm
 from django.contrib.auth.decorators import login_required # Solicitar ligin para ejecutar funcion
 from django.contrib.auth.decorators import permission_required # Solicita login para permisos especificos @permission_required('app_name.add_vacante')
@@ -19,6 +19,11 @@ from datetime import datetime
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
+
+
 
 
 
@@ -409,8 +414,17 @@ def lista_candidatos(request, id):
     vacante = get_object_or_404(Vacante, id=id)
     
     # Obtener la lista de candidatos relacionados con esta vacante
-    candidatos = vacante.candidatos.all()  # Asumiendo que tienes una relación en el modelo
+    candidatos = vacante.candidatos.all()
 
+    # Traer o crear el estado de cada aplicación
+    for candidato in candidatos:
+        estado_aplicacion, creado = EstadoAplicacion.objects.get_or_create(
+            candidato=candidato, 
+            vacante=vacante,
+            defaults={'estado': 'No visto'}
+        )
+        candidato.estado_aplicacion = estado_aplicacion.estado
+    
     # Renderizar la información en el template
     return render(request, 'vacantes/lista_candidatos.html', {'vacante': vacante, 'candidatos': candidatos})
 
@@ -634,3 +648,83 @@ def descargar_candidatos(request):
     wb.save(response)
     
     return response
+
+# Función para cambiar el estado manualmente con los botones
+def cambiar_estado_aplicacion(request, vacante_id, candidato_id, nuevo_estado):
+    vacante = get_object_or_404(Vacante, id=vacante_id)
+    candidato = get_object_or_404(RegistroCandidato, id=candidato_id)
+    
+    # Obtener o crear el estado de la aplicación
+    estado_aplicacion, creado = EstadoAplicacion.objects.get_or_create(
+        candidato=candidato, 
+        vacante=vacante
+    )
+    estado_aplicacion.estado = nuevo_estado
+    estado_aplicacion.save()
+
+    messages.success(request, f"Estado cambiado a {nuevo_estado}.")
+    return redirect('lista_candidatos', id=vacante.id)
+
+# Función para cambiar el estado al Ver Hoja de Vida (solo si es "No visto")
+@csrf_exempt
+def cambiar_estado_a_visto(request, vacante_id, candidato_id):
+    if request.method == "POST":
+        vacante = get_object_or_404(Vacante, id=vacante_id)
+        candidato = get_object_or_404(RegistroCandidato, id=candidato_id)
+        
+        estado_aplicacion, creado = EstadoAplicacion.objects.get_or_create(
+            candidato=candidato, 
+            vacante=vacante
+        )
+        
+        # Solo cambiar a "Visto" si el estado actual es "No visto"
+        if estado_aplicacion.estado == "No visto":
+            estado_aplicacion.estado = "Visto"
+            estado_aplicacion.save()
+            return JsonResponse({'success': True, 'nuevo_estado': 'Visto'})
+        
+        return JsonResponse({'success': False, 'message': 'El estado no era "No visto"'})
+    return JsonResponse({'error': 'Método no permitido'}, status=405)
+
+# Función para manejar la vista de Hoja de Vida
+def ver_hoja_de_vida(request, vacante_id, candidato_id):
+    vacante = get_object_or_404(Vacante, id=vacante_id)
+    candidato = get_object_or_404(RegistroCandidato, id=candidato_id)
+    
+    # Obtener o crear el estado de la aplicación
+    estado_aplicacion, creado = EstadoAplicacion.objects.get_or_create(
+        candidato=candidato, 
+        vacante=vacante
+    )
+
+    # Si el estado actual es "No visto", cambiar a "Visto"
+    if estado_aplicacion.estado == "No visto":
+        estado_aplicacion.estado = "Visto"
+        estado_aplicacion.save()
+
+    # Redirigir a la misma vista de candidatos o mostrar la hoja de vida
+    return HttpResponseRedirect(reverse('lista_candidatos', args=[vacante.id]))
+
+# Función para cambiar el estado a "Visto" solo si es "No visto"
+@csrf_exempt
+def cambiar_a_visto(request, vacante_id, candidato_id):
+    if request.method == "POST":
+        vacante = get_object_or_404(Vacante, id=vacante_id)
+        candidato = get_object_or_404(RegistroCandidato, id=candidato_id)
+        
+        # Obtener o crear el estado de la aplicación
+        estado_aplicacion, creado = EstadoAplicacion.objects.get_or_create(
+            candidato=candidato, 
+            vacante=vacante
+        )
+        
+        # Solo cambiar a "Visto" si el estado actual es "No visto"
+        if estado_aplicacion.estado == "No visto":
+            estado_aplicacion.estado = "Visto"
+            estado_aplicacion.save()
+            return JsonResponse({'success': True, 'nuevo_estado': 'Visto'})
+        
+        # Si no se cambia el estado
+        return JsonResponse({'success': False, 'message': 'El estado no era "No visto"'})
+    
+    return JsonResponse({'error': 'Método no permitido'}, status=405)
