@@ -124,6 +124,16 @@ class RegistroCandidatoForm(forms.ModelForm):
         label="Aspiración Salarial",
         required=False
     )
+    numero_documento = forms.CharField(
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'id': 'numero_documento',
+            'placeholder': 'Ingresa tu número de documento'
+        }),
+        label="Número de Documento",
+        required=True
+    )
+
     def clean_numero_celular(self):
         data = self.cleaned_data['numero_celular']
         # Verificar que solo contenga números
@@ -140,6 +150,15 @@ class RegistroCandidatoForm(forms.ModelForm):
         data = self.cleaned_data['aspiracion_salarial']
         # Remover las comas antes de guardar
         return data.replace(',', '')
+    
+    def clean_numero_documento(self):
+        data = self.cleaned_data['numero_documento']
+        # Verificar que solo contenga números
+        if not data.isdigit():
+            raise forms.ValidationError("El número de documento solo debe contener números.")
+        
+        return data
+
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
