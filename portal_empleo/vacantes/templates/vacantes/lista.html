@@ -502,7 +502,9 @@ Inicio
                             <div class="vacante-meta">
                                 <small>🧑‍💼 Creado: {{ vacante.usuario_publicador.username|default:"No asignado" }} ({{ vacante.fecha_creacion|date:"d/m/Y" }})</small><br>
                                 <small>🔁 Actualizado: {{ vacante.usuario_actualizador.username|default:"" }} ({{ vacante.fecha_actualizacion|date:"d/m/Y" }})</small><br>
-                                <small>👥 Candidatos: {{ vacante.num_candidatos }}</small>
+                                <small>👥 Candidatos: {{ vacante.num_candidatos }}</small><br>
+                                <small>ID Vacante: {{ vacante.codigo_vacante|default:"No asignado" }}</small><br>
+
                             </div>
                             {% endif %}
                         </div>
