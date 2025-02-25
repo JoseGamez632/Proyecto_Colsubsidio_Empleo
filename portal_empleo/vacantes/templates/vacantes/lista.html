@@ -772,8 +772,7 @@ Inicio
                 maxInput.value = maxInput.value.replace(/\./g, '');
             }
         });
-    });
-    
+    }); 
     
 let selectedVacantes = [];
 
@@ -793,6 +792,32 @@ function handleVacanteSelection(vacanteId) {
     
     updateFloatingButton();
 }
+document.addEventListener('DOMContentLoaded', function() {
+    // Función para formatear con puntos de miles
+    const formatNumber = (input) => {
+        // Eliminar puntos existentes
+        let value = input.value.replace(/\./g, '');
+
+        // Asegurarse de que solo hay números
+        if (!isNaN(value) && value !== '') {
+            // Convertir a número y formatear con puntos de miles
+            value = parseInt(value).toLocaleString('es-CO');
+            input.value = value;
+        } else {
+            // Si no es número, limpiar el campo
+            input.value = '';
+        }
+    };
+
+    // Obtener los inputs
+    const minInput = document.getElementById('rango_salarial_min');
+    const maxInput = document.getElementById('rango_salarial_max');
+
+    // Aplicar la función mientras el usuario escribe
+    minInput.addEventListener('input', () => formatNumber(minInput));
+    maxInput.addEventListener('input', () => formatNumber(maxInput));
+});
+
 
 function handleModalSelection(vacanteId) {
     const modalCheckbox = document.getElementById('modal-check' + vacanteId);
