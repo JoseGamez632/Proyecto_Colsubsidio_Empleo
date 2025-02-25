@@ -20,6 +20,11 @@ Candidatos para la Vacante
                             <i class="fas fa-filter"></i>Filtros Avanzados
                         </button>
                     </div>
+                    <div class="col-md-3">
+                        <button id="clearFiltersBtn" class="btn btn-secondary btn-sm w-100 d-flex align-items-center justify-content-center gap-2>
+                            <i class="fas fa-times"></i>Limpiar Filtros
+                        </button>
+                        </div>
                     <div class="col-md-2">
                         <button id="selectAll" class="btn btn-primary btn-sm w-100 d-flex align-items-center justify-content-center gap-2">
                             <i class="fas fa-check-square"></i>Seleccionar
@@ -98,7 +103,7 @@ Candidatos para la Vacante
     </div>
 </div>
 
-<!-- Ventana de filtros -->
+<!-- Ventana de filtros (modificada) -->
 <div id="filtersOverlay" class="filters-overlay">
     <div class="filters-container">
         <div class="filters-header">
@@ -144,12 +149,15 @@ Candidatos para la Vacante
                         <input type="text" id="filterLocalidad" class="form-control form-control-sm">
                     </div>
                     <div class="mb-2">
-                        <label class="form-label">Candidato con Discapacidad</label>
-                        <select id="filterDiscapacidad" class="form-select form-select-sm">
-                            <option value="">Todos</option>
-                            <option value="SI">Sí</option>
-                            <option value="NO">No</option>
-                        </select>
+                        <label class="form-label">Fecha de Nacimiento</label>
+                        <div class="row">
+                            <div class="col-6">
+                                <input type="date" id="filterNacimientoDesde" class="form-control form-control-sm" placeholder="Desde">
+                            </div>
+                            <div class="col-6">
+                                <input type="date" id="filterNacimientoHasta" class="form-control form-control-sm" placeholder="Hasta">
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
@@ -157,8 +165,8 @@ Candidatos para la Vacante
                 <div class="col-md-6 mb-3">
                     <h5 class="text-warning">Formación y Experiencia</h5>
                     <div class="mb-2">
-                        <label class="form-label">Formación Académica</label>
-                        <select id="filterFormacion" class="form-select form-select-sm">
+                        <label class="form-label">Estudio mínimo requerido</label>
+                        <select id="filterEstudioMinimo" class="form-select form-select-sm">
                             <option value="">Todos</option>
                             <option value="BP">BASICA PRIMARIA</option>
                             <option value="BS">BASICA SECUNDARIA</option>
@@ -194,6 +202,21 @@ Candidatos para la Vacante
                             </div>
                             <div class="col-6">
                                 <input type="number" id="filterSalarioMax" class="form-control form-control-sm" placeholder="Hasta">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Nombre Feria</label>
+                        <input type="text" id="filterNombreFeria" class="form-control form-control-sm">
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Fecha Feria</label>
+                        <div class="row">
+                            <div class="col-6">
+                                <input type="date" id="filterFeriaDesde" class="form-control form-control-sm" placeholder="Desde">
+                            </div>
+                            <div class="col-6">
+                                <input type="date" id="filterFeriaHasta" class="form-control form-control-sm" placeholder="Hasta">
                             </div>
                         </div>
                     </div>
@@ -471,6 +494,21 @@ document.addEventListener('DOMContentLoaded', function() {
         nextButton: document.getElementById('nextCandidate')
     };
 
+    // Constante para la jerarquía de formación académica
+    const NIVEL_EDUCATIVO = {
+        'BP': 1,    // BASICA PRIMARIA
+        'BS': 2,    // BASICA SECUNDARIA
+        'EBA': 3,   // ESTUDIANTE BACHILLER ACADEMICO
+        'BA': 4,    // BACHILLER ACADEMICO
+        'ETL': 5,   // ESTUDIANTE TECNICO LABORAL/PROFESIONAL
+        'TL': 6,    // TECNICO LABORAL/PROFESIONAL
+        'ET': 7,    // ESTUDIANTE TECNOLOGO
+        'T': 8,     // TECNOLOGO
+        'EP': 9,    // ESTUDIANTE PROFESIONAL
+        'P': 10,    // PROFESIONAL
+        'PG': 11    // POSGRADO
+    };
+
     // Funciones de utilidad
     function sanitizeHTML(text) {
         if (!text) return 'No especificado';
@@ -561,7 +599,62 @@ document.addEventListener('DOMContentLoaded', function() {
                     case 'filterTipoDocumento':
                         if (candidato.tipo_documento !== value) shouldDisplay = false;
                         break;
-                    // ... Agregar más casos según sea necesario
+                    case 'filterNumeroDocumento':
+                        if (!candidato.numero_documento.includes(value)) shouldDisplay = false;
+                        break;
+                    case 'filterSexo':
+                        if (candidato.sexo !== value) shouldDisplay = false;
+                        break;
+                    case 'filterLocalidad':
+                        if (!candidato.localidad_municipio.toLowerCase().includes(value.toLowerCase())) shouldDisplay = false;
+                        break;
+                    case 'filterNacimientoDesde':
+                        const nacimientoDesde = new Date(value);
+                        const fechaNacimiento = new Date(candidato.fecha_nacimiento);
+                        if (fechaNacimiento < nacimientoDesde) shouldDisplay = false;
+                        break;
+                    case 'filterNacimientoHasta':
+                        const nacimientoHasta = new Date(value);
+                        const fechaNacimientoHasta = new Date(candidato.fecha_nacimiento);
+                        if (fechaNacimientoHasta > nacimientoHasta) shouldDisplay = false;
+                        break;
+                    case 'filterEstudioMinimo':
+                        // Usar la jerarquía de formación académica
+                        const nivelRequerido = NIVEL_EDUCATIVO[value];
+                        const nivelCandidato = NIVEL_EDUCATIVO[candidato.formacion_academica];
+                        if (nivelCandidato < nivelRequerido) shouldDisplay = false;
+                        break;
+                    case 'filterPrograma':
+                        if (!candidato.programa_academico.toLowerCase().includes(value.toLowerCase())) shouldDisplay = false;
+                        break;
+                    case 'filterHorario':
+                        if (candidato.horario_interesado !== value) shouldDisplay = false;
+                        break;
+                    case 'filterSalarioMin':
+                        if (parseInt(candidato.aspiracion_salarial) < parseInt(value)) shouldDisplay = false;
+                        break;
+                    case 'filterSalarioMax':
+                        if (parseInt(candidato.aspiracion_salarial) > parseInt(value)) shouldDisplay = false;
+                        break;
+                    case 'filterNombreFeria':
+                        if (!candidato.feria || !candidato.feria.toLowerCase().includes(value.toLowerCase())) shouldDisplay = false;
+                        break;
+                    case 'filterFeriaDesde':
+                        const feriaDesde = new Date(value);
+                        const fechaFeria = new Date(candidato.fecha_feria);
+                        if (fechaFeria < feriaDesde) shouldDisplay = false;
+                        break;
+                    case 'filterFeriaHasta':
+                        const feriaHasta = new Date(value);
+                        const fechaFeriaHasta = new Date(candidato.fecha_feria);
+                        if (fechaFeriaHasta > feriaHasta) shouldDisplay = false;
+                        break;
+                    case 'filterTecnico':
+                        if (candidato.tecnico_seleccion !== value) shouldDisplay = false;
+                        break;
+                    case 'filterSISE':
+                        if (candidato.registrado_en_sise !== value) shouldDisplay = false;
+                        break;
                 }
             });
 
@@ -605,7 +698,6 @@ document.addEventListener('DOMContentLoaded', function() {
         updateSelectedCount();
     });
 
-    // Nuevo: Event listener para deseleccionar todo
     elements.deselectAllBtn.addEventListener('click', () => {
         elements.checkboxes.forEach(checkbox => {
             checkbox.checked = false;
@@ -678,6 +770,5 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Inicialización
     updateSelectedCount();
-});
-</script>
+});</script>
 {% endblock %}
