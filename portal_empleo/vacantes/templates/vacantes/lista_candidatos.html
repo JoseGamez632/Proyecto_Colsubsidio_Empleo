@@ -51,6 +51,12 @@ Candidatos para la Vacante
                     </div>
                 </div>
             </div>
+            <div class="mb-4">
+                <button class="btn btn-info btn-sm filter-estado" data-estado="Visto">Visto</button>
+                <button class="btn btn-secondary btn-sm filter-estado" data-estado="No visto">No Visto</button>
+                <button class="btn btn-danger btn-sm filter-estado" data-estado="Descartado">Descartado</button>
+                <button class="btn btn-warning btn-sm filter-estado" data-estado="Todos">Ver Todos</button>
+            </div>
 
             <!-- Lista de candidatos -->
             <div class="row" id="candidatosList">
@@ -150,7 +156,7 @@ Candidatos para la Vacante
     </div>
 </div>
 
-<!-- Ventana de filtros (modificada) -->
+
 <div id="filtersOverlay" class="filters-overlay">
     <div class="filters-container">
         <div class="filters-header">
@@ -326,6 +332,10 @@ Candidatos para la Vacante
 </div>
 
 <style>
+    .filter-estado {
+        margin-right: 5px;
+    }
+    
 .filters-overlay {
     position: fixed;
     top: 0;
@@ -489,6 +499,27 @@ Candidatos para la Vacante
 </style>
 
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const filterButtons = document.querySelectorAll('.filter-estado');
+        
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const estadoSeleccionado = this.getAttribute('data-estado');
+                const candidatoCards = document.querySelectorAll('.candidato-card');
+                
+                candidatoCards.forEach(card => {
+                    const estadoCandidato = card.querySelector('.badge').textContent.replace('Estado: ', '').trim();
+                    
+                    if (estadoSeleccionado === 'Todos') {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = (estadoCandidato === estadoSeleccionado) ? 'block' : 'none';
+                    }
+                });
+            });
+        });
+    });
+    
     function verHojaDeVida(vacanteId, candidatoId, boton) {
         // Obtener el estado actual del botón
         const estadoActual = boton.getAttribute("data-estado-actual");
