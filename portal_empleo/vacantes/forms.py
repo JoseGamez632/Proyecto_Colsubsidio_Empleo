@@ -103,6 +103,17 @@ class RegistroCandidatoForm(forms.ModelForm):
         label="Interés Ocupacional",
         required=False
     )
+    numero_celular = forms.CharField(
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'id': 'numero_celular',
+            'maxlength': '10',
+            'placeholder': 'Ingresa tu número de celular'
+        }),
+        label="Número de Celular",
+        required=True
+    )
+
     
     aspiracion_salarial = forms.CharField(
         widget=forms.TextInput(attrs={
@@ -113,6 +124,18 @@ class RegistroCandidatoForm(forms.ModelForm):
         label="Aspiración Salarial",
         required=False
     )
+    def clean_numero_celular(self):
+        data = self.cleaned_data['numero_celular']
+        # Verificar que solo contenga números
+        if not data.isdigit():
+            raise forms.ValidationError("El número de celular solo debe contener números.")
+        
+        # Verificar que tenga exactamente 10 dígitos
+        if len(data) != 10:
+            raise forms.ValidationError("El número de celular debe tener exactamente 10 cifras.")
+        
+        return data
+
     def clean_aspiracion_salarial(self):
         data = self.cleaned_data['aspiracion_salarial']
         # Remover las comas antes de guardar
