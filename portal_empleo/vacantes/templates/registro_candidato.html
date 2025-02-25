@@ -634,6 +634,30 @@ Inicio
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        const fechaNacimientoInput = document.getElementById('fecha_nacimiento');
+        
+        if (fechaNacimientoInput) {
+            const today = new Date();
+            const minDate = new Date(today.getFullYear() - 15, today.getMonth(), today.getDate());
+            const minDateFormatted = minDate.toISOString().split('T')[0];
+            
+            // Establecer el atributo max en el campo de fecha
+            fechaNacimientoInput.setAttribute('max', minDateFormatted);
+    
+            // Agregar evento para validar cuando se cambia la fecha
+            fechaNacimientoInput.addEventListener('change', function() {
+                const selectedDate = new Date(this.value);
+                
+                // Verificar si la fecha seleccionada es mayor a la fecha mínima permitida
+                if (selectedDate > minDate) {
+                    alert("Para registrarte debes ser mayor de edad o mínimo tener 15 años con previo permiso de tus padres.");
+                    this.value = ''; // Limpia el campo de fecha
+                }
+            });
+        }
+    });
+    
+    document.addEventListener('DOMContentLoaded', function() {
         // Inicializar Select2 en el campo de vacantes
         $('#vacantes').select2({
             placeholder: "Seleccione vacantes",
