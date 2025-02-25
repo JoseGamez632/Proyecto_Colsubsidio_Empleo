@@ -462,7 +462,7 @@ Inicio
     </div>
 </div>
 {% endif %}
-
+{% load humanize %}
 <div class="gradient-bg">
     <div class="container py-5">
         <!-- Header Section -->
@@ -550,7 +550,7 @@ Inicio
                         🏢 {{ vacante.modalidad_trabajo }}
                     </div>
                     <div class="info-badge">
-                        💰 {{ vacante.rango_salarial }}
+                        💰 ${{ vacante.rango_salarial|intcomma }}
                     </div>
                 </div>
                 <br>
