@@ -57,6 +57,7 @@ class VacanteForm(forms.ModelForm):
             self.fields['ciudad'].initial = self.instance.ciudad
 # Registro de candidatos
 class RegistroCandidatoForm(forms.ModelForm):
+    
     vacantes_disponibles = forms.ModelMultipleChoiceField(
         queryset=Vacante.objects.all(),
         widget=forms.SelectMultiple(attrs={
@@ -70,7 +71,8 @@ class RegistroCandidatoForm(forms.ModelForm):
     fecha_nacimiento = forms.DateField(
         widget=forms.DateInput(attrs={
             'type': 'date',
-            'class': 'form-control'
+            'class': 'form-control',
+            'id': 'fecha_nacimiento'
         }),
         input_formats=['%Y-%m-%d']
     )
@@ -101,6 +103,20 @@ class RegistroCandidatoForm(forms.ModelForm):
         label="Interés Ocupacional",
         required=False
     )
+    
+    aspiracion_salarial = forms.CharField(
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'id': 'aspiracion_salarial',
+            'placeholder': 'Ingresa tu aspiración salarial'
+        }),
+        label="Aspiración Salarial",
+        required=False
+    )
+    def clean_aspiracion_salarial(self):
+        data = self.cleaned_data['aspiracion_salarial']
+        # Remover las comas antes de guardar
+        return data.replace(',', '')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -111,6 +127,7 @@ class RegistroCandidatoForm(forms.ModelForm):
     class Meta:
         model = RegistroCandidato
         fields = '__all__'
+
 # def clean_vacantes_disponibles(self):
 #     vacantes = self.cleaned_data.get('vacantes_disponibles', [])
 #     return ','.join(vacantes)  # Guarda como una lista separada por comas
