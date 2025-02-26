@@ -7,6 +7,72 @@ Inicio
 
 {% block contenido %}
 <style>
+    .checkbox-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .selection-checkbox {
+        display: none;
+    }
+    
+    .selection-checkbox + label {
+        position: relative;
+        cursor: pointer;
+        padding-left: 30px;
+        user-select: none;
+        color: #fff;
+    }
+    
+    .selection-checkbox + label:before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 20px;
+        height: 20px;
+        border: 2px solid #ffc107;
+        border-radius: 4px;
+        background: transparent;
+        transition: all 0.3s;
+    }
+    
+    .selection-checkbox:checked + label:before {
+        background-color: #ffc107;
+        border-color: #ffc107;
+    }
+    
+    .selection-checkbox:checked + label:after {
+        content: "✔";
+        position: absolute;
+        left: 4px;
+        top: -2px;
+        color: #333;
+        font-size: 14px;
+        transition: all 0.3s;
+    }
+    .vacante-card {
+        text-align: center;
+        padding: 20px;
+        margin-bottom: 20px;
+        color: white;
+    }
+    
+    .vacante-title {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: #ffc107;
+        margin-bottom: 10px;
+    }
+    
+    .vacante-info {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        align-items: center;
+    }
+    
     h1.text-warning.mb-4.fw-bold {
         font-size: 2.5rem; /* Ajusta el tamaño a tu preferencia */
         font-weight: bold;
@@ -508,9 +574,11 @@ Inicio
             <div class="vacante-card">
                 <div class="vacante-header">
                     <div class="checkbox-container">
-                        <input class="selection-checkbox" type="checkbox" value="{{ vacante.id }}" 
-                               id="check{{ vacante.id }}" onchange="handleVacanteSelection('{{ vacante.id }}')">
-                        <div class="vacante-info">
+                        <div class="checkbox-container">
+                            <input class="selection-checkbox" type="checkbox" id="check{{ vacante.id }}" onchange="handleVacanteSelection('{{ vacante.id }}')">
+                            <label for="check{{ vacante.id }}"></label>
+                        </div>
+                            <div class="vacante-info">
                             <div class="vacante-title">{{ vacante.cargo }}</div>
                             <div class="vacante-location">📍 {{ vacante.ciudad }}</div>
                             {% if request.user.is_authenticated %}
