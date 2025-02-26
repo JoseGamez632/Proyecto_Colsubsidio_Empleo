@@ -7,6 +7,25 @@ Inicio
 
 {% block contenido %}
 <style>
+    .section-title {
+        text-align: center;
+        margin-bottom: 3rem;
+        font-weight: 700;
+        color: var(--dark);
+        font-size: 2.5rem;   /* Ajusta el tamaño del texto */
+        line-height: 1.2;   /* Ajusta la altura de línea para controlar el espacio */
+        text-transform: none; /* Asegura que no se aplique mayúsculas automáticas */
+    }
+    
+    .proceso-section {
+        background: linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7)), 
+                    url("{% static 'app/imagenes/fondoPaso.jpg' %}") no-repeat center center/cover;
+        padding: 4rem 0;
+        margin: 4rem 0;
+        color: #000000;  /* Ajusta el color del texto si es necesario */
+        opacity:  90%;
+    }
+        
     :root {
         --primary: #f8d047;
         --dark: #2a2a2a;
@@ -35,12 +54,13 @@ Inicio
 
     /* Header */
     header {
-        background: linear-gradient(135deg, var(--dark) 0%, #3a3a3a 100%);
-        color: var(--primary);
+        background: linear-gradient(rgba(41, 39, 39, 0.7), rgba(43, 43, 43, 0.7)), 
+                    url("{% static 'app/imagenes/feriaEmpleo.jpg' %}") no-repeat center center/cover;        color: var(--primary);
         padding: 4rem 1rem;
         position: relative;
         overflow: hidden;
         margin-bottom: 3rem;
+        opacity: 90%;
     }
 
     header::before {
