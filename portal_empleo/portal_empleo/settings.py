@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'vacantes',  # Asegúrate de que esta línea esté presente.
+    'django.contrib.humanize',
+
 ]
 
 MIDDLEWARE = [

@@ -26,6 +26,23 @@ urlpatterns = [
     path('registration-guide/', RegistrationGuideView.as_view(), name='registration_guide'),
     path("exportar-candidatos/", exportar_candidatos_excel, name="exportar_candidatos"),
     path('descargar-candidatos/', descargar_candidatos, name='descargar_candidatos'),
+    # Rutas para cambiar el estado manualmente
+    path('vacantes/<int:vacante_id>/candidatos/<int:candidato_id>/estado/<str:nuevo_estado>/', 
+        views.cambiar_estado_aplicacion, 
+        name='cambiar_estado_aplicacion'),
+
+    # Ruta para cambiar a "Visto" al ver la Hoja de Vida
+    path('vacantes/<int:vacante_id>/candidatos/<int:candidato_id>/ver/', 
+        views.cambiar_estado_a_visto, 
+        name='cambiar_estado_a_visto'),
+    path('vacantes/<int:vacante_id>/candidatos/<int:candidato_id>/cambiar_a_visto/', 
+        views.cambiar_a_visto, 
+        name='cambiar_a_visto'),
+
+
+
+
+
 
 
 
@@ -39,3 +56,5 @@ urlpatterns = [
 
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

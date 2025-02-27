@@ -8,6 +8,15 @@ Inicio
 {% block contenido %}
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
 <style>
+    h1.text-center {
+        font-size: 2rem !important; /* Ajusta el tamaño */
+        font-weight: bold !important;
+        color:rgb(94, 78, 28) !important; /* Color dorado */
+        text-transform: uppercase !important;
+        line-height: 1.2;
+        margin-bottom: 1.5rem;
+    }
+    
     .authorization-modal {
         display: none;
         position: fixed;
@@ -634,6 +643,135 @@ Inicio
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Validación en tiempo real para Número de Celular
+        const celularInput = document.getElementById('numero_celular');
+        if (celularInput) {
+            celularInput.addEventListener('input', function(e) {
+                // Remover caracteres no numéricos
+                this.value = this.value.replace(/\D/g, '');
+                
+                // Limitar a un máximo de 10 cifras
+                if (this.value.length > 10) {
+                    this.value = this.value.slice(0, 10);
+                }
+            });
+        }
+    
+        // Formateo de Millares para Aspiración Salarial
+        const salarioInput = document.getElementById('aspiracion_salarial');
+        if (salarioInput) {
+            salarioInput.addEventListener('input', function(e) {
+                // Remover comas existentes para no duplicarlas
+                let valorSinComas = this.value.replace(/,/g, '');
+                
+                // Remover espacios en blanco
+                valorSinComas = valorSinComas.replace(/\s+/g, '');
+    
+                // Verificar si es un número válido
+                if (!isNaN(valorSinComas) && valorSinComas !== '') {
+                    // Formatear el número con separadores de miles
+                    this.value = parseInt(valorSinComas).toLocaleString('en-US');
+                } else {
+                    // Si no es número, limpiar el campo
+                    this.value = '';
+                }
+            });
+        }
+    });
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        // Formateo de Millares para Aspiración Salarial
+        const salarioInput = document.getElementById('aspiracion_salarial');
+        if (salarioInput) {
+            salarioInput.addEventListener('input', function(e) {
+                // Remover comas existentes para no duplicarlas
+                let valorSinComas = this.value.replace(/,/g, '');
+                
+                // Remover espacios en blanco
+                valorSinComas = valorSinComas.replace(/\s+/g, '');
+    
+                // Verificar si es un número válido
+                if (!isNaN(valorSinComas) && valorSinComas !== '') {
+                    // Formatear el número con separadores de miles
+                    this.value = parseInt(valorSinComas).toLocaleString('en-US');
+                } else {
+                    // Si no es número, limpiar el campo
+                    this.value = '';
+                }
+            });
+        }
+    });
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        // Validación y formateo de Fecha de Nacimiento
+        const fechaNacimientoInput = document.getElementById('fecha_nacimiento');
+        if (fechaNacimientoInput) {
+            const today = new Date();
+            const minDate = new Date(today.getFullYear() - 15, today.getMonth(), today.getDate());
+            const minDateFormatted = minDate.toISOString().split('T')[0];
+            
+            // Establecer el atributo max en el campo de fecha
+            fechaNacimientoInput.setAttribute('max', minDateFormatted);
+    
+            // Agregar evento para validar cuando se cambia la fecha
+            fechaNacimientoInput.addEventListener('change', function() {
+                const selectedDate = new Date(this.value);
+                
+                // Verificar si la fecha seleccionada es mayor a la fecha mínima permitida
+                if (selectedDate > minDate) {
+                    alert("Para registrarte debes ser mayor de edad o mínimo tener 15 años con previo permiso de tus padres.");
+                    this.value = ''; // Limpia el campo de fecha
+                }
+            });
+        }
+    
+        // Formateo de Millares para Aspiración Salarial
+        const salarioInput = document.getElementById('aspiracion_salarial');
+        if (salarioInput) {
+            salarioInput.addEventListener('input', function(e) {
+                // Remover comas existentes para no duplicarlas
+                let valorSinComas = this.value.replace(/,/g, '');
+                
+                // Remover espacios en blanco
+                valorSinComas = valorSinComas.replace(/\s+/g, '');
+    
+                // Verificar si es un número válido
+                if (!isNaN(valorSinComas) && valorSinComas !== '') {
+                    // Formatear el número con separadores de miles
+                    this.value = parseInt(valorSinComas).toLocaleString('en-US');
+                } else {
+                    // Si no es número, limpiar el campo
+                    this.value = '';
+                }
+            });
+        }
+    });
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        const fechaNacimientoInput = document.getElementById('fecha_nacimiento');
+        
+        if (fechaNacimientoInput) {
+            const today = new Date();
+            const minDate = new Date(today.getFullYear() - 15, today.getMonth(), today.getDate());
+            const minDateFormatted = minDate.toISOString().split('T')[0];
+            
+            // Establecer el atributo max en el campo de fecha
+            fechaNacimientoInput.setAttribute('max', minDateFormatted);
+    
+            // Agregar evento para validar cuando se cambia la fecha
+            fechaNacimientoInput.addEventListener('change', function() {
+                const selectedDate = new Date(this.value);
+                
+                // Verificar si la fecha seleccionada es mayor a la fecha mínima permitida
+                if (selectedDate > minDate) {
+                    alert("Para registrarte debes ser mayor de edad o mínimo tener 15 años con previo permiso de tus padres.");
+                    this.value = ''; // Limpia el campo de fecha
+                }
+            });
+        }
+    });
+    
+    document.addEventListener('DOMContentLoaded', function() {
         // Inicializar Select2 en el campo de vacantes
         $('#vacantes').select2({
             placeholder: "Seleccione vacantes",
@@ -675,6 +813,52 @@ Inicio
 {% comment %} script para mostrar el campo tipo_discapacidad cuando se selecciona la opción SI en candidato_discapacidad {% endcomment %}
 
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Validación en tiempo real para Número de Celular
+        const celularInput = document.getElementById('numero_celular');
+        if (celularInput) {
+            celularInput.addEventListener('input', function(e) {
+                // Remover caracteres no numéricos
+                this.value = this.value.replace(/\D/g, '');
+                
+                // Limitar a un máximo de 10 cifras
+                if (this.value.length > 10) {
+                    this.value = this.value.slice(0, 10);
+                }
+            });
+        }
+    
+        // Validación en tiempo real para Número de Documento
+        const documentoInput = document.getElementById('numero_documento');
+        if (documentoInput) {
+            documentoInput.addEventListener('input', function(e) {
+                // Remover caracteres no numéricos y espacios
+                this.value = this.value.replace(/\D/g, '');
+            });
+        }
+    
+        // Formateo de Millares para Aspiración Salarial
+        const salarioInput = document.getElementById('aspiracion_salarial');
+        if (salarioInput) {
+            salarioInput.addEventListener('input', function(e) {
+                // Remover comas existentes para no duplicarlas
+                let valorSinComas = this.value.replace(/,/g, '');
+                
+                // Remover espacios en blanco
+                valorSinComas = valorSinComas.replace(/\s+/g, '');
+    
+                // Verificar si es un número válido
+                if (!isNaN(valorSinComas) && valorSinComas !== '') {
+                    // Formatear el número con separadores de miles
+                    this.value = parseInt(valorSinComas).toLocaleString('en-US');
+                } else {
+                    // Si no es número, limpiar el campo
+                    this.value = '';
+                }
+            });
+        }
+    });
+    
     document.addEventListener('DOMContentLoaded', function() {
         const discapacidadField = document.querySelector('[name="candidato_discapacidad"]');
         const tipoDiscapacidadContainer = document.getElementById('tipo_discapacidad_container');

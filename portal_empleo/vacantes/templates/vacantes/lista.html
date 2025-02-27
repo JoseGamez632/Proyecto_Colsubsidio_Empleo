@@ -7,6 +7,87 @@ Inicio
 
 {% block contenido %}
 <style>
+    .checkbox-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .selection-checkbox {
+        display: none;
+    }
+    
+    .selection-checkbox + label {
+        position: relative;
+        cursor: pointer;
+        padding-left: 30px;
+        user-select: none;
+        color: #fff;
+    }
+    
+    .selection-checkbox + label:before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 20px;
+        height: 20px;
+        border: 2px solid #ffc107;
+        border-radius: 4px;
+        background: transparent;
+        transition: all 0.3s;
+    }
+    
+    .selection-checkbox:checked + label:before {
+        background-color: #ffc107;
+        border-color: #ffc107;
+    }
+    
+    .selection-checkbox:checked + label:after {
+        content: "✔";
+        position: absolute;
+        left: 4px;
+        top: -2px;
+        color: #333;
+        font-size: 14px;
+        transition: all 0.3s;
+    }
+    .vacante-card {
+        text-align: center;
+        padding: 20px;
+        margin-bottom: 20px;
+        color: white;
+    }
+    
+    .vacante-title {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: #ffc107;
+        margin-bottom: 10px;
+    }
+    
+    .vacante-info {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        align-items: center;
+    }
+    
+    h1.text-warning.mb-4.fw-bold {
+        font-size: 2.5rem; /* Ajusta el tamaño a tu preferencia */
+        font-weight: bold;
+        color: #ffc107; /* Manteniendo el color actual */
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    .custom-title {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #ffc107;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    
     .tutorial-modal {
     display: none;
     position: fixed;
@@ -462,26 +543,26 @@ Inicio
     </div>
 </div>
 {% endif %}
-
+{% load humanize %}
 <div class="gradient-bg">
     <div class="container py-5">
         <!-- Header Section -->
         <div class="mb-5">
             <h1 class="text-warning mb-4 fw-bold">Listado de Vacantes Activas</h1>
-            <div class="d-flex flex-wrap gap-2">
-                <button type="button" class="btn btn-outline-light" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample">
+            <div class="d-flex flex-wrap gap-2 justify-content-center">
+                <button type="button" class="btn btn-outline-light btn-sm" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample">
                     🔍 Filtrar Vacantes
                 </button>
-                <button type="button" class="btn btn-outline-light" onclick="clearFilters()">
+                <button type="button" class="btn btn-outline-light btn-sm" onclick="clearFilters()">
                     🧹 Borrar Filtros
                 </button>
                 {% if request.user.is_authenticated %}
-                <a class="btn btn-outline-warning" href="{% url 'agregar_vacante' %}">
+                <a class="btn btn-outline-warning btn-sm" href="{% url 'agregar_vacante' %}">
                     ➕ Agregar Vacante
                 </a>
-                <a href="{% url 'descargar_excel' %}" class="btn btn-success">Descargar Excel Vacantes</a>
+                <a href="{% url 'descargar_excel' %}" class="btn btn-success btn-sm">Descargar Excel Vacantes</a>
                 {% endif %}
-                <button type="button" class="btn btn-outline-light" onclick="desmarcarVacantes()">
+                <button type="button" class="btn btn-outline-light btn-sm" onclick="desmarcarVacantes()">
                     ❌ Desmarcar Selección
                 </button>
             </div>
@@ -493,16 +574,20 @@ Inicio
             <div class="vacante-card">
                 <div class="vacante-header">
                     <div class="checkbox-container">
-                        <input class="selection-checkbox" type="checkbox" value="{{ vacante.id }}" 
-                               id="check{{ vacante.id }}" onchange="handleVacanteSelection('{{ vacante.id }}')">
-                        <div class="vacante-info">
+                        <div class="checkbox-container">
+                            <input class="selection-checkbox" type="checkbox" id="check{{ vacante.id }}" onchange="handleVacanteSelection('{{ vacante.id }}')">
+                            <label for="check{{ vacante.id }}"></label>
+                        </div>
+                            <div class="vacante-info">
                             <div class="vacante-title">{{ vacante.cargo }}</div>
                             <div class="vacante-location">📍 {{ vacante.ciudad }}</div>
                             {% if request.user.is_authenticated %}
                             <div class="vacante-meta">
                                 <small>🧑‍💼 Creado: {{ vacante.usuario_publicador.username|default:"No asignado" }} ({{ vacante.fecha_creacion|date:"d/m/Y" }})</small><br>
                                 <small>🔁 Actualizado: {{ vacante.usuario_actualizador.username|default:"" }} ({{ vacante.fecha_actualizacion|date:"d/m/Y" }})</small><br>
-                                <small>👥 Candidatos: {{ vacante.num_candidatos }}</small>
+                                <small>👥 Candidatos: {{ vacante.num_candidatos }}</small><br>
+                                <small>ID Vacante: {{ vacante.codigo_vacante|default:"No asignado" }}</small>
+
                             </div>
                             {% endif %}
                         </div>
@@ -550,16 +635,19 @@ Inicio
                         🏢 {{ vacante.modalidad_trabajo }}
                     </div>
                     <div class="info-badge">
-                        💰 {{ vacante.rango_salarial }}
+                        💰 ${{ vacante.rango_salarial|intcomma }}
                     </div>
                 </div>
                 <br>
-                <button class="btn btn-outline-warning" 
-                        type="button"
-                        data-bs-toggle="modal" 
-                        data-bs-target="#modal-{{ vacante.id }}">
-                    Descripcion Vacante
-                </button>
+                <!-- Botón de Descripción Vacante - Ocupa toda la parte inferior -->
+                <div class="mt-auto">
+                    <button class="btn btn-outline-warning w-100 toggle-info d-flex align-items-center justify-content-center" 
+                            type="button"
+                            data-bs-toggle="modal" 
+                            data-bs-target="#modal-{{ vacante.id }}">
+                        Descripción Vacante <i class="fas fa-chevron-down toggle-icon ms-2"></i>
+                    </button>
+                </div>
             </div>
 
             <!-- Modal para detalles de vacante -->
@@ -608,7 +696,7 @@ Inicio
                                             <strong>⏰ Jornada:</strong> {{ vacante.jornada_trabajo }}
                                         </li>
                                         <li class="list-group-item bg-transparent border-secondary">
-                                            <strong>💰 Rango salarial:</strong> {{ vacante.rango_salarial }}
+                                            <strong>💰 Rango salarial: $</strong> {{ vacante.rango_salarial|intcomma }}
                                         </li>
                                     </ul>
                                 </div>
@@ -645,13 +733,19 @@ Inicio
         <h5 class="offcanvas-title text-light">🔍 Filtrar Vacantes</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
     </div>
+    
     <div class="offcanvas-body">
         <form action="" method="GET">
+            {% if request.user.is_authenticated %}
+            <div class="mb-3">
+                <label for="codigo_vacante" class="form-label text-light">🔎 ID Vacante</label>
+                <input type="text" class="form-control" id="codigo_vacante" name="codigo_vacante" value="{{ request.GET.codigo_vacante }}">
+            </div>
+            {% endif %}
             <div class="mb-3">
                 <label for="cargo" class="form-label text-light">💼 Cargo</label>
                 <input type="text" class="form-control" id="cargo" name="cargo" value="{{ request.GET.cargo }}">
             </div>
-
             <div class="mb-3">
                 <label for="area" class="form-label text-light">🎯 Área</label>
                 <select class="form-control" id="area" name="area">
@@ -735,9 +829,13 @@ Inicio
             </div>
 
             <div class="mb-3">
-                <label for="rango_salarial" class="form-label text-light">💰 Rango Salarial</label>
-                <input type="text" class="form-control" id="rango_salarial" name="rango_salarial" value="{{ request.GET.rango_salarial }}">
+                <label class="form-label text-light">💰 Rango Salarial</label>
+                <div class="d-flex gap-2">
+                    <input type="text" class="form-control" placeholder="Desde" id="rango_salarial_min" name="rango_salarial_min">
+                    <input type="text" class="form-control" placeholder="Hasta" id="rango_salarial_max" name="rango_salarial_max">
+                </div>
             </div>
+            
 
             <div class="d-grid gap-2">
                 <button type="submit" class="btn btn-primary">
@@ -752,6 +850,24 @@ Inicio
 </div>
 
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('.offcanvas-body form');
+        
+        form.addEventListener('submit', function(event) {
+            // Obtener los inputs
+            const minInput = document.getElementById('rango_salarial_min');
+            const maxInput = document.getElementById('rango_salarial_max');
+    
+            // Remover puntos antes de enviar
+            if (minInput.value) {
+                minInput.value = minInput.value.replace(/\./g, '');
+            }
+            if (maxInput.value) {
+                maxInput.value = maxInput.value.replace(/\./g, '');
+            }
+        });
+    }); 
+    
 let selectedVacantes = [];
 
 function handleVacanteSelection(vacanteId) {
@@ -770,6 +886,32 @@ function handleVacanteSelection(vacanteId) {
     
     updateFloatingButton();
 }
+document.addEventListener('DOMContentLoaded', function() {
+    // Función para formatear con puntos de miles
+    const formatNumber = (input) => {
+        // Eliminar puntos existentes
+        let value = input.value.replace(/\./g, '');
+
+        // Asegurarse de que solo hay números
+        if (!isNaN(value) && value !== '') {
+            // Convertir a número y formatear con puntos de miles
+            value = parseInt(value).toLocaleString('es-CO');
+            input.value = value;
+        } else {
+            // Si no es número, limpiar el campo
+            input.value = '';
+        }
+    };
+
+    // Obtener los inputs
+    const minInput = document.getElementById('rango_salarial_min');
+    const maxInput = document.getElementById('rango_salarial_max');
+
+    // Aplicar la función mientras el usuario escribe
+    minInput.addEventListener('input', () => formatNumber(minInput));
+    maxInput.addEventListener('input', () => formatNumber(maxInput));
+});
+
 
 function handleModalSelection(vacanteId) {
     const modalCheckbox = document.getElementById('modal-check' + vacanteId);

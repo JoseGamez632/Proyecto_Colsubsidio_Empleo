@@ -104,11 +104,7 @@ class Vacante(models.Model):
     )
     departamento = models.ForeignKey(Departamento, on_delete=models.SET_NULL, null=True, blank=True)
     ciudad = models.ForeignKey(Ciudad, on_delete=models.SET_NULL, null=True, blank=True)
-    rango_salarial = models.CharField(
-        max_length=50, 
-        blank=True, 
-        null=True
-    )
+    rango_salarial = models.IntegerField(null=True, blank=True)
     fecha_publicacion = models.DateField(auto_now_add=True)
     empresa_usuaria = models.CharField(max_length=100)
     candidatos_registrados = models.ManyToManyField('RegistroCandidato', related_name='vacantes', blank=True)
@@ -243,3 +239,22 @@ class RegistroCandidato(models.Model):
 
     def __str__(self):
         return f"{self.nombres} {self.apellidos} - {self.tipo_documento}: {self.numero_documento}"
+
+
+class EstadoAplicacion(models.Model):
+    ESTADO_CHOICES = [
+        ('No visto', 'No visto'),
+        ('Visto', 'Visto'),
+        ('Descartado', 'Descartado'),
+    ]
+
+    candidato = models.ForeignKey('RegistroCandidato', on_delete=models.CASCADE, related_name='aplicaciones')
+    vacante = models.ForeignKey('Vacante', on_delete=models.CASCADE, related_name='aplicaciones')
+    estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='No visto')
+    fecha_actualizacion = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ('candidato', 'vacante')
+
+    def __str__(self):
+        return f"{self.candidato.nombres} - {self.vacante.cargo} - {self.estado}"

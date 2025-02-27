@@ -7,6 +7,25 @@ Inicio
 
 {% block contenido %}
 <style>
+    .section-title {
+        text-align: center;
+        margin-bottom: 3rem;
+        font-weight: 700;
+        color: var(--dark);
+        font-size: 2.5rem;   /* Ajusta el tamaño del texto */
+        line-height: 1.2;   /* Ajusta la altura de línea para controlar el espacio */
+        text-transform: none; /* Asegura que no se aplique mayúsculas automáticas */
+    }
+    
+    .proceso-section {
+        background: linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7)), 
+                    url("{% static 'app/imagenes/fondoPaso.jpg' %}") no-repeat center center/cover;
+        padding: 4rem 0;
+        margin: 4rem 0;
+        color: #000000;  /* Ajusta el color del texto si es necesario */
+        opacity:  90%;
+    }
+        
     :root {
         --primary: #f8d047;
         --dark: #2a2a2a;
@@ -35,12 +54,13 @@ Inicio
 
     /* Header */
     header {
-        background: linear-gradient(135deg, var(--dark) 0%, #3a3a3a 100%);
-        color: var(--primary);
+        background: linear-gradient(rgba(41, 39, 39, 0.7), rgba(43, 43, 43, 0.7)), 
+                    url("{% static 'app/imagenes/feriaEmpleo.jpg' %}") no-repeat center center/cover;        color: var(--primary);
         padding: 4rem 1rem;
         position: relative;
         overflow: hidden;
         margin-bottom: 3rem;
+        opacity: 90%;
     }
 
     header::before {
@@ -265,6 +285,143 @@ Inicio
             font-size: 2rem;
         }
     }
+    :root {
+        --primary: #f8d047;
+        --dark: #2a2a2a;
+        --transition: all 0.5s ease-in-out;
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        overflow-x: hidden;
+        background-color: #ffffff;
+    }
+
+    /* Animaciones generales */
+    .fade-in {
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeIn 0.8s ease-out forwards;
+    }
+
+    @keyframes fadeIn {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .bounce-in {
+        animation: bounceIn 1s ease forwards;
+    }
+
+    @keyframes bounceIn {
+        0% {
+            opacity: 0;
+            transform: scale(0.3);
+        }
+        50% {
+            opacity: 0.9;
+            transform: scale(1.1);
+        }
+        70% {
+            transform: scale(0.9);
+        }
+        100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    .hover-grow:hover {
+        transform: scale(1.05);
+        box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Header */
+    header {
+        background: linear-gradient(rgba(41, 39, 39, 0.7), rgba(43, 43, 43, 0.7)),
+                    url("{% static 'app/imagenes/feriaEmpleo.jpg' %}") no-repeat center center/cover;
+        color: var(--primary);
+        padding: 4rem 1rem;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 3rem;
+        opacity: 90%;
+    }
+
+    .header-content h1 {
+        font-size: 3.5rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        animation: fadeIn 1s ease-out forwards;
+    }
+
+    .header-content .lead {
+        font-size: 1.5rem;
+        margin-bottom: 2rem;
+        color: #ffffff;
+        animation: fadeIn 1.2s ease-out forwards;
+    }
+
+    .btn-vacantes {
+        background-color: var(--primary);
+        color: var(--dark);
+        font-weight: 600;
+        padding: 1rem 2.5rem;
+        border: none;
+        border-radius: 50px;
+        transition: var(--transition);
+        text-decoration: none;
+        box-shadow: 0 4px 15px rgba(248, 208, 71, 0.2);
+        font-size: 1.1rem;
+        display: inline-block;
+        animation: bounceIn 1.5s ease-out forwards;
+    }
+
+    .btn-vacantes:hover {
+        background-color: #ffffff;
+        color: var(--dark);
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(248, 208, 71, 0.3);
+    }
+    .proceso-item {
+        background: white;
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        position: relative;
+        transition: transform 0.4s ease, box-shadow 0.4s ease;
+        text-align: center;
+        perspective: 1000px;
+        transform-style: preserve-3d;
+    }
+    
+    .proceso-item:hover {
+        transform: rotateY(10deg) translateY(-10px);
+        box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
+    }
+    
+    .proceso-numero {
+        width: 40px;
+        height: 40px;
+        background: var(--primary);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: var(--dark);
+        margin: 0 auto;
+        margin-bottom: 1rem;
+        transition: transform 0.5s ease;
+    }
+    
+    .proceso-item:hover .proceso-numero {
+        transform: rotate(360deg);
+    }
+    
 </style>
 
 <header>
