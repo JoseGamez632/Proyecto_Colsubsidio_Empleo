@@ -72,7 +72,8 @@ Candidatos para la Vacante
                 {% for candidato in candidatos %}
                 <div class="col-md-6 col-lg-4 mb-3 candidato-card" 
                      data-nombre="{{ candidato.nombres }} {{ candidato.apellidos }}"
-                     data-ciudad="{{ candidato.localidad_municipio }}"
+                     data-departamento="{{ candidato.departamento }}"
+                     data-ciudad="{{ candidato.ciudad }}"
                      data-documento="{{ candidato.numero_documento }}">
                     <div class="card h-100" style="background-color: #333333; color: #ffffff;">
                         <div class="card-body">
@@ -104,7 +105,7 @@ Candidatos para la Vacante
                             <div class="card-text">
                                 <div class="mb-2 text-light">
                                     <i class="fas fa-map-marker-alt text-warning"></i>
-                                    <span class="ms-2">{{ candidato.localidad_municipio }}</span>
+                                    <span class="ms-2">{{ candidato.departamento }}, {{ candidato.ciudad }}</span>
                                 </div>
                                 <div class="mb-2 text-light">
                                     <i class="fas fa-id-card text-warning"></i>
@@ -194,12 +195,12 @@ Candidatos para la Vacante
                         <label class="form-label">Tipo Documento</label>
                         <select id="filterTipoDocumento" class="form-select form-select-sm">
                             <option value="">Todos</option>
-                            <option value="CC">CEDULA DE CIUDADANIA</option>
-                            <option value="PEP">PERMISO ESPECIAL DE PERMANENCIA</option>
-                            <option value="TI">TARJETA DE IDENTIDAD</option>
-                            <option value="DNI">DOCUMENTO NACIONAL DE IDENTIFICACION</option>
-                            <option value="PAS">PASAPORTE</option>
-                            <option value="CE">CEDULA DE EXTRANJERIA</option>
+                            <option value="CEDULA DE CIUDADANIA">CEDULA DE CIUDADANIA</option>
+                            <option value="PERMISO ESPECIAL DE PERMANENCIA">PERMISO ESPECIAL DE PERMANENCIA</option>
+                            <option value="TARJETA DE IDENTIDAD">TARJETA DE IDENTIDAD</option>
+                            <option value="DOCUMENTO NACIONAL DE IDENTIFICACION">DOCUMENTO NACIONAL DE IDENTIFICACION</option>
+                            <option value="PASAPORTE">PASAPORTE</option>
+                            <option value="CEDULA DE EXTRANJERIA">CEDULA DE EXTRANJERIA</option>
                         </select>
                     </div>
                     <div class="mb-2">
@@ -210,15 +211,32 @@ Candidatos para la Vacante
                         <label class="form-label">Sexo</label>
                         <select id="filterSexo" class="form-select form-select-sm">
                             <option value="">Todos</option>
-                            <option value="M">Mujer</option>
-                            <option value="H">Hombre</option>
-                            <option value="I">Intersexual</option>
+                            <option value="Mujer">Mujer</option>
+                            <option value="Hombre">Hombre</option>
+                            <option value="Intersexual">Intersexual</option>
                         </select>
                     </div>
                     <div class="mb-2">
-                        <label class="form-label">Localidad/Municipio</label>
-                        <input type="text" id="filterLocalidad" class="form-control form-control-sm">
+                        <label class="form-label">Departamento</label>
+                        <select id="filterDepartamento" class="form-select form-select-sm">
+                            <option value=""></option>
+                            {% for value, label in departamento_choices %}
+                                <option value="{{ value }}" {% if filtros.departamento == value|stringformat:"s" %}selected{% endif %}>
+                                    {{ label }}
+                                </option>
+                            {% endfor %}
+                        </select>
                     </div>
+                    
+                    <div class="mb-2">
+                        <label class="form-label">Ciudad</label>
+                        <select id="filterCiudad" class="form-select form-select-sm">
+                            <option value=""></option>
+                            {% if filtros.ciudad_nombre %}
+                                <option value="{{ filtros.ciudad }}" selected>{{ filtros.ciudad_nombre }}</option>
+                            {% endif %}
+                        </select>
+                    </div>                
                     <div class="mb-2">
                         <label class="form-label">Fecha de Nacimiento</label>
                         <div class="row">
@@ -239,17 +257,17 @@ Candidatos para la Vacante
                         <label class="form-label">Estudio mínimo requerido</label>
                         <select id="filterEstudioMinimo" class="form-select form-select-sm">
                             <option value="">Todos</option>
-                            <option value="BP">BASICA PRIMARIA</option>
-                            <option value="BS">BASICA SECUNDARIA</option>
-                            <option value="BA">BACHILLER ACADEMICO</option>
-                            <option value="EBA">ESTUDIANTE BACHILLER ACADEMICO</option>
-                            <option value="TL">TECNICO LABORAL/PROFESIONAL</option>
-                            <option value="ETL">ESTUDIANTE TECNICO LABORAL/PROFESIONAL</option>
-                            <option value="T">TECNOLOGO</option>
-                            <option value="ET">ESTUDIANTE TECNOLOGO</option>
-                            <option value="P">PROFESIONAL</option>
-                            <option value="EP">ESTUDIANTE PROFESIONAL</option>
-                            <option value="PG">POSGRADO</option>
+                            <option value="BASICA PRIMARIA">BASICA PRIMARIA</option>
+                            <option value="BASICA SECUNDARIA">BASICA SECUNDARIA</option>
+                            <option value="BACHILLER ACADEMICO">BACHILLER ACADEMICO</option>
+                            <option value="ESTUDIANTE BACHILLER ACADEMICO">ESTUDIANTE BACHILLER ACADEMICO</option>
+                            <option value="TECNICO LABORAL/PROFESIONAL">TECNICO LABORAL/PROFESIONAL</option>
+                            <option value="ESTUDIANTE TECNICO LABORAL/PROFESIONA">ESTUDIANTE TECNICO LABORAL/PROFESIONAL</option>
+                            <option value="TECNOLOGO">TECNOLOGO</option>
+                            <option value="ESTUDIANTE TECNOLOGO">ESTUDIANTE TECNOLOGO</option>
+                            <option value="PROFESIONAL">PROFESIONAL</option>
+                            <option value="ESTUDIANTE PROFESIONAL">ESTUDIANTE PROFESIONAL</option>
+                            <option value="POSGRADO">POSGRADO</option>
                         </select>
                     </div>
                     <div class="mb-2">
@@ -260,9 +278,9 @@ Candidatos para la Vacante
                         <label class="form-label">Horario Interesado</label>
                         <select id="filterHorario" class="form-select form-select-sm">
                             <option value="">Todos</option>
-                            <option value="FT">TIEMPO COMPLETO</option>
-                            <option value="PT">MEDIO TIEMPO</option>
-                            <option value="WE">FINES DE SEMANA</option>
+                            <option value="TIEMPO COMPLETO">TIEMPO COMPLETO</option>
+                            <option value="MEDIO TIEMPO">MEDIO TIEMPO</option>
+                            <option value="FINES DE SEMANA">FINES DE SEMANA</option>
                         </select>
                     </div>
                     <div class="mb-2">
@@ -295,10 +313,10 @@ Candidatos para la Vacante
                         <label class="form-label">Técnico de Selección</label>
                         <select id="filterTecnico" class="form-select form-select-sm">
                             <option value="">Todos</option>
-                            <option value="NN">No conoce el nombre</option>
-                            <option value="AAM">Angel Andres Moyano Molano</option>
-                            <option value="DAP">Diego Alejandro Parra Pinto</option>
-                            <option value="EJC">Erika Julieth Cristancho Pérez</option>
+                            <option value="No conoce el nombre">No conoce el nombre</option>
+                            <option value="Angel Andres Moyano Molano">Angel Andres Moyano Molano</option>
+                            <option value="Diego Alejandro Parra Pinto">Diego Alejandro Parra Pinto</option>
+                            <option value="Erika Julieth Cristancho Pérez">Erika Julieth Cristancho Pérez</option>
                         </select>
                     </div>
                     <div class="mb-2">
@@ -348,6 +366,7 @@ Candidatos para la Vacante
         </div>
     </div>
 </div>
+
 
 <style>
     
@@ -630,7 +649,8 @@ Candidatos para la Vacante
             programa_academico: "{{ candidato.programa_academico|escapejs }}",
             experiencia_laboral: "{{ candidato.experiencia_laboral|escapejs }}",
             interes_ocupacional: "{{ candidato.interes_ocupacional|escapejs }}",
-            localidad_municipio: "{{ candidato.localidad_municipio|escapejs }}",
+            departamento: "{{ candidato.departamento|escapejs }}",
+            ciudad: "{{ candidato.ciudad|escapejs }}",
             candidato_discapacidad: "{{ candidato.candidato_discapacidad|escapejs }}",
             tipo_discapacidad: "{{ candidato.tipo_discapacidad|escapejs }}",
             horario_interesado: "{{ candidato.horario_interesado|escapejs }}",
@@ -664,22 +684,22 @@ Candidatos para la Vacante
 
     // Constante para la jerarquía de formación académica
     const NIVEL_EDUCATIVO = {
-        'BP': 1,    // BASICA PRIMARIA
-        'BS': 2,    // BASICA SECUNDARIA
-        'EBA': 3,   // ESTUDIANTE BACHILLER ACADEMICO
-        'BA': 4,    // BACHILLER ACADEMICO
-        'ETL': 5,   // ESTUDIANTE TECNICO LABORAL/PROFESIONAL
-        'TL': 6,    // TECNICO LABORAL/PROFESIONAL
-        'ET': 7,    // ESTUDIANTE TECNOLOGO
-        'T': 8,     // TECNOLOGO
-        'EP': 9,    // ESTUDIANTE PROFESIONAL
-        'P': 10,    // PROFESIONAL
-        'PG': 11    // POSGRADO
+        'BASICA PRIMARIA': 1,    // BASICA PRIMARIA
+        'BASICA SECUNDARIA': 2,    // BASICA SECUNDARIA
+        'ESTUDIANTE BACHILLER ACADEMICO': 3,   // ESTUDIANTE BACHILLER ACADEMICO
+        'BACHILLER ACADEMICO': 4,    // BACHILLER ACADEMICO
+        'ESTUDIANTE TECNICO LABORAL/PROFESIONA': 5,   // ESTUDIANTE TECNICO LABORAL/PROFESIONAL
+        'TECNICO LABORAL/PROFESIONAL': 6,    // TECNICO LABORAL/PROFESIONAL
+        'ESTUDIANTE TECNOLOGO': 7,    // ESTUDIANTE TECNOLOGO
+        'TECNOLOGO': 8,     // TECNOLOGO
+        'ESTUDIANTE PROFESIONAL': 9,    // ESTUDIANTE PROFESIONAL
+        'PROFESIONAL': 10,    // PROFESIONAL
+        'POSGRADO': 11    // POSGRADO
     };
 
     // Funciones de utilidad
-    function sanitizeHTML(text) {
-        if (!text) return 'No especificado';
+    function sanitizeHTML(text, defaultText = 'No especificado') {
+        if (!text) return defaultText;
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
@@ -701,9 +721,9 @@ Candidatos para la Vacante
         });
     }
 
-    function showCV(candidato) {
+    function showCV(candidato, vacanteId) {
         if (!candidato) return;
-
+    
         const cvContent = document.getElementById('cvContent');
         cvContent.innerHTML = `
             <div class="cv-section">
@@ -717,7 +737,8 @@ Candidatos para la Vacante
                 <h4>Contacto</h4>
                 <p><strong>Celular:</strong> ${sanitizeHTML(candidato.numero_celular)}</p>
                 <p><strong>Correo:</strong> ${sanitizeHTML(candidato.correo_electronico)}</p>
-                <p><strong>Localidad/Municipio:</strong> ${sanitizeHTML(candidato.localidad_municipio)}</p>
+                <p><strong>Departamento:</strong> ${sanitizeHTML(candidato.departamento)}</p>
+                <p><strong>Ciudad:</strong> ${sanitizeHTML(candidato.ciudad)}</p>
             </div>
             <div class="cv-section">
                 <h4>Formación y Experiencia</h4>
@@ -734,14 +755,55 @@ Candidatos para la Vacante
                 <p><strong>Tipo de discapacidad:</strong> ${sanitizeHTML(candidato.tipo_discapacidad)}</p>
             </div>
             <div class="cv-section">
-                <h4>Datos de la Feria</h4>
-                <p><strong>Feria:</strong> ${sanitizeHTML(candidato.feria)}</p>
-                <p><strong>Fecha de la feria:</strong> ${sanitizeHTML(candidato.fecha_feria)}</p>
-                <p><strong>Técnico de selección:</strong> ${sanitizeHTML(candidato.tecnico_seleccion)}</p>
-                <p><strong>Registrado en SISE:</strong> ${sanitizeHTML(candidato.registrado_en_sise)}</p>
+                <h4>Comentarios del Reclutador</h4>
+                <textarea id="recruiterComments" class="form-control" rows="4" placeholder="Escribe tus comentarios aquí...">
+                    ${sanitizeHTML(candidato.comentarios || '')}
+                </textarea>
+                <button id="saveCommentsBtn" class="btn btn-warning btn-sm mt-2" 
+                    onclick="guardarComentarios(${candidato.id}, ${vacanteId})">
+                    Guardar Comentarios
+                </button>
             </div>
         `;
     }
+    
+function guardarComentarios(candidatoId, vacanteId) {
+    const commentsTextarea = document.getElementById('recruiterComments');
+    const comentarios = commentsTextarea.value.trim();
+
+    if (!comentarios) {
+        alert('El comentario no puede estar vacío.');
+        return;
+    }
+
+    const csrftoken = getCSRFToken();  // Asegurar que obtienes correctamente el token
+
+    fetch(`/vacantes/${vacanteId}/candidatos/${candidatoId}/guardar_comentarios/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': csrftoken,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ comentarios })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Comentarios guardados exitosamente.');
+            const candidato = candidatos.find(c => c.id === candidatoId);
+            if (candidato) candidato.comentarios = comentarios;
+        } else {
+            alert('Error: ' + (data.message || 'No se pudieron guardar los comentarios.'));
+        }
+    })
+    .catch(error => {
+        console.error("Error en la petición:", error);
+        alert('Error al guardar los comentarios.');
+    });
+}
+
+
+
 
     function applyFilters() {
         const candidatoCards = document.querySelectorAll('.candidato-card');
@@ -773,9 +835,14 @@ Candidatos para la Vacante
                     case 'filterSexo':
                         if (candidato.sexo !== value) shouldDisplay = false;
                         break;
-                    case 'filterLocalidad':
-                        if (!candidato.localidad_municipio.toLowerCase().includes(value.toLowerCase())) shouldDisplay = false;
+                    case 'filterDepartamento':
+                        if (!candidato.departamento.toLowerCase().includes(value.toLowerCase())) shouldDisplay = false;
                         break;
+
+                    case 'filterCiudad':
+                        if (!candidato.ciudad.toLowerCase().includes(value.toLowerCase())) shouldDisplay = false;
+                        break;
+                    
                     case 'filterNacimientoDesde':
                         const nacimientoDesde = new Date(value);
                         const fechaNacimiento = new Date(candidato.fecha_nacimiento);
@@ -938,5 +1005,63 @@ Candidatos para la Vacante
 
     // Inicialización
     updateSelectedCount();
+
+    
 });</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const departamentoSelect = document.getElementById("filterDepartamento");
+        const ciudadSelect = document.getElementById("filterCiudad");
+    
+        if (departamentoSelect) {
+            departamentoSelect.addEventListener("change", function() {
+                const departamentoId = this.value;
+                ciudadSelect.innerHTML = '<option value="">-- Selecciona una ciudad --</option>';
+    
+                if (departamentoId) {
+                    fetch(`/cargar-ciudades/?departamento_id=${departamentoId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            data.forEach(ciudad => {
+                                const option = document.createElement("option");
+                                option.value = ciudad.id;
+                                option.textContent = ciudad.nombre;
+                                ciudadSelect.appendChild(option);
+                            });
+                        })
+                        .catch(error => console.error("Error cargando ciudades:", error));
+                }
+            });
+    
+            // Cargar ciudades si hay un departamento seleccionado al cargar la página
+            if (departamentoSelect.value) {
+                cargarCiudades(departamentoSelect.value, '{{ filtros.ciudad }}');
+            }
+        }
+    });
+    
+    function cargarCiudades(departamentoId, ciudadSeleccionada) {
+        const ciudadSelect = document.getElementById("filterCiudad");
+    
+        if (departamentoId && ciudadSelect) {
+            fetch(`/cargar-ciudades/?departamento_id=${departamentoId}`)
+                .then(response => response.json())
+                .then(data => {
+                    ciudadSelect.innerHTML = '<option value="">-- Selecciona una ciudad --</option>';
+                    data.forEach(ciudad => {
+                        const option = document.createElement("option");
+                        option.value = ciudad.id;
+                        option.textContent = ciudad.nombre;
+                        if (ciudad.id == ciudadSeleccionada) {
+                            option.selected = true;
+                        }
+                        ciudadSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error("Error cargando ciudades:", error));
+        }
+    }
+    </script>
+
 {% endblock %}

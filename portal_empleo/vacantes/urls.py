@@ -38,6 +38,9 @@ urlpatterns = [
     path('vacantes/<int:vacante_id>/candidatos/<int:candidato_id>/cambiar_a_visto/', 
         views.cambiar_a_visto, 
         name='cambiar_a_visto'),
+    path('cargar-ciudades/', cargar_ciudades, name="cargar_ciudades"),
+    path('vacantes/<int:vacante_id>/candidatos/<int:candidato_id>/guardar_comentarios/', views.guardar_comentarios, name='guardar_comentarios'),
+
 
 
 

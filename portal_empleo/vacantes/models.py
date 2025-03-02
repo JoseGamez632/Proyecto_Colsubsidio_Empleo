@@ -218,7 +218,8 @@ class RegistroCandidato(models.Model):
     programa_academico = models.CharField(max_length=100)
     experiencia_laboral = models.TextField(blank=True, null=True)
     interes_ocupacional = models.TextField(blank=True, null=True)
-    localidad_municipio = models.CharField(max_length=100)
+    departamento = models.ForeignKey(Departamento, on_delete=models.SET_NULL, null=True, blank=True)
+    ciudad = models.ForeignKey(Ciudad, on_delete=models.SET_NULL, null=True, blank=True)
     candidato_discapacidad = models.CharField(max_length=2, choices=DISABILITY_CHOICES)
     tipo_discapacidad = models.CharField(max_length=100, blank=True, null=True)
     horario_interesado = models.CharField(max_length=20, choices=SCHEDULE_CHOICES)
@@ -233,6 +234,9 @@ class RegistroCandidato(models.Model):
     tecnico_seleccion = models.CharField(max_length=40, choices=RECRUITER_CHOICES, blank=True, null=True)
     vacantes_disponibles = models.ManyToManyField("Vacante", related_name="candidatos", blank=True)
 
+# Campo para comentarios del reclutador
+    comentarios = models.TextField(blank=True, null=True)
+    
     class Meta:
         verbose_name = "Registro de Candidato"
         verbose_name_plural = "Registros de Candidatos"

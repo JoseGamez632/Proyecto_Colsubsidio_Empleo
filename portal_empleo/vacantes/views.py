@@ -24,6 +24,8 @@ from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 
 
+
+
 def normalizar_texto(texto):
     """
     Elimina los acentos y normaliza el texto a minúsculas.
@@ -287,12 +289,48 @@ def descargar_excel(request):
 
 
 
+# def lista_candidatos(request, id):
+#     # Obtener la vacante específica
+#     vacante = get_object_or_404(Vacante, id=id)
+    
+#     # Obtener la lista de candidatos relacionados con esta vacante
+#     candidatos = vacante.candidatos.all()
+
+#     # Traer o crear el estado de cada aplicación
+#     for candidato in candidatos:
+#         estado_aplicacion, creado = EstadoAplicacion.objects.get_or_create(
+#             candidato=candidato, 
+#             vacante=vacante,
+#             defaults={'estado': 'No visto'}
+#         )
+#         candidato.estado_aplicacion = estado_aplicacion.estado
+    
+#     # Renderizar la información en el template
+#     return render(request, 'vacantes/lista_candidatos.html', {'vacante': vacante, 'candidatos': candidatos})
+
+
+
+
+
+
+
+
 def lista_candidatos(request, id):
     # Obtener la vacante específica
     vacante = get_object_or_404(Vacante, id=id)
     
+    # Obtener los filtros de la solicitud GET
+    departamento_id = request.GET.get('departamento', '')
+    ciudad_id = request.GET.get('ciudad', '')
+
     # Obtener la lista de candidatos relacionados con esta vacante
     candidatos = vacante.candidatos.all()
+
+    # Aplicar filtros de departamento y ciudad
+    if departamento_id:
+        candidatos = candidatos.filter(departamento_id=departamento_id)
+    if ciudad_id:
+        candidatos = candidatos.filter(ciudad_id=ciudad_id)
 
     # Traer o crear el estado de cada aplicación
     for candidato in candidatos:
@@ -302,9 +340,29 @@ def lista_candidatos(request, id):
             defaults={'estado': 'No visto'}
         )
         candidato.estado_aplicacion = estado_aplicacion.estado
-    
+
+    # Obtener las opciones de departamento y ciudad
+    departamento_choices = Departamento.objects.all().values_list('id', 'nombre')
+    ciudad_choices = Ciudad.objects.all().values_list('id', 'nombre')
+
+    filtros = {
+        'departamento': departamento_id,
+        'ciudad': ciudad_id,
+        'ciudad_nombre': Ciudad.objects.get(id=ciudad_id).nombre if ciudad_id else ''
+    }
+
     # Renderizar la información en el template
-    return render(request, 'vacantes/lista_candidatos.html', {'vacante': vacante, 'candidatos': candidatos})
+    contexto = {
+        'vacante': vacante,
+        'candidatos': candidatos,
+        'departamento_choices': departamento_choices,
+        'ciudad_choices': ciudad_choices,
+        'filtros': filtros
+    }
+
+    return render(request, 'vacantes/lista_candidatos.html', contexto)
+
+
 
 
 def lista_registros(request):
@@ -382,7 +440,7 @@ def exportar_candidatos_excel(request):
         "Feria", "Fecha Feria", "Sexo", "Tipo Documento", "Número Documento", 
         "Nombres", "Apellidos", "Número Celular", "Correo Electrónico", 
         "Fecha Nacimiento", "Formación Académica", "Programa Académico", 
-        "Experiencia Laboral", "Interés Ocupacional", "Localidad/Municipio", 
+        "Experiencia Laboral", "Interés Ocupacional", "departamento", "ciudad", 
         "Discapacidad", "Tipo Discapacidad", "Horario Interesado", 
         "Aspiración Salarial", "Registrado en SISE", "Técnico Selección"
     ]
@@ -408,7 +466,8 @@ def exportar_candidatos_excel(request):
             candidato.programa_academico,
             candidato.experiencia_laboral,
             candidato.interes_ocupacional,
-            candidato.localidad_municipio,
+            candidato.departamento,
+            candidato.ciudad,
             candidato.get_candidato_discapacidad_display(),
             candidato.tipo_discapacidad,
             candidato.get_horario_interesado_display(),
@@ -460,7 +519,7 @@ def descargar_candidatos(request):
     headers = [
         'Nombres', 'Apellidos', 'Tipo Documento', 'Número Documento',
         'Fecha Nacimiento', 'Sexo', 'Celular', 'Correo',
-        'Localidad/Municipio', 'Formación Académica', 'Programa Académico',
+        'departamento', 'ciudad', 'Formación Académica', 'Programa Académico',
         'Experiencia Laboral', 'Interés Ocupacional', 'Horario Interesado',
         'Aspiración Salarial', 'Candidato Discapacidad', 'Tipo Discapacidad',
         'Registrado en SISE', 'Técnico Selección', 'Feria', 'Fecha Feria'
@@ -485,7 +544,8 @@ def descargar_candidatos(request):
             candidato.get_sexo_display(),
             candidato.numero_celular,
             candidato.correo_electronico,
-            candidato.localidad_municipio,
+            str(candidato.departamento),  # ✅ Convertido a string
+            str(candidato.ciudad),  # ✅ Convertido a string
             candidato.get_formacion_academica_display(),
             candidato.programa_academico,
             candidato.experiencia_laboral,
@@ -606,3 +666,37 @@ def cambiar_a_visto(request, vacante_id, candidato_id):
         return JsonResponse({'success': False, 'message': 'El estado no era "No visto"'})
     
     return JsonResponse({'error': 'Método no permitido'}, status=405)
+
+
+def cargar_ciudades(request):
+    departamento_id = request.GET.get("departamento_id")
+    ciudades = Ciudad.objects.filter(departamento_id=departamento_id).values("id", "nombre")
+    return JsonResponse(list(ciudades), safe=False)
+
+
+
+
+
+#@csrf_exempt  # (Si prefieres usar CSRF token correctamente, quita esta línea)
+def guardar_comentarios(request, vacante_id, candidato_id):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            comentarios = data.get('comentarios', '').strip()
+
+            if not comentarios:
+                return JsonResponse({'success': False, 'message': 'El comentario no puede estar vacío.'})
+
+            candidato = RegistroCandidato.objects.get(id=candidato_id)
+            candidato.comentarios = comentarios
+            candidato.save()
+
+            print(f"Comentario guardado para candidato ID: {candidato_id} - Vacante ID: {vacante_id}")
+
+            return JsonResponse({'success': True})
+        except RegistroCandidato.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'Candidato no encontrado.'})
+        except json.JSONDecodeError:
+            return JsonResponse({'success': False, 'message': 'Error en el formato de los datos.'})
+
+    return JsonResponse({'success': False, 'message': 'Método no permitido.'})
