@@ -216,27 +216,29 @@ Candidatos para la Vacante
                             <option value="Intersexual">Intersexual</option>
                         </select>
                     </div>
-                    <div class="mb-2">
-                        <label class="form-label">Departamento</label>
-                        <select id="filterDepartamento" class="form-select form-select-sm">
-                            <option value=""></option>
-                            {% for value, label in departamento_choices %}
-                                <option value="{{ value }}" {% if filtros.departamento == value|stringformat:"s" %}selected{% endif %}>
-                                    {{ label }}
-                                </option>
-                            {% endfor %}
-                        </select>
-                    </div>
+                    <form id="filtroForm" method="GET" action="">
+                        <div class="mb-2">
+                            <label class="form-label">Departamento</label>
+                            <select id="filterDepartamento" name="departamento" class="form-select form-select-sm">
+                                <option value=""></option>
+                                {% for value, label in departamento_choices %}
+                                    <option value="{{ value }}" {% if filtros.departamento == value|stringformat:"s" %}selected{% endif %}>
+                                        {{ label }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
                     
-                    <div class="mb-2">
-                        <label class="form-label">Ciudad</label>
-                        <select id="filterCiudad" class="form-select form-select-sm">
-                            <option value=""></option>
-                            {% if filtros.ciudad_nombre %}
-                                <option value="{{ filtros.ciudad }}" selected>{{ filtros.ciudad_nombre }}</option>
-                            {% endif %}
-                        </select>
-                    </div>                
+                        <div class="mb-2">
+                            <label class="form-label">Ciudad</label>
+                            <select id="filterCiudad" name="ciudad" class="form-select form-select-sm">
+                                <option value=""></option>
+                                {% if filtros.ciudad_nombre %}
+                                    <option value="{{ filtros.ciudad }}" selected>{{ filtros.ciudad_nombre }}</option>
+                                {% endif %}
+                            </select>
+                        </div>
+                    </form>                        
                     <div class="mb-2">
                         <label class="form-label">Fecha de Nacimiento</label>
                         <div class="row">
@@ -1013,55 +1015,69 @@ function guardarComentarios(candidatoId, vacanteId) {
     document.addEventListener("DOMContentLoaded", function() {
         const departamentoSelect = document.getElementById("filterDepartamento");
         const ciudadSelect = document.getElementById("filterCiudad");
+        const applyFiltersBtn = document.getElementById("applyFiltersBtn");
+        const clearFiltersBtn = document.getElementById("clearFiltersBtn");
     
         if (departamentoSelect) {
             departamentoSelect.addEventListener("change", function() {
-                const departamentoId = this.value;
-                ciudadSelect.innerHTML = '<option value="">-- Selecciona una ciudad --</option>';
-    
-                if (departamentoId) {
-                    fetch(`/cargar-ciudades/?departamento_id=${departamentoId}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            data.forEach(ciudad => {
-                                const option = document.createElement("option");
-                                option.value = ciudad.id;
-                                option.textContent = ciudad.nombre;
-                                ciudadSelect.appendChild(option);
-                            });
-                        })
-                        .catch(error => console.error("Error cargando ciudades:", error));
-                }
+                cargarCiudades(this.value, null);
             });
+        }
     
-            // Cargar ciudades si hay un departamento seleccionado al cargar la página
-            if (departamentoSelect.value) {
-                cargarCiudades(departamentoSelect.value, '{{ filtros.ciudad }}');
+        if (applyFiltersBtn) {
+            applyFiltersBtn.addEventListener("click", function(event) {
+                event.preventDefault(); // Evita que el botón recargue la página de forma predeterminada
+                actualizarURL();
+            });
+        }
+    
+        if (clearFiltersBtn) {
+            clearFiltersBtn.addEventListener("click", function(event) {
+                event.preventDefault();
+                window.location.href = window.location.pathname; // Recarga la página sin filtros
+            });
+        }
+    
+        function cargarCiudades(departamentoId, ciudadSeleccionada) {
+            if (departamentoId) {
+                fetch(`/cargar-ciudades/?departamento_id=${departamentoId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        ciudadSelect.innerHTML = '<option value="">-- Selecciona una ciudad --</option>';
+                        data.forEach(ciudad => {
+                            const option = document.createElement("option");
+                            option.value = ciudad.id;
+                            option.textContent = ciudad.nombre;
+                            if (ciudad.id == ciudadSeleccionada) {
+                                option.selected = true;
+                            }
+                            ciudadSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error("Error cargando ciudades:", error));
             }
         }
-    });
     
-    function cargarCiudades(departamentoId, ciudadSeleccionada) {
-        const ciudadSelect = document.getElementById("filterCiudad");
+        function actualizarURL() {
+            let params = new URLSearchParams(window.location.search);
+            let departamento = departamentoSelect.value;
+            let ciudad = ciudadSelect.value;
     
-        if (departamentoId && ciudadSelect) {
-            fetch(`/cargar-ciudades/?departamento_id=${departamentoId}`)
-                .then(response => response.json())
-                .then(data => {
-                    ciudadSelect.innerHTML = '<option value="">-- Selecciona una ciudad --</option>';
-                    data.forEach(ciudad => {
-                        const option = document.createElement("option");
-                        option.value = ciudad.id;
-                        option.textContent = ciudad.nombre;
-                        if (ciudad.id == ciudadSeleccionada) {
-                            option.selected = true;
-                        }
-                        ciudadSelect.appendChild(option);
-                    });
-                })
-                .catch(error => console.error("Error cargando ciudades:", error));
+            if (departamento) {
+                params.set("departamento", departamento);
+            } else {
+                params.delete("departamento");
+            }
+    
+            if (ciudad) {
+                params.set("ciudad", ciudad);
+            } else {
+                params.delete("ciudad");
+            }
+    
+            window.location.search = params.toString(); // Recargar la página con los filtros aplicados
         }
-    }
+    });
     </script>
 
 {% endblock %}

@@ -315,26 +315,41 @@ def descargar_excel(request):
 
 
 
+
 def lista_candidatos(request, id):
     # Obtener la vacante específica
     vacante = get_object_or_404(Vacante, id=id)
-    
+
     # Obtener los filtros de la solicitud GET
     departamento_id = request.GET.get('departamento', '')
     ciudad_id = request.GET.get('ciudad', '')
 
-    # Obtener la lista de candidatos relacionados con esta vacante
+    # Debugging: Ver qué valores llegan en la solicitud
+    print(f"Departamento seleccionado: {departamento_id}, Ciudad seleccionada: {ciudad_id}")
+
+    # Convertir los valores a enteros si existen
+    try:
+        departamento_id = int(departamento_id) if departamento_id else None
+        ciudad_id = int(ciudad_id) if ciudad_id else None
+    except ValueError:
+        departamento_id = None
+        ciudad_id = None
+
+    # Obtener los candidatos relacionados con esta vacante
     candidatos = vacante.candidatos.all()
 
     # Aplicar filtros de departamento y ciudad
     if departamento_id:
-        candidatos = candidatos.filter(departamento_id=departamento_id)
-    if ciudad_id:
-        candidatos = candidatos.filter(ciudad_id=ciudad_id)
+        candidatos = candidatos.filter(departamento__id=departamento_id)
+        print(f"Candidatos después de filtrar por departamento: {candidatos.count()}")
 
-    # Traer o crear el estado de cada aplicación
+    if ciudad_id:
+        candidatos = candidatos.filter(ciudad__id=ciudad_id)
+        print(f"Candidatos después de filtrar por ciudad: {candidatos.count()}")
+
+    # Obtener o crear el estado de cada aplicación
     for candidato in candidatos:
-        estado_aplicacion, creado = EstadoAplicacion.objects.get_or_create(
+        estado_aplicacion, _ = EstadoAplicacion.objects.get_or_create(
             candidato=candidato, 
             vacante=vacante,
             defaults={'estado': 'No visto'}
@@ -345,9 +360,10 @@ def lista_candidatos(request, id):
     departamento_choices = Departamento.objects.all().values_list('id', 'nombre')
     ciudad_choices = Ciudad.objects.all().values_list('id', 'nombre')
 
+    # Construir el diccionario de filtros
     filtros = {
-        'departamento': departamento_id,
-        'ciudad': ciudad_id,
+        'departamento': departamento_id if departamento_id else '',
+        'ciudad': ciudad_id if ciudad_id else '',
         'ciudad_nombre': Ciudad.objects.get(id=ciudad_id).nombre if ciudad_id else ''
     }
 
