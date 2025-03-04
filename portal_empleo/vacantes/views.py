@@ -316,67 +316,127 @@ def descargar_excel(request):
 
 
 
+
+
+
 def lista_candidatos(request, id):
-    # Obtener la vacante específica
     vacante = get_object_or_404(Vacante, id=id)
-
-    # Obtener los filtros de la solicitud GET
-    departamento_id = request.GET.get('departamento', '')
-    ciudad_id = request.GET.get('ciudad', '')
-
-    # Debugging: Ver qué valores llegan en la solicitud
-    print(f"Departamento seleccionado: {departamento_id}, Ciudad seleccionada: {ciudad_id}")
-
-    # Convertir los valores a enteros si existen
-    try:
-        departamento_id = int(departamento_id) if departamento_id else None
-        ciudad_id = int(ciudad_id) if ciudad_id else None
-    except ValueError:
-        departamento_id = None
-        ciudad_id = None
-
-    # Obtener los candidatos relacionados con esta vacante
     candidatos = vacante.candidatos.all()
 
-    # Aplicar filtros de departamento y ciudad
-    if departamento_id:
-        candidatos = candidatos.filter(departamento__id=departamento_id)
-        print(f"Candidatos después de filtrar por departamento: {candidatos.count()}")
+    # Obtener todos los filtros de la solicitud GET
+    filtros = {}
+    for key, value in request.GET.items():
+        if value:  # Solo si el valor no está vacío
+            filtros[key] = value
 
-    if ciudad_id:
-        candidatos = candidatos.filter(ciudad__id=ciudad_id)
-        print(f"Candidatos después de filtrar por ciudad: {candidatos.count()}")
+    print(f"Filtros recibidos: {filtros}")  # debug
+
+    # Aplicar los filtros a los candidatos
+    if filtros:
+        q_objects = Q()
+        for key, value in filtros.items():
+            if key == 'departamento':
+                q_objects &= Q(departamento__id=value)  # AND operator for relational fields
+            elif key == 'ciudad':
+                q_objects &= Q(ciudad__id=value)  # AND operator for relational fields
+            elif key == 'filterNombre':
+                q_objects &= (Q(nombres__icontains=value) | Q(apellidos__icontains=value)) #AND operator
+            elif key == 'filterTipoDocumento':
+                q_objects &= Q(tipo_documento=value) #AND operator
+            elif key == 'filterNumeroDocumento':
+                q_objects &= Q(numero_documento__icontains=value) #AND operator
+            elif key == 'filterSexo':
+                q_objects &= Q(sexo=value) #AND operator
+            elif key == 'filterNacimientoDesde':
+                try:
+                    value = datetime.strptime(value, '%Y-%m-%d').date() #Convert to date
+                    q_objects &= Q(fecha_nacimiento__gte=value) #AND operator
+                except ValueError:
+                    pass  # Ignorar el filtro si el formato es incorrecto
+            elif key == 'filterNacimientoHasta':
+                try:
+                    value = datetime.strptime(value, '%Y-%m-%d').date() #Convert to date
+                    q_objects &= Q(fecha_nacimiento__lte=value) #AND operator
+                except ValueError:
+                    pass  # Ignorar el filtro si el formato es incorrecto
+            elif key == 'filterEstudioMinimo':
+                q_objects &= Q(formacion_academica=value) #AND operator
+            elif key == 'filterPrograma':
+                q_objects &= Q(programa_academico__icontains=value) #AND operator
+            elif key == 'filterHorario':
+                q_objects &= Q(horario_interesado=value) #AND operator
+            elif key == 'filterSalarioMin':
+                try:
+                    value = int(value)
+                    q_objects &= Q(aspiracion_salarial__gte=value) #AND operator
+                except ValueError:
+                    pass  # Ignorar el filtro si el formato es incorrecto
+            elif key == 'filterSalarioMax':
+                try:
+                    value = int(value)
+                    q_objects &= Q(aspiracion_salarial__lte=value) #AND operator
+                except ValueError:
+                    pass  # Ignorar el filtro si el formato es incorrecto
+            elif key == 'filterNombreFeria':
+                q_objects &= Q(feria__icontains=value)  #AND operator
+            elif key == 'filterFeriaDesde':
+                try:
+                    value = datetime.strptime(value, '%Y-%m-%d').date() #Convert to date
+                    q_objects &= Q(fecha_feria__gte=value) #AND operator
+                except ValueError:
+                    pass  # Ignorar el filtro si el formato es incorrecto
+            elif key == 'filterFeriaHasta':
+                try:
+                    value = datetime.strptime(value, '%Y-%m-%d').date() #Convert to date
+                    q_objects &= Q(fecha_feria__lte=value) #AND operator
+                except ValueError:
+                    pass  # Ignorar el filtro si el formato es incorrecto
+            elif key == 'filterTecnico':
+                q_objects &= Q(tecnico_seleccion=value) #AND operator
+            elif key == 'filterSISE':
+                q_objects &= Q(registrado_en_sise=value) #AND operator
+
+        candidatos = candidatos.filter(q_objects)
+        print(f"Candidatos después de aplicar todos los filtros: {candidatos.count()}")  # debug
 
     # Obtener o crear el estado de cada aplicación
     for candidato in candidatos:
         estado_aplicacion, _ = EstadoAplicacion.objects.get_or_create(
-            candidato=candidato, 
+            candidato=candidato,
             vacante=vacante,
             defaults={'estado': 'No visto'}
         )
         candidato.estado_aplicacion = estado_aplicacion.estado
 
-    # Obtener las opciones de departamento y ciudad
+    # preparar la data de los filtros para la plantilla
     departamento_choices = Departamento.objects.all().values_list('id', 'nombre')
-    ciudad_choices = Ciudad.objects.all().values_list('id', 'nombre')
+    ciudad_choices = []
+    if filtros.get('departamento'):
+        ciudad_choices = Ciudad.objects.filter(departamento_id=filtros['departamento']).values_list('id', 'nombre')
 
-    # Construir el diccionario de filtros
-    filtros = {
-        'departamento': departamento_id if departamento_id else '',
-        'ciudad': ciudad_id if ciudad_id else '',
-        'ciudad_nombre': Ciudad.objects.get(id=ciudad_id).nombre if ciudad_id else ''
+    # se crea un nuevo diccionario para la informacion de la plantilla
+    filtros_para_la_plantilla = {
+        key: value for key, value in filtros.items() if key not in ['departamento', 'ciudad']
     }
+    filtros_para_la_plantilla['departamento'] = int(filtros['departamento']) if filtros.get('departamento') else ''
+    filtros_para_la_plantilla['ciudad'] = int(filtros['ciudad']) if filtros.get('ciudad') else ''
 
-    # Renderizar la información en el template
+    if filtros_para_la_plantilla.get('ciudad'):
+        filtros_para_la_plantilla['ciudad_nombre'] = Ciudad.objects.get(id=filtros_para_la_plantilla['ciudad']).nombre
+    else:
+        filtros_para_la_plantilla['ciudad_nombre'] = ''
+
     contexto = {
         'vacante': vacante,
         'candidatos': candidatos,
         'departamento_choices': departamento_choices,
         'ciudad_choices': ciudad_choices,
-        'filtros': filtros
+        'filtros': filtros_para_la_plantilla,
     }
 
     return render(request, 'vacantes/lista_candidatos.html', contexto)
+
+
 
 
 

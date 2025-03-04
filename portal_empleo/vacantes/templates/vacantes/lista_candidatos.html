@@ -216,29 +216,26 @@ Candidatos para la Vacante
                             <option value="Intersexual">Intersexual</option>
                         </select>
                     </div>
-                    <form id="filtroForm" method="GET" action="">
-                        <div class="mb-2">
-                            <label class="form-label">Departamento</label>
-                            <select id="filterDepartamento" name="departamento" class="form-select form-select-sm">
-                                <option value=""></option>
-                                {% for value, label in departamento_choices %}
-                                    <option value="{{ value }}" {% if filtros.departamento == value|stringformat:"s" %}selected{% endif %}>
-                                        {{ label }}
-                                    </option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    
-                        <div class="mb-2">
-                            <label class="form-label">Ciudad</label>
-                            <select id="filterCiudad" name="ciudad" class="form-select form-select-sm">
-                                <option value=""></option>
-                                {% if filtros.ciudad_nombre %}
-                                    <option value="{{ filtros.ciudad }}" selected>{{ filtros.ciudad_nombre }}</option>
-                                {% endif %}
-                            </select>
-                        </div>
-                    </form>                        
+                    <div class="mb-2">
+                        <label class="form-label">Departamento</label>
+                        <select id="filterDepartamento" name="departamento" class="form-select form-select-sm">
+                            <option value=""></option>
+                            {% for value, label in departamento_choices %}
+                                <option value="{{ value }}" {% if filtros.departamento == value|stringformat:"s" %}selected{% endif %}>
+                                    {{ label }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Ciudad</label>
+                        <select id="filterCiudad" name="ciudad" class="form-select form-select-sm">
+                            <option value=""></option>
+                            {% if filtros.ciudad_nombre %}
+                                <option value="{{ filtros.ciudad }}" selected>{{ filtros.ciudad_nombre }}</option>
+                            {% endif %}
+                        </select>
+                    </div>                                        
                     <div class="mb-2">
                         <label class="form-label">Fecha de Nacimiento</label>
                         <div class="row">
@@ -550,500 +547,191 @@ Candidatos para la Vacante
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const filterButtons = document.querySelectorAll('.filter-estado');
-        
-        filterButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const estadoSeleccionado = this.getAttribute('data-estado');
-                const candidatoCards = document.querySelectorAll('.candidato-card');
-                
-                candidatoCards.forEach(card => {
-                    const estadoCandidato = card.querySelector('.badge').textContent.replace('Estado: ', '').trim();
-                    
-                    if (estadoSeleccionado === 'Todos') {
-                        card.style.display = 'block';
-                    } else {
-                        card.style.display = (estadoCandidato === estadoSeleccionado) ? 'block' : 'none';
+        // --- Element References ---
+        const elements = {
+            filterButtons: document.querySelectorAll('.filter-estado'),
+            filtersOverlay: document.getElementById('filtersOverlay'),
+            openFiltersBtn: document.getElementById('openFiltersBtn'),
+            closeFiltersBtn: document.getElementById('closeFiltersBtn'),
+            applyFiltersBtn: document.getElementById('applyFiltersBtn'),
+            clearFiltersBtn: document.getElementById('clearFiltersBtn'),
+            selectAllBtn: document.getElementById('selectAll'),
+            deselectAllBtn: document.getElementById('deselectAll'),
+            downloadBtn: document.getElementById('downloadExcel'),
+            selectedCountSpan: document.getElementById('selectedCount').querySelector('span'),
+            selectedCandidatesInput: document.getElementById('selectedCandidates'),
+            checkboxes: document.querySelectorAll('.candidate-checkbox'),
+            prevButton: document.getElementById('prevCandidate'),
+            nextButton: document.getElementById('nextCandidate'),
+            departamentoSelect: document.getElementById("filterDepartamento"),
+            ciudadSelect: document.getElementById("filterCiudad"),
+            allFilterInputs: document.querySelectorAll('[id^="filter"]'),
+            // Add other elements here if needed
+        };
+
+        // --- Data ---
+        let candidatos = [
+            {% for candidato in candidatos %}
+            {
+                id: {{ candidato.id }},
+                nombres: "{{ candidato.nombres|escapejs }}",
+                apellidos: "{{ candidato.apellidos|escapejs }}",
+                feria: "{{ candidato.feria|escapejs }}",
+                fecha_feria: "{{ candidato.fecha_feria|escapejs }}",
+                sexo: "{{ candidato.sexo|escapejs }}",
+                tipo_documento: "{{ candidato.tipo_documento|escapejs }}",
+                numero_documento: "{{ candidato.numero_documento|escapejs }}",
+                numero_celular: "{{ candidato.numero_celular|escapejs }}",
+                correo_electronico: "{{ candidato.correo_electronico|escapejs }}",
+                fecha_nacimiento: "{{ candidato.fecha_nacimiento|escapejs }}",
+                formacion_academica: "{{ candidato.formacion_academica|escapejs }}",
+                programa_academico: "{{ candidato.programa_academico|escapejs }}",
+                experiencia_laboral: "{{ candidato.experiencia_laboral|escapejs }}",
+                interes_ocupacional: "{{ candidato.interes_ocupacional|escapejs }}",
+                departamento: "{{ candidato.departamento|escapejs }}",
+                ciudad: "{{ candidato.ciudad|escapejs }}",
+                candidato_discapacidad: "{{ candidato.candidato_discapacidad|escapejs }}",
+                tipo_discapacidad: "{{ candidato.tipo_discapacidad|escapejs }}",
+                horario_interesado: "{{ candidato.horario_interesado|escapejs }}",
+                aspiracion_salarial: "{{ candidato.aspiracion_salarial|escapejs }}",
+                registrado_en_sise: "{{ candidato.registrado_en_sise|escapejs }}",
+                tecnico_seleccion: "{{ candidato.tecnico_seleccion|escapejs }}"
+            },
+            {% endfor %}
+        ];
+        let currentCandidatoIndex = 0;
+        let activeFilters = {};
+        const modal = new bootstrap.Modal(document.getElementById('cvModal'));
+
+        // --- Constants ---
+        const NIVEL_EDUCATIVO = {
+            'BASICA PRIMARIA': 1,    // BASICA PRIMARIA
+            'BASICA SECUNDARIA': 2,    // BASICA SECUNDARIA
+            'ESTUDIANTE BACHILLER ACADEMICO': 3,   // ESTUDIANTE BACHILLER ACADEMICO
+            'BACHILLER ACADEMICO': 4,    // BACHILLER ACADEMICO
+            'ESTUDIANTE TECNICO LABORAL/PROFESIONA': 5,   // ESTUDIANTE TECNICO LABORAL/PROFESIONAL
+            'TECNICO LABORAL/PROFESIONAL': 6,    // TECNICO LABORAL/PROFESIONAL
+            'ESTUDIANTE TECNOLOGO': 7,    // ESTUDIANTE TECNOLOGO
+            'TECNOLOGO': 8,     // TECNOLOGO
+            'ESTUDIANTE PROFESIONAL': 9,    // ESTUDIANTE PROFESIONAL
+            'PROFESIONAL': 10,    // PROFESIONAL
+            'POSGRADO': 11    // POSGRADO
+        };
+
+        // --- Utility Functions ---
+        function sanitizeHTML(text, defaultText = 'No especificado') {
+            if (!text) return defaultText;
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function updateSelectedCount() {
+            const selectedCount = document.querySelectorAll('.candidate-checkbox:checked').length;
+            elements.selectedCountSpan.textContent = selectedCount;
+            elements.downloadBtn.disabled = selectedCount === 0;
+
+            const selectedIds = Array.from(elements.checkboxes)
+                .filter(checkbox => checkbox.checked)
+                .map(checkbox => checkbox.value);
+            elements.selectedCandidatesInput.value = JSON.stringify(selectedIds);
+
+            elements.checkboxes.forEach(checkbox => {
+                const card = checkbox.closest('.card');
+                card.classList.toggle('selected-card', checkbox.checked);
+            });
+        }
+
+        function getCSRFToken() {
+            let csrfToken = null;
+            const cookies = document.cookie.split(';');
+            cookies.forEach(cookie => {
+                const [name, value] = cookie.trim().split('=');
+                if (name === 'csrftoken') {
+                    csrfToken = value;
+                }
+            });
+            return csrfToken;
+        }
+
+        // --- Candidate Card Functions ---
+        function verHojaDeVida(vacanteId, candidatoId, boton) {
+            const estadoActual = boton.getAttribute("data-estado-actual");
+            if (estadoActual === "No visto") {
+                const csrftoken = getCSRFToken();
+                fetch(`/vacantes/${vacanteId}/candidatos/${candidatoId}/cambiar_a_visto/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrftoken,
+                        'Content-Type': 'application/json'
                     }
+                }).then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            const estadoElemento = document.getElementById(`estado-${candidatoId}`);
+                            estadoElemento.textContent = "Estado: Visto";
+                            estadoElemento.classList.remove("bg-secondary");
+                            estadoElemento.classList.add("bg-info");
+                            boton.setAttribute("data-estado-actual", "Visto");
+                            mostrarHojaDeVida(candidatoId);
+                        } else {
+                            console.log("No se cambió el estado:", data.message);
+                            mostrarHojaDeVida(candidatoId);
+                        }
+                    }).catch(error => {
+                    console.error("Error en la petición:", error);
                 });
-            });
-        });
-    });
-    
-    function verHojaDeVida(vacanteId, candidatoId, boton) {
-        // Obtener el estado actual del botón
-        const estadoActual = boton.getAttribute("data-estado-actual");
-    
-        // Verificar si el estado es "No visto"
-        if (estadoActual === "No visto") {
-            // Obtener el token CSRF de las cookies
-            const csrftoken = getCSRFToken();
-    
-            // Hacer una petición POST para cambiar el estado a "Visto"
-            fetch(`/vacantes/${vacanteId}/candidatos/${candidatoId}/cambiar_a_visto/`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': csrftoken,
-                    'Content-Type': 'application/json'
-                }
-            }).then(response => response.json())
-              .then(data => {
-                if (data.success) {
-                    // Cambiar el texto y color del estado en la tarjeta
-                    const estadoElemento = document.getElementById(`estado-${candidatoId}`);
-                    estadoElemento.textContent = "Estado: Visto";
-                    estadoElemento.classList.remove("bg-secondary");
-                    estadoElemento.classList.add("bg-info");
-    
-                    // Actualizar el atributo data-estado-actual
-                    boton.setAttribute("data-estado-actual", "Visto");
-    
-                    // Acción personalizada: Mostrar Hoja de Vida
-                    mostrarHojaDeVida(candidatoId);
-                } else {
-                    console.log("No se cambió el estado:", data.message);
-                    mostrarHojaDeVida(candidatoId);
-                }
-            }).catch(error => {
-                console.error("Error en la petición:", error);
-            });
-        } else {
-            // Si el estado no es "No visto", solo muestra la Hoja de Vida
-            mostrarHojaDeVida(candidatoId);
-        }
-    }
-    
-    // Función para mostrar la Hoja de Vida
-    function mostrarHojaDeVida(candidatoId) {
-    }
-    
-    // Función para obtener el token CSRF de las cookies
-    function getCSRFToken() {
-        let csrfToken = null;
-        const cookies = document.cookie.split(';');
-        cookies.forEach(cookie => {
-            const [name, value] = cookie.trim().split('=');
-            if (name === 'csrftoken') {
-                csrfToken = value;
+            } else {
+                mostrarHojaDeVida(candidatoId);
             }
-        });
-        return csrfToken;
-    }
-    
+        }
 
-    document.addEventListener('DOMContentLoaded', function() {
-    // Inicialización de variables
-    let candidatos = [
-        {% for candidato in candidatos %}
-        {
-            id: {{ candidato.id }},
-            nombres: "{{ candidato.nombres|escapejs }}",
-            apellidos: "{{ candidato.apellidos|escapejs }}",
-            feria: "{{ candidato.feria|escapejs }}",
-            fecha_feria: "{{ candidato.fecha_feria|escapejs }}",
-            sexo: "{{ candidato.sexo|escapejs }}",
-            tipo_documento: "{{ candidato.tipo_documento|escapejs }}",
-            numero_documento: "{{ candidato.numero_documento|escapejs }}",
-            numero_celular: "{{ candidato.numero_celular|escapejs }}",
-            correo_electronico: "{{ candidato.correo_electronico|escapejs }}",
-            fecha_nacimiento: "{{ candidato.fecha_nacimiento|escapejs }}",
-            formacion_academica: "{{ candidato.formacion_academica|escapejs }}",
-            programa_academico: "{{ candidato.programa_academico|escapejs }}",
-            experiencia_laboral: "{{ candidato.experiencia_laboral|escapejs }}",
-            interes_ocupacional: "{{ candidato.interes_ocupacional|escapejs }}",
-            departamento: "{{ candidato.departamento|escapejs }}",
-            ciudad: "{{ candidato.ciudad|escapejs }}",
-            candidato_discapacidad: "{{ candidato.candidato_discapacidad|escapejs }}",
-            tipo_discapacidad: "{{ candidato.tipo_discapacidad|escapejs }}",
-            horario_interesado: "{{ candidato.horario_interesado|escapejs }}",
-            aspiracion_salarial: "{{ candidato.aspiracion_salarial|escapejs }}",
-            registrado_en_sise: "{{ candidato.registrado_en_sise|escapejs }}",
-            tecnico_seleccion: "{{ candidato.tecnico_seleccion|escapejs }}"
-        },
-        {% endfor %}
-    ];
-
-    let currentCandidatoIndex = 0;
-    let activeFilters = {};
-    const modal = new bootstrap.Modal(document.getElementById('cvModal'));
-
-    // Referencias DOM
-    const elements = {
-        filtersOverlay: document.getElementById('filtersOverlay'),
-        openFiltersBtn: document.getElementById('openFiltersBtn'),
-        closeFiltersBtn: document.getElementById('closeFiltersBtn'),
-        applyFiltersBtn: document.getElementById('applyFiltersBtn'),
-        clearFiltersBtn: document.getElementById('clearFiltersBtn'),
-        selectAllBtn: document.getElementById('selectAll'),
-        deselectAllBtn: document.getElementById('deselectAll'),
-        downloadBtn: document.getElementById('downloadExcel'),
-        selectedCountSpan: document.getElementById('selectedCount').querySelector('span'),
-        selectedCandidatesInput: document.getElementById('selectedCandidates'),
-        checkboxes: document.querySelectorAll('.candidate-checkbox'),
-        prevButton: document.getElementById('prevCandidate'),
-        nextButton: document.getElementById('nextCandidate')
-    };
-
-    // Constante para la jerarquía de formación académica
-    const NIVEL_EDUCATIVO = {
-        'BASICA PRIMARIA': 1,    // BASICA PRIMARIA
-        'BASICA SECUNDARIA': 2,    // BASICA SECUNDARIA
-        'ESTUDIANTE BACHILLER ACADEMICO': 3,   // ESTUDIANTE BACHILLER ACADEMICO
-        'BACHILLER ACADEMICO': 4,    // BACHILLER ACADEMICO
-        'ESTUDIANTE TECNICO LABORAL/PROFESIONA': 5,   // ESTUDIANTE TECNICO LABORAL/PROFESIONAL
-        'TECNICO LABORAL/PROFESIONAL': 6,    // TECNICO LABORAL/PROFESIONAL
-        'ESTUDIANTE TECNOLOGO': 7,    // ESTUDIANTE TECNOLOGO
-        'TECNOLOGO': 8,     // TECNOLOGO
-        'ESTUDIANTE PROFESIONAL': 9,    // ESTUDIANTE PROFESIONAL
-        'PROFESIONAL': 10,    // PROFESIONAL
-        'POSGRADO': 11    // POSGRADO
-    };
-
-    // Funciones de utilidad
-    function sanitizeHTML(text, defaultText = 'No especificado') {
-        if (!text) return defaultText;
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    }
-
-    function updateSelectedCount() {
-        const selectedCount = document.querySelectorAll('.candidate-checkbox:checked').length;
-        elements.selectedCountSpan.textContent = selectedCount;
-        elements.downloadBtn.disabled = selectedCount === 0;
-        
-        const selectedIds = Array.from(elements.checkboxes)
-            .filter(checkbox => checkbox.checked)
-            .map(checkbox => checkbox.value);
-        elements.selectedCandidatesInput.value = JSON.stringify(selectedIds);
-
-        elements.checkboxes.forEach(checkbox => {
-            const card = checkbox.closest('.card');
-            card.classList.toggle('selected-card', checkbox.checked);
-        });
-    }
-
-    function showCV(candidato, vacanteId) {
-        if (!candidato) return;
-    
-        const cvContent = document.getElementById('cvContent');
-        cvContent.innerHTML = `
-            <div class="cv-section">
-                <h4>Información Personal</h4>
-                <p><strong>Nombre completo:</strong> ${sanitizeHTML(candidato.nombres)} ${sanitizeHTML(candidato.apellidos)}</p>
-                <p><strong>Documento:</strong> ${sanitizeHTML(candidato.tipo_documento)} ${sanitizeHTML(candidato.numero_documento)}</p>
-                <p><strong>Fecha de nacimiento:</strong> ${sanitizeHTML(candidato.fecha_nacimiento)}</p>
-                <p><strong>Sexo:</strong> ${sanitizeHTML(candidato.sexo)}</p>
-            </div>
-            <div class="cv-section">
-                <h4>Contacto</h4>
-                <p><strong>Celular:</strong> ${sanitizeHTML(candidato.numero_celular)}</p>
-                <p><strong>Correo:</strong> ${sanitizeHTML(candidato.correo_electronico)}</p>
-                <p><strong>Departamento:</strong> ${sanitizeHTML(candidato.departamento)}</p>
-                <p><strong>Ciudad:</strong> ${sanitizeHTML(candidato.ciudad)}</p>
-            </div>
-            <div class="cv-section">
-                <h4>Formación y Experiencia</h4>
-                <p><strong>Formación académica:</strong> ${sanitizeHTML(candidato.formacion_academica)}</p>
-                <p><strong>Programa académico:</strong> ${sanitizeHTML(candidato.programa_academico)}</p>
-                <p><strong>Experiencia laboral:</strong> ${sanitizeHTML(candidato.experiencia_laboral)}</p>
-            </div>
-            <div class="cv-section">
-                <h4>Información Adicional</h4>
-                <p><strong>Interés ocupacional:</strong> ${sanitizeHTML(candidato.interes_ocupacional)}</p>
-                <p><strong>Horario interesado:</strong> ${sanitizeHTML(candidato.horario_interesado)}</p>
-                <p><strong>Aspiración salarial:</strong> ${sanitizeHTML(candidato.aspiracion_salarial)}</p>
-                <p><strong>Candidato con discapacidad:</strong> ${sanitizeHTML(candidato.candidato_discapacidad)}</p>
-                <p><strong>Tipo de discapacidad:</strong> ${sanitizeHTML(candidato.tipo_discapacidad)}</p>
-            </div>
-            <div class="cv-section">
-                <h4>Comentarios del Reclutador</h4>
-                <textarea id="recruiterComments" class="form-control" rows="4" placeholder="Escribe tus comentarios aquí...">
-                    ${sanitizeHTML(candidato.comentarios || '')}
-                </textarea>
-                <button id="saveCommentsBtn" class="btn btn-warning btn-sm mt-2" 
-                    onclick="guardarComentarios(${candidato.id}, ${vacanteId})">
-                    Guardar Comentarios
-                </button>
-            </div>
-        `;
-    }
-    
-function guardarComentarios(candidatoId, vacanteId) {
-    const commentsTextarea = document.getElementById('recruiterComments');
-    const comentarios = commentsTextarea.value.trim();
-
-    if (!comentarios) {
-        alert('El comentario no puede estar vacío.');
-        return;
-    }
-
-    const csrftoken = getCSRFToken();  // Asegurar que obtienes correctamente el token
-
-    fetch(`/vacantes/${vacanteId}/candidatos/${candidatoId}/guardar_comentarios/`, {
-        method: 'POST',
-        headers: {
-            'X-CSRFToken': csrftoken,
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ comentarios })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('Comentarios guardados exitosamente.');
+        function mostrarHojaDeVida(candidatoId) {
             const candidato = candidatos.find(c => c.id === candidatoId);
-            if (candidato) candidato.comentarios = comentarios;
-        } else {
-            alert('Error: ' + (data.message || 'No se pudieron guardar los comentarios.'));
-        }
-    })
-    .catch(error => {
-        console.error("Error en la petición:", error);
-        alert('Error al guardar los comentarios.');
-    });
-}
-
-
-
-
-    function applyFilters() {
-        const candidatoCards = document.querySelectorAll('.candidato-card');
-        let visibleCount = 0;
-
-        candidatoCards.forEach(card => {
-            const candidatoId = card.querySelector('.candidate-checkbox').value;
-            const candidato = candidatos.find(c => c.id === parseInt(candidatoId));
-            
+            const vacanteId = window.location.pathname.split('/')[2]; // Extract vacanteId from URL
             if (!candidato) return;
-
-            let shouldDisplay = true;
-
-            // Aplicar cada filtro activo
-            Object.entries(activeFilters).forEach(([key, value]) => {
-                if (!value) return;
-
-                switch(key) {
-                    case 'filterNombre':
-                        const nombreCompleto = `${candidato.nombres} ${candidato.apellidos}`.toLowerCase();
-                        if (!nombreCompleto.includes(value.toLowerCase())) shouldDisplay = false;
-                        break;
-                    case 'filterTipoDocumento':
-                        if (candidato.tipo_documento !== value) shouldDisplay = false;
-                        break;
-                    case 'filterNumeroDocumento':
-                        if (!candidato.numero_documento.includes(value)) shouldDisplay = false;
-                        break;
-                    case 'filterSexo':
-                        if (candidato.sexo !== value) shouldDisplay = false;
-                        break;
-                    case 'filterDepartamento':
-                        if (!candidato.departamento.toLowerCase().includes(value.toLowerCase())) shouldDisplay = false;
-                        break;
-
-                    case 'filterCiudad':
-                        if (!candidato.ciudad.toLowerCase().includes(value.toLowerCase())) shouldDisplay = false;
-                        break;
-                    
-                    case 'filterNacimientoDesde':
-                        const nacimientoDesde = new Date(value);
-                        const fechaNacimiento = new Date(candidato.fecha_nacimiento);
-                        if (fechaNacimiento < nacimientoDesde) shouldDisplay = false;
-                        break;
-                    case 'filterNacimientoHasta':
-                        const nacimientoHasta = new Date(value);
-                        const fechaNacimientoHasta = new Date(candidato.fecha_nacimiento);
-                        if (fechaNacimientoHasta > nacimientoHasta) shouldDisplay = false;
-                        break;
-                    case 'filterEstudioMinimo':
-                        // Usar la jerarquía de formación académica
-                        const nivelRequerido = NIVEL_EDUCATIVO[value];
-                        const nivelCandidato = NIVEL_EDUCATIVO[candidato.formacion_academica];
-                        if (nivelCandidato < nivelRequerido) shouldDisplay = false;
-                        break;
-                    case 'filterPrograma':
-                        if (!candidato.programa_academico.toLowerCase().includes(value.toLowerCase())) shouldDisplay = false;
-                        break;
-                    case 'filterHorario':
-                        if (candidato.horario_interesado !== value) shouldDisplay = false;
-                        break;
-                    case 'filterSalarioMin':
-                        if (parseInt(candidato.aspiracion_salarial) < parseInt(value)) shouldDisplay = false;
-                        break;
-                    case 'filterSalarioMax':
-                        if (parseInt(candidato.aspiracion_salarial) > parseInt(value)) shouldDisplay = false;
-                        break;
-                    case 'filterNombreFeria':
-                        if (!candidato.feria || !candidato.feria.toLowerCase().includes(value.toLowerCase())) shouldDisplay = false;
-                        break;
-                    case 'filterFeriaDesde':
-                        const feriaDesde = new Date(value);
-                        const fechaFeria = new Date(candidato.fecha_feria);
-                        if (fechaFeria < feriaDesde) shouldDisplay = false;
-                        break;
-                    case 'filterFeriaHasta':
-                        const feriaHasta = new Date(value);
-                        const fechaFeriaHasta = new Date(candidato.fecha_feria);
-                        if (fechaFeriaHasta > feriaHasta) shouldDisplay = false;
-                        break;
-                    case 'filterTecnico':
-                        if (candidato.tecnico_seleccion !== value) shouldDisplay = false;
-                        break;
-                    case 'filterSISE':
-                        if (candidato.registrado_en_sise !== value) shouldDisplay = false;
-                        break;
-                }
-            });
-
-            card.style.display = shouldDisplay ? 'block' : 'none';
-            if (shouldDisplay) visibleCount++;
-            card.querySelector('.card').classList.toggle('highlight-filter', 
-                Object.keys(activeFilters).length > 0 && shouldDisplay);
-        });
-
-        updateResultsCounter(visibleCount, candidatoCards.length);
-    }
-
-    function updateResultsCounter(visible, total) {
-        let counter = document.getElementById('filterResultsCounter');
-        if (!counter) {
-            counter = document.createElement('div');
-            counter.id = 'filterResultsCounter';
-            counter.className = 'filter-results-count';
-            document.getElementById('candidatosList').parentNode.insertBefore(counter, 
-                document.getElementById('candidatosList'));
+            const cvContent = document.getElementById('cvContent');
+            cvContent.innerHTML = `
+                <div class="cv-section">
+                    <h4>Información Personal</h4>
+                    <p><strong>Nombre completo:</strong> ${sanitizeHTML(candidato.nombres)} ${sanitizeHTML(candidato.apellidos)}</p>
+                    <p><strong>Documento:</strong> ${sanitizeHTML(candidato.tipo_documento)} ${sanitizeHTML(candidato.numero_documento)}</p>
+                    <p><strong>Fecha de nacimiento:</strong> ${sanitizeHTML(candidato.fecha_nacimiento)}</p>
+                    <p><strong>Sexo:</strong> ${sanitizeHTML(candidato.sexo)}</p>
+                </div>
+                <div class="cv-section">
+                    <h4>Contacto</h4>
+                    <p><strong>Celular:</strong> ${sanitizeHTML(candidato.numero_celular)}</p>
+                    <p><strong>Correo:</strong> ${sanitizeHTML(candidato.correo_electronico)}</p>
+                    <p><strong>Departamento:</strong> ${sanitizeHTML(candidato.departamento)}</p>
+                    <p><strong>Ciudad:</strong> ${sanitizeHTML(candidato.ciudad)}</p>
+                </div>
+                <div class="cv-section">
+                    <h4>Formación y Experiencia</h4>
+                    <p><strong>Formación académica:</strong> ${sanitizeHTML(candidato.formacion_academica)}</p>
+                    <p><strong>Programa académico:</strong> ${sanitizeHTML(candidato.programa_academico)}</p>
+                    <p><strong>Experiencia laboral:</strong> ${sanitizeHTML(candidato.experiencia_laboral)}</p>
+                </div>
+                <div class="cv-section">
+                    <h4>Información Adicional</h4>
+                    <p><strong>Interés ocupacional:</strong> ${sanitizeHTML(candidato.interes_ocupacional)}</p>
+                    <p><strong>Horario interesado:</strong> ${sanitizeHTML(candidato.horario_interesado)}</p>
+                    <p><strong>Aspiración salarial:</strong> ${sanitizeHTML(candidato.aspiracion_salarial)}</p>
+                    <p><strong>Candidato con discapacidad:</strong> ${sanitizeHTML(candidato.candidato_discapacidad)}</p>
+                    <p><strong>Tipo de discapacidad:</strong> ${sanitizeHTML(candidato.tipo_discapacidad)}</p>
+                </div>
+            `;
+            modal.show();
         }
 
-        counter.style.display = Object.keys(activeFilters).length > 0 ? 'inline-block' : 'none';
-        if (counter.style.display === 'inline-block') {
-            counter.innerHTML = `Mostrando <strong>${visible}</strong> de <strong>${total}</strong> candidatos`;
-        }
-    }
 
-    // Event Listeners
-    elements.checkboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', updateSelectedCount);
-    });
-
-    elements.selectAllBtn.addEventListener('click', () => {
-        elements.checkboxes.forEach(checkbox => {
-            const card = checkbox.closest('.candidato-card');
-            if (card.style.display !== 'none') {
-                checkbox.checked = true;
-            }
-        });
-        updateSelectedCount();
-    });
-
-    elements.deselectAllBtn.addEventListener('click', () => {
-        elements.checkboxes.forEach(checkbox => {
-            checkbox.checked = false;
-        });
-        updateSelectedCount();
-    });
-
-    document.querySelectorAll('.view-details').forEach(button => {
-        button.addEventListener('click', () => {
-            const candidatoId = parseInt(button.dataset.candidatoId);
-            currentCandidatoIndex = candidatos.findIndex(c => c.id === candidatoId);
-            if (currentCandidatoIndex !== -1) {
-                showCV(candidatos[currentCandidatoIndex]);
-                modal.show();
-            }
-        });
-    });
-
-    elements.prevButton.addEventListener('click', () => {
-        if (currentCandidatoIndex > 0) {
-            currentCandidatoIndex--;
-            showCV(candidatos[currentCandidatoIndex]);
-        }
-    });
-
-    elements.nextButton.addEventListener('click', () => {
-        if (currentCandidatoIndex < candidatos.length - 1) {
-            currentCandidatoIndex++;
-            showCV(candidatos[currentCandidatoIndex]);
-        }
-    });
-
-    // Manejo de filtros
-    elements.openFiltersBtn.addEventListener('click', () => {
-        elements.filtersOverlay.classList.add('show');
-        document.body.style.overflow = 'hidden';
-    });
-
-    elements.closeFiltersBtn.addEventListener('click', () => {
-        elements.filtersOverlay.classList.remove('show');
-        document.body.style.overflow = '';
-    });
-
-    elements.filtersOverlay.addEventListener('click', (event) => {
-        if (event.target === elements.filtersOverlay) {
-            elements.filtersOverlay.classList.remove('show');
-            document.body.style.overflow = '';
-        }
-    });
-
-    elements.applyFiltersBtn.addEventListener('click', () => {
-        activeFilters = {};
-        // Recolectar valores de filtros
-        document.querySelectorAll('[id^="filter"]').forEach(filter => {
-            if (filter.value) activeFilters[filter.id] = filter.value;
-        });
-        
-        applyFilters();
-        elements.filtersOverlay.classList.remove('show');
-        document.body.style.overflow = '';
-    });
-
-    elements.clearFiltersBtn.addEventListener('click', () => {
-        document.querySelectorAll('[id^="filter"]').forEach(filter => {
-            filter.value = '';
-        });
-        activeFilters = {};
-        applyFilters();
-    });
-
-    // Inicialización
-    updateSelectedCount();
-
-    
-});</script>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const departamentoSelect = document.getElementById("filterDepartamento");
-        const ciudadSelect = document.getElementById("filterCiudad");
-        const applyFiltersBtn = document.getElementById("applyFiltersBtn");
-        const clearFiltersBtn = document.getElementById("clearFiltersBtn");
-    
-        if (departamentoSelect) {
-            departamentoSelect.addEventListener("change", function() {
-                cargarCiudades(this.value, null);
-            });
-        }
-    
-        if (applyFiltersBtn) {
-            applyFiltersBtn.addEventListener("click", function(event) {
-                event.preventDefault(); // Evita que el botón recargue la página de forma predeterminada
-                actualizarURL();
-            });
-        }
-    
-        if (clearFiltersBtn) {
-            clearFiltersBtn.addEventListener("click", function(event) {
-                event.preventDefault();
-                window.location.href = window.location.pathname; // Recarga la página sin filtros
-            });
-        }
-    
+        // --- Filtering Functions ---
         function cargarCiudades(departamentoId, ciudadSeleccionada) {
             if (departamentoId) {
                 fetch(`/cargar-ciudades/?departamento_id=${departamentoId}`)
                     .then(response => response.json())
                     .then(data => {
-                        ciudadSelect.innerHTML = '<option value="">-- Selecciona una ciudad --</option>';
+                        elements.ciudadSelect.innerHTML = '<option value="">-- Selecciona una ciudad --</option>';
                         data.forEach(ciudad => {
                             const option = document.createElement("option");
                             option.value = ciudad.id;
@@ -1051,33 +739,152 @@ function guardarComentarios(candidatoId, vacanteId) {
                             if (ciudad.id == ciudadSeleccionada) {
                                 option.selected = true;
                             }
-                            ciudadSelect.appendChild(option);
+                            elements.ciudadSelect.appendChild(option);
                         });
                     })
                     .catch(error => console.error("Error cargando ciudades:", error));
             }
         }
-    
+
         function actualizarURL() {
-            let params = new URLSearchParams(window.location.search);
-            let departamento = departamentoSelect.value;
-            let ciudad = ciudadSelect.value;
-    
-            if (departamento) {
-                params.set("departamento", departamento);
-            } else {
-                params.delete("departamento");
+            let params = new URLSearchParams();
+            
+            // Recolectar valores de todos los filtros
+            elements.allFilterInputs.forEach(input => {
+                if (input.value) {
+                    params.set(input.id, input.value);
+                }
+            });
+            //para los select
+            if (elements.departamentoSelect.value) {
+                params.set("departamento", elements.departamentoSelect.value);
             }
-    
-            if (ciudad) {
-                params.set("ciudad", ciudad);
-            } else {
-                params.delete("ciudad");
+            if (elements.ciudadSelect.value) {
+                params.set("ciudad", elements.ciudadSelect.value);
             }
-    
-            window.location.search = params.toString(); // Recargar la página con los filtros aplicados
+
+            window.location.search = params.toString();
         }
+
+
+        function updateResultsCounter(visible, total) {
+            let counter = document.getElementById('filterResultsCounter');
+            if (!counter) {
+                counter = document.createElement('div');
+                counter.id = 'filterResultsCounter';
+                counter.className = 'filter-results-count';
+                document.getElementById('candidatosList').parentNode.insertBefore(counter,
+                    document.getElementById('candidatosList'));
+            }
+            const activeFilters = Array.from(elements.allFilterInputs).some(input => input.value);
+            counter.style.display = activeFilters ? 'inline-block' : 'none';
+            if (counter.style.display === 'inline-block') {
+                counter.innerHTML = `Mostrando <strong>${visible}</strong> de <strong>${total}</strong> candidatos`;
+            }
+        }
+
+        // --- Event Handlers ---
+
+        //filters by status
+        elements.filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const estadoSeleccionado = this.getAttribute('data-estado');
+                const candidatoCards = document.querySelectorAll('.candidato-card');
+
+                candidatoCards.forEach(card => {
+                    const estadoCandidato = card.querySelector('.badge').textContent.replace('Estado: ', '').trim();
+                    card.style.display = (estadoSeleccionado === 'Todos' || estadoCandidato === estadoSeleccionado) ? 'block' : 'none';
+                });
+            });
+        });
+
+        elements.checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', updateSelectedCount);
+        });
+
+        elements.selectAllBtn.addEventListener('click', () => {
+            elements.checkboxes.forEach(checkbox => {
+                const card = checkbox.closest('.candidato-card');
+                if (card.style.display !== 'none') {
+                    checkbox.checked = true;
+                }
+            });
+            updateSelectedCount();
+        });
+
+        elements.deselectAllBtn.addEventListener('click', () => {
+            elements.checkboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            updateSelectedCount();
+        });
+
+        document.querySelectorAll('.view-details').forEach(button => {
+            button.addEventListener('click', () => {
+                const candidatoId = parseInt(button.dataset.candidatoId);
+                currentCandidatoIndex = candidatos.findIndex(c => c.id === candidatoId);
+                if (currentCandidatoIndex !== -1) {
+                    mostrarHojaDeVida(candidatos[currentCandidatoIndex].id); //showCV(candidatos[currentCandidatoIndex]);
+                }
+            });
+        });
+
+        elements.prevButton.addEventListener('click', () => {
+            if (currentCandidatoIndex > 0) {
+                currentCandidatoIndex--;
+                mostrarHojaDeVida(candidatos[currentCandidatoIndex].id); //showCV(candidatos[currentCandidatoIndex]);
+            }
+        });
+
+        elements.nextButton.addEventListener('click', () => {
+            if (currentCandidatoIndex < candidatos.length - 1) {
+                currentCandidatoIndex++;
+                mostrarHojaDeVida(candidatos[currentCandidatoIndex].id); //showCV(candidatos[currentCandidatoIndex]);
+            }
+        });
+
+        // --- Filter Management ---
+        elements.openFiltersBtn.addEventListener('click', () => {
+            elements.filtersOverlay.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        });
+
+        elements.closeFiltersBtn.addEventListener('click', () => {
+            elements.filtersOverlay.classList.remove('show');
+            document.body.style.overflow = '';
+        });
+
+        elements.filtersOverlay.addEventListener('click', (event) => {
+            if (event.target === elements.filtersOverlay) {
+                elements.filtersOverlay.classList.remove('show');
+                document.body.style.overflow = '';
+            }
+        });
+
+        elements.applyFiltersBtn.addEventListener('click', (event) => {
+            event.preventDefault(); // Previene la recarga de página
+            actualizarURL(); // Ahora, actualiza la URL
+            elements.filtersOverlay.classList.remove('show');
+            document.body.style.overflow = '';
+        });
+
+        elements.clearFiltersBtn.addEventListener('click', (event) => {
+            event.preventDefault();
+             window.location.href = window.location.pathname; // recarga la pagina sin filtros
+        });
+
+        // Event listener para seleción de departamento
+        if (elements.departamentoSelect) {
+            elements.departamentoSelect.addEventListener("change", function() {
+                cargarCiudades(this.value, null);
+            });
+        }
+
+        // --- Initialization ---
+        updateSelectedCount();
     });
-    </script>
+</script>
+
+
 
 {% endblock %}
