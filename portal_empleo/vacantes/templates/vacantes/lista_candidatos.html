@@ -720,6 +720,13 @@ Candidatos para la Vacante
                     <p><strong>Candidato con discapacidad:</strong> ${sanitizeHTML(candidato.candidato_discapacidad)}</p>
                     <p><strong>Tipo de discapacidad:</strong> ${sanitizeHTML(candidato.tipo_discapacidad)}</p>
                 </div>
+            <div class="cv-section">
+                <h4>Datos de la Feria</h4>
+                <p><strong>Feria:</strong> ${sanitizeHTML(candidato.feria)}</p>
+                <p><strong>Fecha de la Feria:</strong> ${sanitizeHTML(candidato.fecha_feria)}</p>
+                <p><strong>Técnico de Selección:</strong> ${sanitizeHTML(candidato.tecnico_seleccion)}</p>
+                <p><strong>Registrado en SISE:</strong> ${sanitizeHTML(candidato.registrado_en_sise)}</p>
+            </div>
             `;
             modal.show();
         }
