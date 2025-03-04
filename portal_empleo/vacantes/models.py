@@ -152,38 +152,38 @@ def validar_aspiracion_salarial(value):
 class RegistroCandidato(models.Model):
     # Opciones para los campos
     SEX_CHOICES = [
-        ('M', 'Mujer'),
-        ('H', 'Hombre'),
-        ('I', 'Intersexual'),
+        ('Mujer', 'Mujer'),
+        ('Hombre', 'Hombre'),
+        ('Intersexual', 'Intersexual'),
     ]
 
     DOCUMENT_TYPE_CHOICES = [
-        ('CC', 'CEDULA DE CIUDADANIA'),
-        ('PEP', 'PERMISO ESPECIAL DE PERMANENCIA'),
-        ('TI', 'TARJETA DE IDENTIDAD'),
-        ('DNI', 'DOCUMENTO NACIONAL DE IDENTIFICACION'),
-        ('PAS', 'PASAPORTE'),
-        ('CE', 'CEDULA DE EXTRANJERIA'),
+        ('CEDULA DE CIUDADANIA', 'CEDULA DE CIUDADANIA'),
+        ('PERMISO ESPECIAL DE PERMANENCIA', 'PERMISO ESPECIAL DE PERMANENCIA'),
+        ('TARJETA DE IDENTIDAD', 'TARJETA DE IDENTIDAD'),
+        ('DOCUMENTO NACIONAL DE IDENTIFICACION', 'DOCUMENTO NACIONAL DE IDENTIFICACION'),
+        ('PASAPORTE', 'PASAPORTE'),
+        ('CEDULA DE EXTRANJERIA', 'CEDULA DE EXTRANJERIA'),
     ]
 
     EDUCATION_LEVEL_CHOICES = [
-        ('BP', 'BASICA PRIMARIA'),
-        ('BS', 'BASICA SECUNDARIA'),
-        ('BA', 'BACHILLER ACADEMICO'),
-        ('EBA', 'ESTUDIANTE BACHILLER ACADEMICO'),
-        ('TL', 'TECNICO LABORAL/PROFESIONAL'),
-        ('ETL', 'ESTUDIANTE TECNICO LABORAL/PROFESIONAL'),
-        ('T', 'TECNOLOGO'),
-        ('ET', 'ESTUDIANTE TECNOLOGO'),
-        ('P', 'PROFESIONAL'),
-        ('EP', 'ESTUDIANTE PROFESIONAL'),
-        ('PG', 'POSGRADO'),
+        ('BASICA PRIMARIA', 'BASICA PRIMARIA'),
+        ('BASICA SECUNDARIA', 'BASICA SECUNDARIA'),
+        ('BACHILLER ACADEMICO', 'BACHILLER ACADEMICO'),
+        ('ESTUDIANTE BACHILLER ACADEMICO', 'ESTUDIANTE BACHILLER ACADEMICO'),
+        ('TECNICO LABORAL/PROFESIONAL', 'TECNICO LABORAL/PROFESIONAL'),
+        ('ESTUDIANTE TECNICO LABORAL/PROFESIONAL', 'ESTUDIANTE TECNICO LABORAL/PROFESIONAL'),
+        ('TECNOLOGO', 'TECNOLOGO'),
+        ('ESTUDIANTE TECNOLOGO', 'ESTUDIANTE TECNOLOGO'),
+        ('PROFESIONAL', 'PROFESIONAL'),
+        ('ESTUDIANTE PROFESIONAL', 'ESTUDIANTE PROFESIONAL'),
+        ('POSGRADO', 'POSGRADO'),
     ]
 
     SCHEDULE_CHOICES = [
-        ('FT', 'TIEMPO COMPLETO'),
-        ('PT', 'MEDIO TIEMPO'),
-        ('WE', 'FINES DE SEMANA'),
+        ('TIEMPO COMPLETO', 'TIEMPO COMPLETO'),
+        ('MEDIO TIEMPO', 'MEDIO TIEMPO'),
+        ('FINES DE SEMANA', 'FINES DE SEMANA'),
     ]
 
     DISABILITY_CHOICES = [
@@ -197,31 +197,32 @@ class RegistroCandidato(models.Model):
     ]
 
     RECRUITER_CHOICES = [
-        ('NN', 'No conoce el nombre'),
-        ('AAM', 'Angel Andres Moyano Molano'),
-        ('DAP', 'Diego Alejandro Parra Pinto'),
-        ('EJC', 'Erika Julieth Cristancho Pérez'),
+        ('No conoce el nombre', 'No conoce el nombre'),
+        ('Angel Andres Moyano Molano', 'Angel Andres Moyano Molano'),
+        ('Diego Alejandro Parra Pinto', 'Diego Alejandro Parra Pinto'),
+        ('Erika Julieth Cristancho Pérez', 'Erika Julieth Cristancho Pérez'),
     ]
 
     # Campos
     feria = models.CharField(max_length=100, blank=True, null=True)
     fecha_feria = models.DateField(default=date(2025, 1, 1), blank=True, null=True)
-    sexo = models.CharField(max_length=1, choices=SEX_CHOICES)
-    tipo_documento = models.CharField(max_length=3, choices=DOCUMENT_TYPE_CHOICES)
+    sexo = models.CharField(max_length=16, choices=SEX_CHOICES)
+    tipo_documento = models.CharField(max_length=50, choices=DOCUMENT_TYPE_CHOICES)
     numero_documento = models.CharField(max_length=20, unique=True)
     nombres = models.CharField(max_length=100)
     apellidos = models.CharField(max_length=100)
     numero_celular = models.CharField(max_length=15)
     correo_electronico = models.EmailField()
     fecha_nacimiento = models.DateField()
-    formacion_academica = models.CharField(max_length=3, choices=EDUCATION_LEVEL_CHOICES)
+    formacion_academica = models.CharField(max_length=40, choices=EDUCATION_LEVEL_CHOICES)
     programa_academico = models.CharField(max_length=100)
     experiencia_laboral = models.TextField(blank=True, null=True)
     interes_ocupacional = models.TextField(blank=True, null=True)
-    localidad_municipio = models.CharField(max_length=100)
+    departamento = models.ForeignKey(Departamento, on_delete=models.SET_NULL, null=True, blank=True)
+    ciudad = models.ForeignKey(Ciudad, on_delete=models.SET_NULL, null=True, blank=True)
     candidato_discapacidad = models.CharField(max_length=2, choices=DISABILITY_CHOICES)
     tipo_discapacidad = models.CharField(max_length=100, blank=True, null=True)
-    horario_interesado = models.CharField(max_length=2, choices=SCHEDULE_CHOICES)
+    horario_interesado = models.CharField(max_length=20, choices=SCHEDULE_CHOICES)
 
     # Aspiración salarial como número entero con validación
     aspiracion_salarial = models.IntegerField(
@@ -230,9 +231,12 @@ class RegistroCandidato(models.Model):
     )
 
     registrado_en_sise = models.CharField(max_length=2, choices=SISE_CHOICES)
-    tecnico_seleccion = models.CharField(max_length=3, choices=RECRUITER_CHOICES, blank=True, null=True)
+    tecnico_seleccion = models.CharField(max_length=40, choices=RECRUITER_CHOICES, blank=True, null=True)
     vacantes_disponibles = models.ManyToManyField("Vacante", related_name="candidatos", blank=True)
 
+# Campo para comentarios del reclutador
+    comentarios = models.TextField(blank=True, null=True)
+    
     class Meta:
         verbose_name = "Registro de Candidato"
         verbose_name_plural = "Registros de Candidatos"

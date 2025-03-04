@@ -24,6 +24,8 @@ from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 
 
+
+
 def normalizar_texto(texto):
     """
     Elimina los acentos y normaliza el texto a minúsculas.
@@ -287,24 +289,156 @@ def descargar_excel(request):
 
 
 
-def lista_candidatos(request, id):
-    # Obtener la vacante específica
-    vacante = get_object_or_404(Vacante, id=id)
+# def lista_candidatos(request, id):
+#     # Obtener la vacante específica
+#     vacante = get_object_or_404(Vacante, id=id)
     
-    # Obtener la lista de candidatos relacionados con esta vacante
+#     # Obtener la lista de candidatos relacionados con esta vacante
+#     candidatos = vacante.candidatos.all()
+
+#     # Traer o crear el estado de cada aplicación
+#     for candidato in candidatos:
+#         estado_aplicacion, creado = EstadoAplicacion.objects.get_or_create(
+#             candidato=candidato, 
+#             vacante=vacante,
+#             defaults={'estado': 'No visto'}
+#         )
+#         candidato.estado_aplicacion = estado_aplicacion.estado
+    
+#     # Renderizar la información en el template
+#     return render(request, 'vacantes/lista_candidatos.html', {'vacante': vacante, 'candidatos': candidatos})
+
+
+
+
+
+
+
+
+
+
+
+
+def lista_candidatos(request, id):
+    vacante = get_object_or_404(Vacante, id=id)
     candidatos = vacante.candidatos.all()
 
-    # Traer o crear el estado de cada aplicación
+    # Obtener todos los filtros de la solicitud GET
+    filtros = {}
+    for key, value in request.GET.items():
+        if value:  # Solo si el valor no está vacío
+            filtros[key] = value
+
+    print(f"Filtros recibidos: {filtros}")  # debug
+
+    # Aplicar los filtros a los candidatos
+    if filtros:
+        q_objects = Q()
+        for key, value in filtros.items():
+            if key == 'departamento':
+                q_objects &= Q(departamento__id=value)  # AND operator for relational fields
+            elif key == 'ciudad':
+                q_objects &= Q(ciudad__id=value)  # AND operator for relational fields
+            elif key == 'filterNombre':
+                q_objects &= (Q(nombres__icontains=value) | Q(apellidos__icontains=value)) #AND operator
+            elif key == 'filterTipoDocumento':
+                q_objects &= Q(tipo_documento=value) #AND operator
+            elif key == 'filterNumeroDocumento':
+                q_objects &= Q(numero_documento__icontains=value) #AND operator
+            elif key == 'filterSexo':
+                q_objects &= Q(sexo=value) #AND operator
+            elif key == 'filterNacimientoDesde':
+                try:
+                    value = datetime.strptime(value, '%Y-%m-%d').date() #Convert to date
+                    q_objects &= Q(fecha_nacimiento__gte=value) #AND operator
+                except ValueError:
+                    pass  # Ignorar el filtro si el formato es incorrecto
+            elif key == 'filterNacimientoHasta':
+                try:
+                    value = datetime.strptime(value, '%Y-%m-%d').date() #Convert to date
+                    q_objects &= Q(fecha_nacimiento__lte=value) #AND operator
+                except ValueError:
+                    pass  # Ignorar el filtro si el formato es incorrecto
+            elif key == 'filterEstudioMinimo':
+                q_objects &= Q(formacion_academica=value) #AND operator
+            elif key == 'filterPrograma':
+                q_objects &= Q(programa_academico__icontains=value) #AND operator
+            elif key == 'filterHorario':
+                q_objects &= Q(horario_interesado=value) #AND operator
+            elif key == 'filterSalarioMin':
+                try:
+                    value = int(value)
+                    q_objects &= Q(aspiracion_salarial__gte=value) #AND operator
+                except ValueError:
+                    pass  # Ignorar el filtro si el formato es incorrecto
+            elif key == 'filterSalarioMax':
+                try:
+                    value = int(value)
+                    q_objects &= Q(aspiracion_salarial__lte=value) #AND operator
+                except ValueError:
+                    pass  # Ignorar el filtro si el formato es incorrecto
+            elif key == 'filterNombreFeria':
+                q_objects &= Q(feria__icontains=value)  #AND operator
+            elif key == 'filterFeriaDesde':
+                try:
+                    value = datetime.strptime(value, '%Y-%m-%d').date() #Convert to date
+                    q_objects &= Q(fecha_feria__gte=value) #AND operator
+                except ValueError:
+                    pass  # Ignorar el filtro si el formato es incorrecto
+            elif key == 'filterFeriaHasta':
+                try:
+                    value = datetime.strptime(value, '%Y-%m-%d').date() #Convert to date
+                    q_objects &= Q(fecha_feria__lte=value) #AND operator
+                except ValueError:
+                    pass  # Ignorar el filtro si el formato es incorrecto
+            elif key == 'filterTecnico':
+                q_objects &= Q(tecnico_seleccion=value) #AND operator
+            elif key == 'filterSISE':
+                q_objects &= Q(registrado_en_sise=value) #AND operator
+
+        candidatos = candidatos.filter(q_objects)
+        print(f"Candidatos después de aplicar todos los filtros: {candidatos.count()}")  # debug
+
+    # Obtener o crear el estado de cada aplicación
     for candidato in candidatos:
-        estado_aplicacion, creado = EstadoAplicacion.objects.get_or_create(
-            candidato=candidato, 
+        estado_aplicacion, _ = EstadoAplicacion.objects.get_or_create(
+            candidato=candidato,
             vacante=vacante,
             defaults={'estado': 'No visto'}
         )
         candidato.estado_aplicacion = estado_aplicacion.estado
-    
-    # Renderizar la información en el template
-    return render(request, 'vacantes/lista_candidatos.html', {'vacante': vacante, 'candidatos': candidatos})
+
+    # preparar la data de los filtros para la plantilla
+    departamento_choices = Departamento.objects.all().values_list('id', 'nombre')
+    ciudad_choices = []
+    if filtros.get('departamento'):
+        ciudad_choices = Ciudad.objects.filter(departamento_id=filtros['departamento']).values_list('id', 'nombre')
+
+    # se crea un nuevo diccionario para la informacion de la plantilla
+    filtros_para_la_plantilla = {
+        key: value for key, value in filtros.items() if key not in ['departamento', 'ciudad']
+    }
+    filtros_para_la_plantilla['departamento'] = int(filtros['departamento']) if filtros.get('departamento') else ''
+    filtros_para_la_plantilla['ciudad'] = int(filtros['ciudad']) if filtros.get('ciudad') else ''
+
+    if filtros_para_la_plantilla.get('ciudad'):
+        filtros_para_la_plantilla['ciudad_nombre'] = Ciudad.objects.get(id=filtros_para_la_plantilla['ciudad']).nombre
+    else:
+        filtros_para_la_plantilla['ciudad_nombre'] = ''
+
+    contexto = {
+        'vacante': vacante,
+        'candidatos': candidatos,
+        'departamento_choices': departamento_choices,
+        'ciudad_choices': ciudad_choices,
+        'filtros': filtros_para_la_plantilla,
+    }
+
+    return render(request, 'vacantes/lista_candidatos.html', contexto)
+
+
+
+
 
 
 def lista_registros(request):
@@ -382,7 +516,7 @@ def exportar_candidatos_excel(request):
         "Feria", "Fecha Feria", "Sexo", "Tipo Documento", "Número Documento", 
         "Nombres", "Apellidos", "Número Celular", "Correo Electrónico", 
         "Fecha Nacimiento", "Formación Académica", "Programa Académico", 
-        "Experiencia Laboral", "Interés Ocupacional", "Localidad/Municipio", 
+        "Experiencia Laboral", "Interés Ocupacional", "departamento", "ciudad", 
         "Discapacidad", "Tipo Discapacidad", "Horario Interesado", 
         "Aspiración Salarial", "Registrado en SISE", "Técnico Selección"
     ]
@@ -408,7 +542,8 @@ def exportar_candidatos_excel(request):
             candidato.programa_academico,
             candidato.experiencia_laboral,
             candidato.interes_ocupacional,
-            candidato.localidad_municipio,
+            candidato.departamento,
+            candidato.ciudad,
             candidato.get_candidato_discapacidad_display(),
             candidato.tipo_discapacidad,
             candidato.get_horario_interesado_display(),
@@ -460,7 +595,7 @@ def descargar_candidatos(request):
     headers = [
         'Nombres', 'Apellidos', 'Tipo Documento', 'Número Documento',
         'Fecha Nacimiento', 'Sexo', 'Celular', 'Correo',
-        'Localidad/Municipio', 'Formación Académica', 'Programa Académico',
+        'departamento', 'ciudad', 'Formación Académica', 'Programa Académico',
         'Experiencia Laboral', 'Interés Ocupacional', 'Horario Interesado',
         'Aspiración Salarial', 'Candidato Discapacidad', 'Tipo Discapacidad',
         'Registrado en SISE', 'Técnico Selección', 'Feria', 'Fecha Feria'
@@ -485,7 +620,8 @@ def descargar_candidatos(request):
             candidato.get_sexo_display(),
             candidato.numero_celular,
             candidato.correo_electronico,
-            candidato.localidad_municipio,
+            str(candidato.departamento),  # ✅ Convertido a string
+            str(candidato.ciudad),  # ✅ Convertido a string
             candidato.get_formacion_academica_display(),
             candidato.programa_academico,
             candidato.experiencia_laboral,
@@ -606,3 +742,37 @@ def cambiar_a_visto(request, vacante_id, candidato_id):
         return JsonResponse({'success': False, 'message': 'El estado no era "No visto"'})
     
     return JsonResponse({'error': 'Método no permitido'}, status=405)
+
+
+def cargar_ciudades(request):
+    departamento_id = request.GET.get("departamento_id")
+    ciudades = Ciudad.objects.filter(departamento_id=departamento_id).values("id", "nombre")
+    return JsonResponse(list(ciudades), safe=False)
+
+
+
+
+
+#@csrf_exempt  # (Si prefieres usar CSRF token correctamente, quita esta línea)
+def guardar_comentarios(request, vacante_id, candidato_id):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            comentarios = data.get('comentarios', '').strip()
+
+            if not comentarios:
+                return JsonResponse({'success': False, 'message': 'El comentario no puede estar vacío.'})
+
+            candidato = RegistroCandidato.objects.get(id=candidato_id)
+            candidato.comentarios = comentarios
+            candidato.save()
+
+            print(f"Comentario guardado para candidato ID: {candidato_id} - Vacante ID: {vacante_id}")
+
+            return JsonResponse({'success': True})
+        except RegistroCandidato.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'Candidato no encontrado.'})
+        except json.JSONDecodeError:
+            return JsonResponse({'success': False, 'message': 'Error en el formato de los datos.'})
+
+    return JsonResponse({'success': False, 'message': 'Método no permitido.'})
