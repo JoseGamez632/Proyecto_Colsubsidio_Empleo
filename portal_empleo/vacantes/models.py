@@ -234,8 +234,6 @@ class RegistroCandidato(models.Model):
     tecnico_seleccion = models.CharField(max_length=40, choices=RECRUITER_CHOICES, blank=True, null=True)
     vacantes_disponibles = models.ManyToManyField("Vacante", related_name="candidatos", blank=True)
 
-# Campo para comentarios del reclutador
-    comentarios = models.TextField(blank=True, null=True)
     
     class Meta:
         verbose_name = "Registro de Candidato"
@@ -262,3 +260,26 @@ class EstadoAplicacion(models.Model):
 
     def __str__(self):
         return f"{self.candidato.nombres} - {self.vacante.cargo} - {self.estado}"
+    
+    
+from django.db import models
+from django.contrib.auth.models import User # Asegurate de tenerlo importado
+from django.utils.timezone import now
+
+
+
+class ComentarioCandidato(models.Model):
+    """
+    Modelo para almacenar comentarios de los reclutadores sobre un candidato.
+    """
+    candidato = models.ForeignKey('RegistroCandidato', on_delete=models.CASCADE, related_name='comentarios')
+    usuario = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    comentario = models.TextField()
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-fecha_creacion']  # Ordena del más reciente al más antiguo
+
+    def __str__(self):
+        return f"Comentario de {self.usuario.username if self.usuario else 'Desconocido'} - {self.fecha_creacion.strftime('%Y-%m-%d %H:%M:%S')}"
+

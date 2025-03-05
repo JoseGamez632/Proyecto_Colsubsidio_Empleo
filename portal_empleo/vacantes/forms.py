@@ -1,5 +1,5 @@
 from django import forms
-from .models import Vacante, RegistroCandidato, Departamento, Ciudad
+from .models import Vacante, RegistroCandidato, Departamento, Ciudad, ComentarioCandidato
 import json
 from django.forms import modelformset_factory
 
@@ -350,6 +350,15 @@ class RegistroCandidatoForm(forms.ModelForm):
     class Meta:
         model = RegistroCandidato
         fields = '__all__'
+        
+        
+class ComentarioCandidatoForm(forms.ModelForm):
+    class Meta:
+        model = ComentarioCandidato
+        fields = ['comentario']
+        widgets = {
+            'comentario': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Escribe un nuevo comentario...'}),
+        }
 
 
 # def clean_vacantes_disponibles(self):
