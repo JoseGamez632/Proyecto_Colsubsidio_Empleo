@@ -319,6 +319,10 @@ def descargar_excel(request):
 
 
 
+# views.py
+
+
+
 def lista_candidatos(request, id):
     vacante = get_object_or_404(Vacante, id=id)
     candidatos = vacante.candidatos.all()
@@ -340,61 +344,63 @@ def lista_candidatos(request, id):
             elif key == 'ciudad':
                 q_objects &= Q(ciudad__id=value)  # AND operator for relational fields
             elif key == 'filterNombre':
-                q_objects &= (Q(nombres__icontains=value) | Q(apellidos__icontains=value)) #AND operator
+                palabras = value.split()
+                for palabra in palabras:
+                    q_objects &= (Q(nombres__icontains=palabra) | Q(apellidos__icontains=palabra))
             elif key == 'filterTipoDocumento':
-                q_objects &= Q(tipo_documento=value) #AND operator
+                q_objects &= Q(tipo_documento=value)  # AND operator
             elif key == 'filterNumeroDocumento':
-                q_objects &= Q(numero_documento__icontains=value) #AND operator
+                q_objects &= Q(numero_documento__icontains=value)  # AND operator
             elif key == 'filterSexo':
-                q_objects &= Q(sexo=value) #AND operator
+                q_objects &= Q(sexo=value)  # AND operator
             elif key == 'filterNacimientoDesde':
                 try:
-                    value = datetime.strptime(value, '%Y-%m-%d').date() #Convert to date
-                    q_objects &= Q(fecha_nacimiento__gte=value) #AND operator
+                    value = datetime.strptime(value, '%Y-%m-%d').date()  # Convert to date
+                    q_objects &= Q(fecha_nacimiento__gte=value)  # AND operator
                 except ValueError:
                     pass  # Ignorar el filtro si el formato es incorrecto
             elif key == 'filterNacimientoHasta':
                 try:
-                    value = datetime.strptime(value, '%Y-%m-%d').date() #Convert to date
-                    q_objects &= Q(fecha_nacimiento__lte=value) #AND operator
+                    value = datetime.strptime(value, '%Y-%m-%d').date()  # Convert to date
+                    q_objects &= Q(fecha_nacimiento__lte=value)  # AND operator
                 except ValueError:
                     pass  # Ignorar el filtro si el formato es incorrecto
             elif key == 'filterEstudioMinimo':
-                q_objects &= Q(formacion_academica=value) #AND operator
+                q_objects &= Q(formacion_academica=value)  # AND operator
             elif key == 'filterPrograma':
-                q_objects &= Q(programa_academico__icontains=value) #AND operator
+                q_objects &= Q(programa_academico__icontains=value)  # AND operator
             elif key == 'filterHorario':
-                q_objects &= Q(horario_interesado=value) #AND operator
+                q_objects &= Q(horario_interesado=value)  # AND operator
             elif key == 'filterSalarioMin':
                 try:
                     value = int(value)
-                    q_objects &= Q(aspiracion_salarial__gte=value) #AND operator
+                    q_objects &= Q(aspiracion_salarial__gte=value)  # AND operator
                 except ValueError:
                     pass  # Ignorar el filtro si el formato es incorrecto
             elif key == 'filterSalarioMax':
                 try:
                     value = int(value)
-                    q_objects &= Q(aspiracion_salarial__lte=value) #AND operator
+                    q_objects &= Q(aspiracion_salarial__lte=value)  # AND operator
                 except ValueError:
                     pass  # Ignorar el filtro si el formato es incorrecto
             elif key == 'filterNombreFeria':
-                q_objects &= Q(feria__icontains=value)  #AND operator
+                q_objects &= Q(feria__icontains=value)  # AND operator
             elif key == 'filterFeriaDesde':
                 try:
-                    value = datetime.strptime(value, '%Y-%m-%d').date() #Convert to date
-                    q_objects &= Q(fecha_feria__gte=value) #AND operator
+                    value = datetime.strptime(value, '%Y-%m-%d').date()  # Convert to date
+                    q_objects &= Q(fecha_feria__gte=value)  # AND operator
                 except ValueError:
                     pass  # Ignorar el filtro si el formato es incorrecto
             elif key == 'filterFeriaHasta':
                 try:
-                    value = datetime.strptime(value, '%Y-%m-%d').date() #Convert to date
-                    q_objects &= Q(fecha_feria__lte=value) #AND operator
+                    value = datetime.strptime(value, '%Y-%m-%d').date()  # Convert to date
+                    q_objects &= Q(fecha_feria__lte=value)  # AND operator
                 except ValueError:
                     pass  # Ignorar el filtro si el formato es incorrecto
             elif key == 'filterTecnico':
-                q_objects &= Q(tecnico_seleccion=value) #AND operator
+                q_objects &= Q(tecnico_seleccion=value)  # AND operator
             elif key == 'filterSISE':
-                q_objects &= Q(registrado_en_sise=value) #AND operator
+                q_objects &= Q(registrado_en_sise=value)  # AND operator
 
         candidatos = candidatos.filter(q_objects)
         print(f"Candidatos después de aplicar todos los filtros: {candidatos.count()}")  # debug
@@ -435,7 +441,6 @@ def lista_candidatos(request, id):
     }
 
     return render(request, 'vacantes/lista_candidatos.html', contexto)
-
 
 
 
