@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.http import HttpResponse, JsonResponse
-from .models import Vacante, Ciudad, Departamento, RegistroCandidato, EstadoAplicacion
-from .forms import VacanteForm, RegistroCandidatoForm
+from .models import Vacante, Ciudad, Departamento, RegistroCandidato, EstadoAplicacion, ComentarioCandidato
+from .forms import VacanteForm, RegistroCandidatoForm, ComentarioCandidatoForm #Añadir ComentarioCandidatoForm
 from django.contrib.auth.decorators import login_required # Solicitar ligin para ejecutar funcion
 from django.contrib.auth.decorators import permission_required # Solicita login para permisos especificos @permission_required('app_name.add_vacante')
 import openpyxl
@@ -334,6 +334,11 @@ def lista_candidatos(request, id):
             filtros[key] = value
 
     print(f"Filtros recibidos: {filtros}")  # debug
+    
+        # Obtener todos los comentarios para cada candidato (sin filtrar)
+    todos_los_comentarios = {}
+    for candidato in candidatos:
+        todos_los_comentarios[candidato.id] = candidato.comentarios.all()
 
     # Aplicar los filtros a los candidatos
     if filtros:
@@ -438,6 +443,8 @@ def lista_candidatos(request, id):
         'departamento_choices': departamento_choices,
         'ciudad_choices': ciudad_choices,
         'filtros': filtros_para_la_plantilla,
+        'todos_los_comentarios': todos_los_comentarios,  # Pasar todos los comentarios al template
+        'form_comentario': ComentarioCandidatoForm() # Se crea una instancia del formulario
     }
 
     return render(request, 'vacantes/lista_candidatos.html', contexto)
@@ -758,26 +765,46 @@ def cargar_ciudades(request):
 
 
 
-#@csrf_exempt  # (Si prefieres usar CSRF token correctamente, quita esta línea)
-def guardar_comentarios(request, vacante_id, candidato_id):
+
+
+
+@login_required
+def obtener_comentarios(request, vacante_id, candidato_id):
+    """
+    Retorna los comentarios de un candidato en formato JSON.
+    """
+    comentarios = ComentarioCandidato.objects.filter(candidato_id=candidato_id).order_by('-fecha_creacion')
+    data = {
+        'comentarios': [
+            {
+                'comentario': comentario.comentario,
+                'usuario': comentario.usuario.username if comentario.usuario else 'Desconocido',
+                'fecha_creacion': comentario.fecha_creacion.strftime('%Y-%m-%d %H:%M:%S'),
+            }
+            for comentario in comentarios
+        ]
+    }
+    return JsonResponse(data)
+
+@login_required
+def guardar_comentario(request, vacante_id, candidato_id):
+    """
+    Guarda un nuevo comentario para un candidato específico.
+    """
     if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            comentarios = data.get('comentarios', '').strip()
+        candidato = get_object_or_404(RegistroCandidato, id=candidato_id)
+        comentario_text = request.POST.get('comentario')
+        if comentario_text:
+            comentario = ComentarioCandidato.objects.create(
+                candidato=candidato,
+                usuario=request.user,
+                comentario=comentario_text
+            )
+            comentario.save()
+            data = {'success': True}
+            return JsonResponse(data)
+        else:
+             data = {'success': False}
+             return JsonResponse(data)
 
-            if not comentarios:
-                return JsonResponse({'success': False, 'message': 'El comentario no puede estar vacío.'})
-
-            candidato = RegistroCandidato.objects.get(id=candidato_id)
-            candidato.comentarios = comentarios
-            candidato.save()
-
-            print(f"Comentario guardado para candidato ID: {candidato_id} - Vacante ID: {vacante_id}")
-
-            return JsonResponse({'success': True})
-        except RegistroCandidato.DoesNotExist:
-            return JsonResponse({'success': False, 'message': 'Candidato no encontrado.'})
-        except json.JSONDecodeError:
-            return JsonResponse({'success': False, 'message': 'Error en el formato de los datos.'})
-
-    return JsonResponse({'success': False, 'message': 'Método no permitido.'})
+    return JsonResponse({'success': False})
