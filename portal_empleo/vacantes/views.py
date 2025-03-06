@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.http import HttpResponse, JsonResponse
-from .models import Vacante, Ciudad, Departamento, RegistroCandidato, EstadoAplicacion
-from .forms import VacanteForm, RegistroCandidatoForm
+from .models import Vacante, Ciudad, Departamento, RegistroCandidato, EstadoAplicacion, ComentarioCandidato
+from .forms import VacanteForm, RegistroCandidatoForm, ComentarioCandidatoForm #Añadir ComentarioCandidatoForm
 from django.contrib.auth.decorators import login_required # Solicitar ligin para ejecutar funcion
 from django.contrib.auth.decorators import permission_required # Solicita login para permisos especificos @permission_required('app_name.add_vacante')
 import openpyxl
@@ -22,6 +22,8 @@ from openpyxl.utils import get_column_letter
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
+
+
 
 
 def normalizar_texto(texto):
@@ -287,24 +289,168 @@ def descargar_excel(request):
 
 
 
-def lista_candidatos(request, id):
-    # Obtener la vacante específica
-    vacante = get_object_or_404(Vacante, id=id)
+# def lista_candidatos(request, id):
+#     # Obtener la vacante específica
+#     vacante = get_object_or_404(Vacante, id=id)
     
-    # Obtener la lista de candidatos relacionados con esta vacante
+#     # Obtener la lista de candidatos relacionados con esta vacante
+#     candidatos = vacante.candidatos.all()
+
+#     # Traer o crear el estado de cada aplicación
+#     for candidato in candidatos:
+#         estado_aplicacion, creado = EstadoAplicacion.objects.get_or_create(
+#             candidato=candidato, 
+#             vacante=vacante,
+#             defaults={'estado': 'No visto'}
+#         )
+#         candidato.estado_aplicacion = estado_aplicacion.estado
+    
+#     # Renderizar la información en el template
+#     return render(request, 'vacantes/lista_candidatos.html', {'vacante': vacante, 'candidatos': candidatos})
+
+
+
+
+
+
+
+
+
+
+
+
+# views.py
+
+
+
+def lista_candidatos(request, id):
+    vacante = get_object_or_404(Vacante, id=id)
     candidatos = vacante.candidatos.all()
 
-    # Traer o crear el estado de cada aplicación
+    # Obtener todos los filtros de la solicitud GET
+    filtros = {}
+    for key, value in request.GET.items():
+        if value:  # Solo si el valor no está vacío
+            filtros[key] = value
+
+    print(f"Filtros recibidos: {filtros}")  # debug
+    
+        # Obtener todos los comentarios para cada candidato (sin filtrar)
+    todos_los_comentarios = {}
     for candidato in candidatos:
-        estado_aplicacion, creado = EstadoAplicacion.objects.get_or_create(
-            candidato=candidato, 
+        todos_los_comentarios[candidato.id] = candidato.comentarios.all()
+
+    # Aplicar los filtros a los candidatos
+    if filtros:
+        q_objects = Q()
+        for key, value in filtros.items():
+            if key == 'departamento':
+                q_objects &= Q(departamento__id=value)  # AND operator for relational fields
+            elif key == 'ciudad':
+                q_objects &= Q(ciudad__id=value)  # AND operator for relational fields
+            elif key == 'filterNombre':
+                palabras = value.split()
+                for palabra in palabras:
+                    q_objects &= (Q(nombres__icontains=palabra) | Q(apellidos__icontains=palabra))
+            elif key == 'filterTipoDocumento':
+                q_objects &= Q(tipo_documento=value)  # AND operator
+            elif key == 'filterNumeroDocumento':
+                q_objects &= Q(numero_documento__icontains=value)  # AND operator
+            elif key == 'filterSexo':
+                q_objects &= Q(sexo=value)  # AND operator
+            elif key == 'filterNacimientoDesde':
+                try:
+                    value = datetime.strptime(value, '%Y-%m-%d').date()  # Convert to date
+                    q_objects &= Q(fecha_nacimiento__gte=value)  # AND operator
+                except ValueError:
+                    pass  # Ignorar el filtro si el formato es incorrecto
+            elif key == 'filterNacimientoHasta':
+                try:
+                    value = datetime.strptime(value, '%Y-%m-%d').date()  # Convert to date
+                    q_objects &= Q(fecha_nacimiento__lte=value)  # AND operator
+                except ValueError:
+                    pass  # Ignorar el filtro si el formato es incorrecto
+            elif key == 'filterEstudioMinimo':
+                q_objects &= Q(formacion_academica=value)  # AND operator
+            elif key == 'filterPrograma':
+                q_objects &= Q(programa_academico__icontains=value)  # AND operator
+            elif key == 'filterHorario':
+                q_objects &= Q(horario_interesado=value)  # AND operator
+            elif key == 'filterSalarioMin':
+                try:
+                    value = int(value)
+                    q_objects &= Q(aspiracion_salarial__gte=value)  # AND operator
+                except ValueError:
+                    pass  # Ignorar el filtro si el formato es incorrecto
+            elif key == 'filterSalarioMax':
+                try:
+                    value = int(value)
+                    q_objects &= Q(aspiracion_salarial__lte=value)  # AND operator
+                except ValueError:
+                    pass  # Ignorar el filtro si el formato es incorrecto
+            elif key == 'filterNombreFeria':
+                q_objects &= Q(feria__icontains=value)  # AND operator
+            elif key == 'filterFeriaDesde':
+                try:
+                    value = datetime.strptime(value, '%Y-%m-%d').date()  # Convert to date
+                    q_objects &= Q(fecha_feria__gte=value)  # AND operator
+                except ValueError:
+                    pass  # Ignorar el filtro si el formato es incorrecto
+            elif key == 'filterFeriaHasta':
+                try:
+                    value = datetime.strptime(value, '%Y-%m-%d').date()  # Convert to date
+                    q_objects &= Q(fecha_feria__lte=value)  # AND operator
+                except ValueError:
+                    pass  # Ignorar el filtro si el formato es incorrecto
+            elif key == 'filterTecnico':
+                q_objects &= Q(tecnico_seleccion=value)  # AND operator
+            elif key == 'filterSISE':
+                q_objects &= Q(registrado_en_sise=value)  # AND operator
+
+        candidatos = candidatos.filter(q_objects)
+        print(f"Candidatos después de aplicar todos los filtros: {candidatos.count()}")  # debug
+
+    # Obtener o crear el estado de cada aplicación
+    for candidato in candidatos:
+        estado_aplicacion, _ = EstadoAplicacion.objects.get_or_create(
+            candidato=candidato,
             vacante=vacante,
             defaults={'estado': 'No visto'}
         )
         candidato.estado_aplicacion = estado_aplicacion.estado
-    
-    # Renderizar la información en el template
-    return render(request, 'vacantes/lista_candidatos.html', {'vacante': vacante, 'candidatos': candidatos})
+
+    # preparar la data de los filtros para la plantilla
+    departamento_choices = Departamento.objects.all().values_list('id', 'nombre')
+    ciudad_choices = []
+    if filtros.get('departamento'):
+        ciudad_choices = Ciudad.objects.filter(departamento_id=filtros['departamento']).values_list('id', 'nombre')
+
+    # se crea un nuevo diccionario para la informacion de la plantilla
+    filtros_para_la_plantilla = {
+        key: value for key, value in filtros.items() if key not in ['departamento', 'ciudad']
+    }
+    filtros_para_la_plantilla['departamento'] = int(filtros['departamento']) if filtros.get('departamento') else ''
+    filtros_para_la_plantilla['ciudad'] = int(filtros['ciudad']) if filtros.get('ciudad') else ''
+
+    if filtros_para_la_plantilla.get('ciudad'):
+        filtros_para_la_plantilla['ciudad_nombre'] = Ciudad.objects.get(id=filtros_para_la_plantilla['ciudad']).nombre
+    else:
+        filtros_para_la_plantilla['ciudad_nombre'] = ''
+
+    contexto = {
+        'vacante': vacante,
+        'candidatos': candidatos,
+        'departamento_choices': departamento_choices,
+        'ciudad_choices': ciudad_choices,
+        'filtros': filtros_para_la_plantilla,
+        'todos_los_comentarios': todos_los_comentarios,  # Pasar todos los comentarios al template
+        'form_comentario': ComentarioCandidatoForm() # Se crea una instancia del formulario
+    }
+
+    return render(request, 'vacantes/lista_candidatos.html', contexto)
+
+
+
 
 
 def lista_registros(request):
@@ -382,7 +528,7 @@ def exportar_candidatos_excel(request):
         "Feria", "Fecha Feria", "Sexo", "Tipo Documento", "Número Documento", 
         "Nombres", "Apellidos", "Número Celular", "Correo Electrónico", 
         "Fecha Nacimiento", "Formación Académica", "Programa Académico", 
-        "Experiencia Laboral", "Interés Ocupacional", "Localidad/Municipio", 
+        "Experiencia Laboral", "Interés Ocupacional", "departamento", "ciudad", 
         "Discapacidad", "Tipo Discapacidad", "Horario Interesado", 
         "Aspiración Salarial", "Registrado en SISE", "Técnico Selección"
     ]
@@ -408,7 +554,8 @@ def exportar_candidatos_excel(request):
             candidato.programa_academico,
             candidato.experiencia_laboral,
             candidato.interes_ocupacional,
-            candidato.localidad_municipio,
+            candidato.departamento,
+            candidato.ciudad,
             candidato.get_candidato_discapacidad_display(),
             candidato.tipo_discapacidad,
             candidato.get_horario_interesado_display(),
@@ -460,7 +607,7 @@ def descargar_candidatos(request):
     headers = [
         'Nombres', 'Apellidos', 'Tipo Documento', 'Número Documento',
         'Fecha Nacimiento', 'Sexo', 'Celular', 'Correo',
-        'Localidad/Municipio', 'Formación Académica', 'Programa Académico',
+        'departamento', 'ciudad', 'Formación Académica', 'Programa Académico',
         'Experiencia Laboral', 'Interés Ocupacional', 'Horario Interesado',
         'Aspiración Salarial', 'Candidato Discapacidad', 'Tipo Discapacidad',
         'Registrado en SISE', 'Técnico Selección', 'Feria', 'Fecha Feria'
@@ -485,7 +632,8 @@ def descargar_candidatos(request):
             candidato.get_sexo_display(),
             candidato.numero_celular,
             candidato.correo_electronico,
-            candidato.localidad_municipio,
+            str(candidato.departamento),  # ✅ Convertido a string
+            str(candidato.ciudad),  # ✅ Convertido a string
             candidato.get_formacion_academica_display(),
             candidato.programa_academico,
             candidato.experiencia_laboral,
@@ -606,3 +754,57 @@ def cambiar_a_visto(request, vacante_id, candidato_id):
         return JsonResponse({'success': False, 'message': 'El estado no era "No visto"'})
     
     return JsonResponse({'error': 'Método no permitido'}, status=405)
+
+
+def cargar_ciudades(request):
+    departamento_id = request.GET.get("departamento_id")
+    ciudades = Ciudad.objects.filter(departamento_id=departamento_id).values("id", "nombre")
+    return JsonResponse(list(ciudades), safe=False)
+
+
+
+
+
+
+
+
+@login_required
+def obtener_comentarios(request, vacante_id, candidato_id):
+    """
+    Retorna los comentarios de un candidato en formato JSON.
+    """
+    comentarios = ComentarioCandidato.objects.filter(candidato_id=candidato_id).order_by('-fecha_creacion')
+    data = {
+        'comentarios': [
+            {
+                'comentario': comentario.comentario,
+                'usuario': comentario.usuario.username if comentario.usuario else 'Desconocido',
+                'fecha_creacion': comentario.fecha_creacion.strftime('%Y-%m-%d %H:%M:%S'),
+            }
+            for comentario in comentarios
+        ]
+    }
+    return JsonResponse(data)
+
+@login_required
+def guardar_comentario(request, vacante_id, candidato_id):
+    """
+    Guarda un nuevo comentario para un candidato específico.
+    """
+    if request.method == 'POST':
+        candidato = get_object_or_404(RegistroCandidato, id=candidato_id)
+        comentario_text = request.POST.get('comentario')
+        if comentario_text:
+            comentario = ComentarioCandidato.objects.create(
+                candidato=candidato,
+                usuario=request.user,
+                comentario=comentario_text
+            )
+            comentario.save()
+            data = {'success': True}
+            return JsonResponse(data)
+        else:
+             data = {'success': False}
+             return JsonResponse(data)
+
+    return JsonResponse({'success': False})
