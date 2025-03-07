@@ -566,6 +566,7 @@ Candidatos para la Vacante
             departamentoSelect: document.getElementById("filterDepartamento"),
             ciudadSelect: document.getElementById("filterCiudad"),
             allFilterInputs: document.querySelectorAll('[id^="filter"]'),
+            clearFiltersBtnModal : document.querySelector("#filtersOverlay #clearFiltersBtn"),//boton de limpiar filtros del modal
             // Add other elements here if needed
         };
 
@@ -973,6 +974,19 @@ Candidatos para la Vacante
         elements.clearFiltersBtn.addEventListener('click', (event) => {
             event.preventDefault();
              window.location.href = window.location.pathname; // recarga la pagina sin filtros
+        });
+
+        elements.clearFiltersBtnModal.addEventListener('click', (event) => { //evento boton limpiar del modal
+            event.preventDefault();
+            elements.allFilterInputs.forEach(input => {
+                if (input.type === 'select-one') {
+                    input.selectedIndex = 0; // Restablece el select a su primera opción
+                } else {
+                    input.value = ''; // Limpia el valor del input
+                }
+            });
+            elements.ciudadSelect.innerHTML = '<option value="">-- Selecciona una ciudad --</option>';
+            
         });
 
         // Event listener para seleción de departamento
