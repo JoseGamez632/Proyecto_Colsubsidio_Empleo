@@ -321,7 +321,8 @@ def descargar_excel(request):
 
 # views.py
 
-
+def normalize_text(text):
+    return unicodedata.normalize('NFKD', text).encode('ascii', 'ignore').decode('ascii')
 
 def lista_candidatos(request, id):
     vacante = get_object_or_404(Vacante, id=id)
@@ -331,7 +332,7 @@ def lista_candidatos(request, id):
     filtros = {}
     for key, value in request.GET.items():
         if value:  # Solo si el valor no está vacío
-            filtros[key] = value
+            filtros[key] = normalize_text(value)
 
     print(f"Filtros recibidos: {filtros}")  # debug
     
@@ -465,8 +466,8 @@ def lista_registros(request):
             documento_lower=Lower('numero_documento')
         ).filter(
             Q(nombres_lower__icontains=query) |
-            Q(apellidos_lower__icontains=query) |
-            Q(documento_lower__icontains(query))
+            Q(apellidos_lower__icontains(query) |
+            Q(documento_lower__icontains=query))
         )
 
     context = {

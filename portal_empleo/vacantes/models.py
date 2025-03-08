@@ -4,6 +4,7 @@ import uuid
 from datetime import date
 from django.contrib.auth.models import User  # Importa el modelo User
 from django.utils.timezone import now
+import unicodedata
 
 
 
@@ -234,6 +235,15 @@ class RegistroCandidato(models.Model):
     tecnico_seleccion = models.CharField(max_length=40, choices=RECRUITER_CHOICES, blank=True, null=True)
     vacantes_disponibles = models.ManyToManyField("Vacante", related_name="candidatos", blank=True)
 
+    def save(self, *args, **kwargs):
+        self.nombres = self.normalize_text(self.nombres)
+        self.apellidos = self.normalize_text(self.apellidos)
+        self.programa_academico = self.normalize_text(self.programa_academico)
+        self.feria = self.normalize_text(self.feria)
+        super().save(*args, **kwargs)
+
+    def normalize_text(self, text):
+        return unicodedata.normalize('NFKD', text).encode('ascii', 'ignore').decode('ascii')
     
     class Meta:
         verbose_name = "Registro de Candidato"
