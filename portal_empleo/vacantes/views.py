@@ -466,7 +466,7 @@ def lista_registros(request):
         ).filter(
             Q(nombres_lower__icontains=query) |
             Q(apellidos_lower__icontains=query) |
-            Q(documento_lower__icontains=query)
+            Q(documento_lower__icontains(query))
         )
 
     context = {
@@ -528,7 +528,7 @@ def exportar_candidatos_excel(request):
         "Feria", "Fecha Feria", "Sexo", "Tipo Documento", "Número Documento", 
         "Nombres", "Apellidos", "Número Celular", "Correo Electrónico", 
         "Fecha Nacimiento", "Formación Académica", "Programa Académico", 
-        "Experiencia Laboral", "Interés Ocupacional", "departamento", "ciudad", 
+        "Experiencia Laboral", "Interés Ocupacional", "Departamento", "Ciudad", 
         "Discapacidad", "Tipo Discapacidad", "Horario Interesado", 
         "Aspiración Salarial", "Registrado en SISE", "Técnico Selección"
     ]
@@ -554,8 +554,8 @@ def exportar_candidatos_excel(request):
             candidato.programa_academico,
             candidato.experiencia_laboral,
             candidato.interes_ocupacional,
-            candidato.departamento,
-            candidato.ciudad,
+            str(candidato.departamento) if candidato.departamento else "",
+            str(candidato.ciudad) if candidato.ciudad else "",
             candidato.get_candidato_discapacidad_display(),
             candidato.tipo_discapacidad,
             candidato.get_horario_interesado_display(),
@@ -568,7 +568,7 @@ def exportar_candidatos_excel(request):
     response = HttpResponse(
         content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
-    response["Content-Disposition"] = f'attachment; filename="candidatos_{datetime.datetime.now().strftime("%Y%m%d_%H%M%S")}.xlsx"'
+    response["Content-Disposition"] = f'attachment; filename="candidatos_{datetime.now().strftime("%Y%m%d_%H%M%S")}.xlsx"'
     
     # Guardar el archivo en la respuesta
     wb.save(response)
