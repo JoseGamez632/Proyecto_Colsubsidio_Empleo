@@ -7,6 +7,76 @@ Inicio
 
 {% block contenido %}
 <style>
+  .vacante-location {
+    background-color: #ffc107;
+    color: #333 !important; /* Forzar color gris oscuro */
+    padding: 3px 6px; /* Relleno más ajustado */
+    margin: 2px 0; /* Margen más pequeño */
+    display: inline-block;
+    border-radius: 3px;
+    font-weight: bold;
+    font-size: 0.85em; /* Letra un poco más pequeña */
+  }
+    
+    @media (max-width: 768px) {
+    .grid-container {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding: 5px;
+    }
+
+    .vacante-card {
+        padding: 10px;
+        font-size: 14px;
+        border-radius: 8px;
+    }
+
+    .vacante-header {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .vacante-title {
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .vacante-meta small {
+        font-size: 12px;
+    }
+
+    .badge-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        font-size: 12px;
+    }
+
+    .vacante-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        justify-content: center;
+    }
+
+    .vacante-actions button,
+    .vacante-actions a {
+        font-size: 12px;
+        padding: 5px;
+    }
+
+    .modal-body ul.list-group {
+        font-size: 13px;
+    }
+
+    .toggle-info {
+        font-size: 14px;
+        padding: 8px;
+    }
+}
+
     .checkbox-container {
         display: flex;
         align-items: center;
@@ -576,6 +646,7 @@ Inicio
                     <div class="checkbox-container">
                         <div class="checkbox-container">
                             <input class="selection-checkbox" type="checkbox" id="check{{ vacante.id }}" onchange="handleVacanteSelection('{{ vacante.id }}')">
+                            
                             <label for="check{{ vacante.id }}"></label>
                         </div>
                             <div class="vacante-info">
