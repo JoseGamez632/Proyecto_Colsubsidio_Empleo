@@ -7,6 +7,40 @@ Inicio
 
 {% block contenido %}
 <style>
+    @media (max-width: 768px) {
+    .grid-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        padding: 5px;
+    }
+
+    .vacante-card {
+        width: 100%;
+        max-width: 95%;
+        padding: 15px;
+    }
+}
+
+.vacante-card {
+    word-wrap: break-word;
+    overflow: hidden;
+}
+.vacante-card {
+    margin-bottom: 10px; /* Reducido de 20px */
+    padding: 10px;
+}
+@media (max-width: 480px) {
+    .vacante-title {
+        font-size: 14px; /* En lugar de 1.8rem */
+    }
+
+    .vacante-meta small {
+        font-size: 10px;
+    }
+}
+
   .vacante-location {
     background-color: #ffc107;
     color: #333 !important; /* Forzar color gris oscuro */
