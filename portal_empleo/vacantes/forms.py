@@ -243,7 +243,7 @@ class RegistroCandidatoForm(forms.ModelForm):
     experiencia_laboral = forms.CharField(
         widget=forms.Textarea(attrs={
             'class': 'form-control',
-            'placeholder': 'Describa su experiencia laboral'
+            'placeholder': 'Coloca tus ultimas 3 experiencias laborales con el formato indicado (Último cargo - Fecha inicio a Fecha fin - Empresa)'
         }),
         label="Experiencia Laboral",
         required=False
