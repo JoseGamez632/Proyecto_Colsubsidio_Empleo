@@ -108,62 +108,7 @@ h1.text-warning.mb-4.fw-bold {
     border-color: rgba(255, 255, 255, 0.2) !important;
 }
 
-/* Responsividad */
-@media (max-width: 768px) {
-    .grid-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .vacante-card {
-        max-width: 90%;
-        padding: 12px;
-    }
-
-    .vacante-title {
-        font-size: 1.6rem; /* Aumentado para mejor visibilidad en móviles */
-    }
-
-    .vacante-meta small {
-        font-size: 12px;
-    }
-}
-
-@media (max-width: 480px) {
-    .vacante-title {
-        font-size: 1.4rem !important; /* Aumentado para móviles pequeños */
-    }
-
-    .vacante-meta small {
-        font-size: 12px;
-    }
-}
-
-/* Otros estilos */
-.badge-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 15px;
-}
-
-.floating-button {
-    position: fixed;
-    bottom: 2rem;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 1000;
-    transition: all 0.3s ease;
-    min-width: 200px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.floating-button:hover {
-    transform: translateX(-50%) translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-}
-
+/* Tutorial Modal */
 .tutorial-modal {
     display: none;
     position: fixed;
@@ -174,6 +119,8 @@ h1.text-warning.mb-4.fw-bold {
     background-color: rgba(0, 0, 0, 0.7);
     z-index: 2000;
     animation: fadeIn 0.3s ease-in-out;
+    overflow-y: auto;
+    padding-bottom: 20px;
 }
 
 .tutorial-content {
@@ -189,8 +136,14 @@ h1.text-warning.mb-4.fw-bold {
     max-width: 600px;
     color: white;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    padding-bottom: 20px;
 }
 
+.tutorial-footer {
+    padding: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+}
 </style>
 {% if not user.is_authenticated %}
 <div class="tutorial-modal" id="tutorialModal">
