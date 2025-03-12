@@ -69,7 +69,7 @@ h1.text-warning.mb-4.fw-bold {
 .floating-button {
     position: fixed;
     bottom: 20px;
-    right: 20px;
+    left: 20px;
     z-index: 1000;
     background-color: #ffc107;
     color: black;
@@ -87,14 +87,36 @@ h1.text-warning.mb-4.fw-bold {
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
 }
 
-@media (max-width: 768px) {
-    .floating-button {
-        bottom: 20px;
-        left: 20px;
-        right: auto;
-        top: auto;
-    }
+/* Filtros y descripción de vacante */
+.offcanvas-header, .modal-header {
+    background-color: #3d4146 !important;
+    color: white !important;
 }
+
+.offcanvas-body, .modal-body {
+    background-color: #343a40 !important;
+    color: white !important;
+}
+
+.modal-footer {
+    background-color: #3d4146 !important;
+    color: white !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.form-control {
+    background-color: #495057 !important;
+    color: white !important;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Corregir color de texto en Detalles de la Vacante */
+.modal-body .emoji-icon, 
+.modal-body .vacante-info, 
+.modal-body .vacante-info span, 
+.modal-body .list-group-item.bg-transparent.border-secondary {
+    color: white !important;
+} 
 
 /* Tutorial Modal */
 .tutorial-modal {
@@ -167,7 +189,6 @@ h1.text-warning.mb-4.fw-bold {
     justify-content: space-between;
     align-items: center;
 }
-
 </style>
 {% if not user.is_authenticated %}
 <div class="tutorial-modal" id="tutorialModal">
