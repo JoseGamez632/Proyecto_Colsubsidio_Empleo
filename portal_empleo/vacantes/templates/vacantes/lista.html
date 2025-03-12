@@ -295,6 +295,33 @@ input:checked + .slider:before {
                             <div class="vacante-title">{{ vacante.cargo }}</div>
                             <div class="vacante-location">📍 {{ vacante.ciudad }}</div>
                             {% if request.user.is_authenticated %}
+                            {% if request.user.is_authenticated %}
+                            <br>
+                            <div class="vacante-actions">
+                                <form action="{% url 'eliminar_vacante' vacante.id %}" method="POST" class="d-inline" 
+                                      onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta vacante?');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-outline-danger btn-sm">
+                                        🗑️
+                                    </button>
+                                </form>
+                                <a href="{% url 'editar_vacante' vacante.id %}" class="btn btn-outline-info btn-sm">
+                                    ✏️
+                                </a>
+                                <a href="{% url 'lista_candidatos' vacante.id %}" class="btn btn-outline-primary btn-sm">
+                                    👥
+                                </a>
+                                <form action="{% url 'cambiar_estado_vacante' vacante.id %}" method="POST" style="display: inline;">
+                                    {% csrf_token %}
+                                    <label class="switch">
+                                        <input type="checkbox" onchange="this.form.submit()" {% if vacante.estado %}checked{% endif %}>
+                                        <span class="slider round">
+                                            <span class="switch-text">{% if vacante.estado %}Activa{% else %}Inactiva{% endif %}</span>
+                                        </span>
+                                    </label>
+                                </form>
+                            </div>
+                            {% endif %}
                             <div class="vacante-meta">
                                 <small>🧑‍💼 Creado: {{ vacante.usuario_publicador.username|default:"No asignado" }} ({{ vacante.fecha_creacion|date:"d/m/Y" }})</small><br>
                                 <small>🔁 Actualizado: {{ vacante.usuario_actualizador.username|default:"" }} ({{ vacante.fecha_actualizacion|date:"d/m/Y" }})</small><br>
@@ -306,32 +333,7 @@ input:checked + .slider:before {
                         </div>
                     </div>
                     
-                    {% if request.user.is_authenticated %}
-                    <div class="vacante-actions">
-                        <form action="{% url 'eliminar_vacante' vacante.id %}" method="POST" class="d-inline" 
-                              onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta vacante?');">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-outline-danger btn-sm">
-                                🗑️
-                            </button>
-                        </form>
-                        <a href="{% url 'editar_vacante' vacante.id %}" class="btn btn-outline-info btn-sm">
-                            ✏️
-                        </a>
-                        <a href="{% url 'lista_candidatos' vacante.id %}" class="btn btn-outline-primary btn-sm">
-                            👥
-                        </a>
-                        <form action="{% url 'cambiar_estado_vacante' vacante.id %}" method="POST" style="display: inline;">
-                            {% csrf_token %}
-                            <label class="switch">
-                                <input type="checkbox" onchange="this.form.submit()" {% if vacante.estado %}checked{% endif %}>
-                                <span class="slider round">
-                                    <span class="switch-text">{% if vacante.estado %}Activa{% else %}Inactiva{% endif %}</span>
-                                </span>
-                            </label>
-                        </form>
-                    </div>
-                    {% endif %}
+
                 </div>
 
                 <div class="badge-container">
