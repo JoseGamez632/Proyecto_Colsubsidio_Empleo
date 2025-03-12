@@ -7,6 +7,13 @@ Inicio
 
 {% block contenido %}
 <style>
+    .vacante-card.selected {
+    box-shadow: 0 0 10px 3px rgba(40, 167, 69, 0.8);
+    border: 2px solid #28a745;
+    transition: all 0.3s ease-in-out;
+}
+
+    
     .descripcion-vacante {
     white-space: pre-line;
 }
@@ -662,19 +669,24 @@ let selectedVacantes = [];
 function handleVacanteSelection(vacanteId) {
     const checkbox = document.getElementById('check' + vacanteId);
     const modalCheckbox = document.getElementById('modal-check' + vacanteId);
-    
+    const vacanteCard = checkbox.closest('.vacante-card');
+
     if (checkbox.checked) {
+        vacanteCard.classList.add('selected'); // Aplicar sombra verde al instante
         if (!selectedVacantes.includes(vacanteId)) {
             selectedVacantes.push(vacanteId);
         }
         if (modalCheckbox) modalCheckbox.checked = true;
     } else {
+        vacanteCard.classList.remove('selected'); // Quitar sombra al instante
         selectedVacantes = selectedVacantes.filter(id => id !== vacanteId);
         if (modalCheckbox) modalCheckbox.checked = false;
     }
-    
+
     updateFloatingButton();
+    localStorage.setItem('selectedVacantes', JSON.stringify(selectedVacantes));
 }
+
 document.addEventListener('DOMContentLoaded', function() {
     // Función para formatear con puntos de miles
     const formatNumber = (input) => {
@@ -705,19 +717,45 @@ document.addEventListener('DOMContentLoaded', function() {
 function handleModalSelection(vacanteId) {
     const modalCheckbox = document.getElementById('modal-check' + vacanteId);
     const checkbox = document.getElementById('check' + vacanteId);
-    
+    const vacanteCard = checkbox.closest('.vacante-card');
+
     if (modalCheckbox.checked) {
+        vacanteCard.classList.add('selected'); // Aplicar sombra verde al instante
         if (!selectedVacantes.includes(vacanteId)) {
             selectedVacantes.push(vacanteId);
         }
         checkbox.checked = true;
     } else {
+        vacanteCard.classList.remove('selected'); // Quitar sombra al instante
         selectedVacantes = selectedVacantes.filter(id => id !== vacanteId);
         checkbox.checked = false;
     }
-    
+
     updateFloatingButton();
+    localStorage.setItem('selectedVacantes', JSON.stringify(selectedVacantes));
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    const stored = localStorage.getItem('selectedVacantes');
+    if (stored) {
+        selectedVacantes = JSON.parse(stored);
+        selectedVacantes.forEach(id => {
+            const checkbox = document.getElementById('check' + id);
+            const modalCheckbox = document.getElementById('modal-check' + id);
+            const vacanteCard = checkbox?.closest('.vacante-card');
+
+            if (checkbox && vacanteCard) {
+                checkbox.checked = true;
+                vacanteCard.classList.add('selected'); // Aplicar sombra en la carga
+            }
+            if (modalCheckbox) {
+                modalCheckbox.checked = true;
+            }
+        });
+    }
+    updateFloatingButton();
+});
+
 
 function updateFloatingButton() {
     const button = document.getElementById('registroButton');
