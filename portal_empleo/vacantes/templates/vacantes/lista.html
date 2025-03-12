@@ -22,6 +22,7 @@ Inicio
     border-radius: 8px;
     transition: all 0.3s ease;
     color: white;
+    position: relative;
 }
 
 .vacante-card:hover {
@@ -34,6 +35,8 @@ Inicio
     font-weight: bold;
     color: #ffc107;
     margin-bottom: 10px;
+    position: relative;
+    z-index: 5;
 }
 
 .vacante-location {
@@ -62,51 +65,35 @@ h1.text-warning.mb-4.fw-bold {
     padding: 10px;
 }
 
-/* Filtros - Ajuste de fondo */
-.offcanvas-header {
-    background-color: #343a40 !important; /* Fondo gris oscuro para el título */
-    color: white !important;
+/* Botón flotante */
+.floating-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    background-color: #ffc107;
+    color: black;
+    border-radius: 50px;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
 }
 
-.offcanvas-body {
-    background-color: #343a40 !important; /* Fondo gris oscuro */
-    color: white;
+.floating-button:hover {
+    background-color: #ffca2c;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
 }
 
-.form-control {
-    background-color: #495057 !important; /* Fondo gris intermedio para los inputs */
-    color: white !important;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.form-control:focus {
-    background-color: #6c757d !important;
-    border-color: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.1);
-}
-
-/* Modal Detalles de la Vacante */
-.modal-content {
-    background-color: #343a40 !important; /* Fondo gris oscuro */
-    color: white !important;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.modal-header, .modal-footer {
-    background-color: #3d4146 !important; /* Un tono ligeramente diferente para separar las secciones */
-    border-color: rgba(255, 255, 255, 0.1);
-}
-
-.modal-body {
-    background-color: #343a40 !important;
-    color: white !important;
-    padding: 20px;
-}
-
-.modal-body .list-group-item {
-    background-color: transparent !important;
-    color: white !important;
-    border-color: rgba(255, 255, 255, 0.2) !important;
+@media (max-width: 768px) {
+    .floating-button {
+        bottom: 20px;
+        left: 20px;
+        right: auto;
+        top: auto;
+    }
 }
 
 /* Tutorial Modal */
@@ -180,6 +167,7 @@ h1.text-warning.mb-4.fw-bold {
     justify-content: space-between;
     align-items: center;
 }
+
 </style>
 {% if not user.is_authenticated %}
 <div class="tutorial-modal" id="tutorialModal">
