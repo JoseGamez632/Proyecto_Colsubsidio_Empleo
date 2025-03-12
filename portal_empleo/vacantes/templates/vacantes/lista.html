@@ -7,6 +7,10 @@ Inicio
 
 {% block contenido %}
 <style>
+    .descripcion-vacante {
+    white-space: pre-line;
+}
+
 /* Estilos generales */
 .vacante-card {
     width: 100%;
@@ -448,9 +452,8 @@ input:checked + .slider:before {
                             <div class="row">
                                 <div class="col-md-12 mb-4">
                                     <h6 class="text-warning mb-3">📝 Descripción de la Vacante</h6>
-                                    <p>{{ vacante.descripcion_vacante }}</p>
-                                </div>
-                                
+                                    <p class="descripcion-vacante">{{ vacante.descripcion_vacante }}</p>
+                                </div>                                                                
                                 <div class="col-md-6">
                                     <h6 class="text-warning mb-3">📊 Información General</h6>
                                     <ul class="list-group list-group-flush bg-transparent">
