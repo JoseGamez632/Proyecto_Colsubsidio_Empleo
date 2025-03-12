@@ -217,10 +217,16 @@ class RegistroCandidato(models.Model):
     ]
 
     RECRUITER_CHOICES = [
-        ('No conoce el nombre', 'No conoce el nombre'),
-        ('Angel Andres Moyano Molano', 'Angel Andres Moyano Molano'),
         ('Diego Alejandro Parra Pinto', 'Diego Alejandro Parra Pinto'),
-        ('Erika Julieth Cristancho Pérez', 'Erika Julieth Cristancho Pérez'),
+        ('Jony Edilberto Chisaba Rojas', 'Jony Edilberto Chisaba Rojas'),
+        ('Jose Luis Gamez Torres', 'Jose Luis Gamez Torres'),
+        ('Jully Andrea Galindo Fonseca', 'Jully Andrea Galindo Fonseca'),
+        ('Maria Alejandra Moreno Pedraza', 'Maria Alejandra Moreno Pedraza'),
+        ('Sergio Daniel García Donado', 'Sergio Daniel García Donado'),
+        ('Steven Alejandro Arevalo Benitez', 'Steven Alejandro Arevalo Benitez'),
+        ('Victor De Jesus Fagua Cogollo', 'Victor De Jesus Fagua Cogollo'),
+        ('Yennifer Alexandra Ruiz', 'Yennifer Alexandra Ruiz'),
+        ('Yesica Natalia Lemos Lemos', 'Yesica Natalia Lemos Lemos'),
     ]
 
     # Campos
