@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Vacante, RegistroCandidato
+from .models import Vacante, RegistroCandidato, Departamento, Ciudad
 # Register your models here.
 
 
@@ -19,6 +19,16 @@ class VacanteAdmin(admin.ModelAdmin):
 class RegistroCandidatoAdmin(admin.ModelAdmin):
     list_filter = ('vacantes_disponibles',)  # Filtra por las vacantes asociadas
 
+@admin.register(Departamento)
+class DepartamentoAdmin(admin.ModelAdmin):
+    list_display = ("nombre",)  # Muestra solo el nombre en la lista
+    search_fields = ("nombre",)  # Permite buscar por nombre
+
+@admin.register(Ciudad)
+class CiudadAdmin(admin.ModelAdmin):
+    list_display = ("nombre", "departamento")  # Muestra nombre y su departamento
+    search_fields = ("nombre", "departamento__nombre")  # Permite buscar por nombre de ciudad o departamento
+    list_filter = ("departamento",)  # Agrega un filtro por departamento en la barra lateral
 
 
 

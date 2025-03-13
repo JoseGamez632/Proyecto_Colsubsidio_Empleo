@@ -7,158 +7,194 @@ Inicio
 
 {% block contenido %}
 <style>
-  .vacante-location {
+    .vacante-card.selected {
+    box-shadow: 0 0 10px 3px rgba(40, 167, 69, 0.8);
+    border: 2px solid #28a745;
+    transition: all 0.3s ease-in-out;
+}
+
+    
+    .descripcion-vacante {
+    white-space: pre-line;
+}
+
+/* Estilos generales */
+.vacante-card {
+    width: 100%;
+    max-width: 95%;
+    word-wrap: break-word;
+    overflow: hidden;
+    text-align: center;
+    padding: 15px;
+    margin-bottom: 15px;
+    background: rgba(33, 37, 41, 0.8);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    color: white;
+    position: relative;
+}
+
+.vacante-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.vacante-title {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #ffc107;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 5;
+}
+
+.vacante-location {
     background-color: #ffc107;
-    color: #333 !important; /* Forzar color gris oscuro */
-    padding: 3px 6px; /* Relleno más ajustado */
-    margin: 2px 0; /* Margen más pequeño */
+    color: #333 !important;
+    padding: 3px 6px;
+    margin: 2px 0;
     display: inline-block;
     border-radius: 3px;
     font-weight: bold;
-    font-size: 0.85em; /* Letra un poco más pequeña */
-  }
-    
-    @media (max-width: 768px) {
-    .grid-container {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        padding: 5px;
-    }
-
-    .vacante-card {
-        padding: 10px;
-        font-size: 14px;
-        border-radius: 8px;
-    }
-
-    .vacante-header {
-        display: flex;
-        flex-direction: column;
-        gap: 5px;
-    }
-
-    .vacante-title {
-        font-size: 16px;
-        font-weight: bold;
-    }
-
-    .vacante-meta small {
-        font-size: 12px;
-    }
-
-    .badge-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 5px;
-        font-size: 12px;
-    }
-
-    .vacante-actions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 5px;
-        justify-content: center;
-    }
-
-    .vacante-actions button,
-    .vacante-actions a {
-        font-size: 12px;
-        padding: 5px;
-    }
-
-    .modal-body ul.list-group {
-        font-size: 13px;
-    }
-
-    .toggle-info {
-        font-size: 14px;
-        padding: 8px;
-    }
+    font-size: 0.85em;
 }
 
-    .checkbox-container {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-    
-    .selection-checkbox {
-        display: none;
-    }
-    
-    .selection-checkbox + label {
-        position: relative;
-        cursor: pointer;
-        padding-left: 30px;
-        user-select: none;
-        color: #fff;
-    }
-    
-    .selection-checkbox + label:before {
-        content: "";
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 20px;
-        height: 20px;
-        border: 2px solid #ffc107;
-        border-radius: 4px;
-        background: transparent;
-        transition: all 0.3s;
-    }
-    
-    .selection-checkbox:checked + label:before {
-        background-color: #ffc107;
-        border-color: #ffc107;
-    }
-    
-    .selection-checkbox:checked + label:after {
-        content: "✔";
-        position: absolute;
-        left: 4px;
-        top: -2px;
-        color: #333;
-        font-size: 14px;
-        transition: all 0.3s;
-    }
-    .vacante-card {
-        text-align: center;
-        padding: 20px;
-        margin-bottom: 20px;
-        color: white;
-    }
-    
-    .vacante-title {
-        font-size: 1.8rem;
-        font-weight: bold;
-        color: #ffc107;
-        margin-bottom: 10px;
-    }
-    
-    .vacante-info {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        align-items: center;
-    }
-    
-    h1.text-warning.mb-4.fw-bold {
-        font-size: 2.5rem; /* Ajusta el tamaño a tu preferencia */
-        font-weight: bold;
-        color: #ffc107; /* Manteniendo el color actual */
-        text-align: center;
-        margin-bottom: 2rem;
-    }
-    .custom-title {
-        font-size: 2.5rem;
-        font-weight: bold;
-        color: #ffc107;
-        text-align: center;
-        margin-bottom: 2rem;
-    }
-    
-    .tutorial-modal {
+h1.text-warning.mb-4.fw-bold {
+    font-size: 2.5rem !important;
+    font-weight: bold !important;
+    color: #ffc107 !important;
+    text-align: center !important;
+    margin-bottom: 2rem !important;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Mejor ajuste en móviles */
+    gap: 15px;
+    padding: 10px;
+}
+
+/* Botón flotante */
+.floating-button {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 1000;
+    background-color: #ffc107;
+    color: black;
+    border-radius: 50px;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+}
+
+.floating-button:hover {
+    background-color: #ffca2c;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Switch Estado de Vacante */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 86px;
+    height: 30px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: red;
+    transition: .4s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 12px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 12px;
+    width: 12px;
+    left: 4px;
+    bottom: 9px;
+    background-color: white;
+    transition: .4s;
+}
+
+input:checked + .slider {
+    background-color: green;
+}
+
+input:checked + .slider:before {
+    transform: translateX(66px);
+}
+
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+.switch-text {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    pointer-events: none;
+}
+
+/* Filtros y descripción de vacante */
+.offcanvas-header, .modal-header {
+    background-color: #3d4146 !important;
+    color: white !important;
+}
+
+.offcanvas-body, .modal-body {
+    background-color: #343a40 !important;
+    color: white !important;
+}
+
+.modal-footer {
+    background-color: #3d4146 !important;
+    color: white !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.form-control {
+    background-color: #495057 !important;
+    color: white !important;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Corregir color de texto en Detalles de la Vacante */
+.modal-body .emoji-icon, 
+.modal-body .vacante-info, 
+.modal-body .vacante-info span, 
+.modal-body .list-group-item.bg-transparent.border-secondary {
+    color: white !important;
+} 
+
+/* Tutorial Modal */
+.tutorial-modal {
     display: none;
     position: fixed;
     top: 0;
@@ -168,417 +204,103 @@ Inicio
     background-color: rgba(0, 0, 0, 0.7);
     z-index: 2000;
     animation: fadeIn 0.3s ease-in-out;
-    }
+    overflow-y: auto;
+    padding: 40px 20px;
+}
 
-    .tutorial-content {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: rgba(33, 37, 41, 0.95);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 12px;
-        width: 90%;
-        max-width: 600px;
-        color: white;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    }
+.tutorial-content {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(33, 37, 41, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    width: 90%;
+    max-width: 600px;
+    color: white;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    padding: 30px;
+}
 
-    .tutorial-header {
-        padding: 20px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
+.tutorial-note {
+    background: rgba(255, 193, 7, 0.1);
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid #ffc107;
+    margin-top: 20px;
+    color: white;
+}
 
-    .tutorial-header h4 {
-        margin: 0;
-        color: #ffc107;
-    }
+.tutorial-step {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
 
-    .tutorial-close {
-        background: none;
-        border: none;
-        color: white;
-        font-size: 24px;
-        cursor: pointer;
-        padding: 0 8px;
-    }
+.step-number {
+    background: #ffc107;
+    color: black;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 16px;
+    flex-shrink: 0;
+}
 
-    .tutorial-body {
-        padding: 20px;
-    }
+.tutorial-footer {
+    padding: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 
-    .tutorial-step {
-        display: flex;
-        align-items: flex-start;
-        margin-bottom: 20px;
-        background: rgba(255, 255, 255, 0.05);
-        padding: 15px;
-        border-radius: 8px;
-    }
+/* Checkbox personalizado */
+.selection-checkbox {
+    display: none;
+}
 
-    .step-number {
-        background: #ffc107;
-        color: black;
-        width: 24px;
-        height: 24px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-        margin-right: 15px;
-        flex-shrink: 0;
-    }
+.selection-checkbox + label {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    background-color: #ffc107;
+    color: black;
+    border-radius: 8px;
+    border: 2px solid #ffc107;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
 
-    .tutorial-note {
-        background: rgba(255, 193, 7, 0.1);
-        padding: 15px;
-        border-radius: 8px;
-        border-left: 4px solid #ffc107;
-        margin-top: 20px;
-    }
+.selection-checkbox:checked + label {
+    background-color: #28a745;
+    border-color: #28a745;
+    color: white;
+}
 
-    .tutorial-footer {
-        padding: 20px;
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
+.selection-checkbox + label:after {
+    content: "Click para aplicar";
+}
 
-    .no-show-again {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        color: #adb5bd;
-    }
+.selection-checkbox:checked + label:after {
+    content: "Aplicado";
+}
 
-    .tutorial-button {
-        background: #ffc107;
-        color: black;
-        border: none;
-        padding: 8px 20px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-weight: bold;
-        transition: all 0.3s ease;
-    }
 
-    .tutorial-button:hover {
-        background: #ffca2c;
-        transform: translateY(-1px);
-    }
 
-    @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-    }
 
-    .gradient-bg {
-        background: linear-gradient(135deg, rgba(33, 37, 41, 0.97), rgba(33, 37, 41, 0.95));
-        backdrop-filter: blur(10px);
-        min-height: 100vh;
-    }
-    
-    .vacante-card {
-        background: rgba(33, 37, 41, 0.8);
-        backdrop-filter: blur(5px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 8px;
-        transition: all 0.3s ease;
-        padding: 20px;
-        margin-bottom: 20px;
-        position: relative;
-        color: white;
-    }
-    
-    .vacante-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-    }
-    
-    .floating-button {
-        position: fixed;
-        bottom: 2rem;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 1000;
-        transition: all 0.3s ease;
-        min-width: 200px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    }
-    
-    .floating-button:hover {
-        transform: translateX(-50%) translateY(-2px);
-        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-    }
-    
-    .offcanvas {
-        background: rgba(33, 37, 41, 0.98);
-        backdrop-filter: blur(10px);
-    }
-    
-    .form-control {
-        background: rgba(52, 58, 64, 0.8);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        color: #fff;
-    }
-    
-    .form-control:focus {
-        background: rgba(52, 58, 64, 0.9);
-        border-color: rgba(255, 255, 255, 0.2);
-        color: #fff;
-        box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.1);
-    }
-
-    .badge-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        margin-top: 15px;
-    }
-
-    .info-badge {
-        background: rgba(255, 255, 255, 0.1);
-        padding: 0.5rem 1rem;
-        border-radius: 50px;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        transition: all 0.3s ease;
-        color: white;
-    }
-
-    .info-badge:hover {
-        background: rgba(255, 255, 255, 0.15);
-        transform: translateY(-1px);
-    }
-
-    .emoji-icon {
-        font-size: 1.2rem;
-        margin-right: 0.5rem;
-    }
-
-    .switch {
-        position: relative;
-        display: inline-block;
-        width: 86px;
-        height: 30px;
-    }
-    
-    .switch input {
-        opacity: 0;
-        width: 0;
-        height: 0;
-    }
-    
-    .slider {
-        position: absolute;
-        cursor: pointer;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: red;
-        transition: .4s;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 12px;
-    }
-    
-    .slider:before {
-        position: absolute;
-        content: "";
-        height: 12px;
-        width: 12px;
-        left: 4px;
-        bottom: 9px;
-        background-color: white;
-        transition: .4s;
-    }
-    
-    input:checked + .slider {
-        background-color: green;
-    }
-    
-    input:checked + .slider:before {
-        transform: translateX(66px);
-    }
-    
-    .slider.round {
-        border-radius: 34px;
-    }
-    
-    .slider.round:before {
-        border-radius: 50%;
-    }
-
-    .switch-text {
-        position: absolute;
-        width: 100%;
-        text-align: center;
-        pointer-events: none;
-    }
-
-    .vacante-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-    }
-
-    .vacante-info {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .vacante-actions {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-    }
-
-    .vacante-title {
-        font-size: 1.5rem;
-        font-weight: bold;
-        color: #ffc107;
-        margin-bottom: 5px;
-    }
-
-    .vacante-location {
-        font-size: 0.9rem;
-        color: #ddd;
-    }
-
-    /* Estilos actualizados del modal */
-    .modal {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100vh;
-        background-color: rgba(0, 0, 0, 0.5);
-        z-index: 1050;
-        overflow-x: hidden;
-        overflow-y: auto;
-        outline: 0;
-    }
-    
-    .modal-dialog {
-        position: relative;
-        width: auto;
-        margin: 0;
-        pointer-events: none;
-        display: flex;
-        align-items: center;
-        min-height: 100vh;
-        padding: 1.75rem;
-    }
-    
-    .modal-dialog-centered {
-        display: flex;
-        align-items: center;
-    }
-    
-    .modal.show .modal-dialog {
-        transform: none;
-    }
-    
-    .modal-content {
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        pointer-events: auto;
-        background: rgba(33, 37, 41, 0.95);
-        backdrop-filter: blur(10px);
-        color: white;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 0.5rem;
-        outline: 0;
-        max-height: calc(100vh - 3.5rem);
-        overflow-y: auto;
-    }
-    
-    .modal-backdrop {
-        display: none !important;
-    }
-    
-    .modal-open {
-        overflow: hidden;
-        padding-right: 0 !important;
-    }
-    
-    .modal-header {
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        padding: 1rem;
-    }
-
-    .modal-body {
-        position: relative;
-        flex: 1 1 auto;
-        padding: 1rem;
-    }
-
-    .modal-footer {
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
-        padding: 1rem;
-    }
-
-    @media (min-width: 576px) {
-        .modal-dialog {
-            max-width: 800px;
-            margin: 1.75rem auto;
-        }
-    }
-
-    .selection-checkbox {
-        width: 22px;
-        height: 22px;
-        margin-right: 15px;
-    }
-
-    .checkbox-container {
-        display: flex;
-        align-items: center;
-    }
-
-    .vacante-details-btn {
-        border: none;
-        background: transparent;
-        color: #ffc107;
-        text-decoration: underline;
-        transition: all 0.3s ease;
-        cursor: pointer;
-        padding: 10px 0;
-        text-align: left;
-    }
-
-    .vacante-details-btn:hover {
-        color: #ffca2c;
-    }
-
-    .grid-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-        gap: 20px;
-    }
-
-    .list-group-item {
-        background-color: transparent !important;
-        color: white !important;
-    }
-    
-    .btn-close-white {
-        filter: invert(1) grayscale(100%) brightness(200%);
-    }
 </style>
 {% if not user.is_authenticated %}
 <div class="tutorial-modal" id="tutorialModal">
@@ -644,15 +366,37 @@ Inicio
             <div class="vacante-card">
                 <div class="vacante-header">
                     <div class="checkbox-container">
-                        <div class="checkbox-container">
-                            <input class="selection-checkbox" type="checkbox" id="check{{ vacante.id }}" onchange="handleVacanteSelection('{{ vacante.id }}')">
-                            
-                            <label for="check{{ vacante.id }}"></label>
-                        </div>
                             <div class="vacante-info">
                             <div class="vacante-title">{{ vacante.cargo }}</div>
                             <div class="vacante-location">📍 {{ vacante.ciudad }}</div>
                             {% if request.user.is_authenticated %}
+                            {% if request.user.is_authenticated %}
+                            <br>
+                            <div class="vacante-actions">
+                                <form action="{% url 'eliminar_vacante' vacante.id %}" method="POST" class="d-inline" 
+                                      onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta vacante?');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-outline-danger btn-sm">
+                                        🗑️
+                                    </button>
+                                </form>
+                                <a href="{% url 'editar_vacante' vacante.id %}" class="btn btn-outline-info btn-sm">
+                                    ✏️
+                                </a>
+                                <a href="{% url 'lista_candidatos' vacante.id %}" class="btn btn-outline-primary btn-sm">
+                                    👥
+                                </a>
+                                <form action="{% url 'cambiar_estado_vacante' vacante.id %}" method="POST" style="display: inline;">
+                                    {% csrf_token %}
+                                    <label class="switch">
+                                        <input type="checkbox" onchange="this.form.submit()" {% if vacante.estado %}checked{% endif %}>
+                                        <span class="slider round">
+                                            <span class="switch-text">{% if vacante.estado %}Activa{% else %}Inactiva{% endif %}</span>
+                                        </span>
+                                    </label>
+                                </form>
+                            </div>
+                            {% endif %}
                             <div class="vacante-meta">
                                 <small>🧑‍💼 Creado: {{ vacante.usuario_publicador.username|default:"No asignado" }} ({{ vacante.fecha_creacion|date:"d/m/Y" }})</small><br>
                                 <small>🔁 Actualizado: {{ vacante.usuario_actualizador.username|default:"" }} ({{ vacante.fecha_actualizacion|date:"d/m/Y" }})</small><br>
@@ -664,32 +408,7 @@ Inicio
                         </div>
                     </div>
                     
-                    {% if request.user.is_authenticated %}
-                    <div class="vacante-actions">
-                        <form action="{% url 'eliminar_vacante' vacante.id %}" method="POST" class="d-inline" 
-                              onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta vacante?');">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-outline-danger btn-sm">
-                                🗑️
-                            </button>
-                        </form>
-                        <a href="{% url 'editar_vacante' vacante.id %}" class="btn btn-outline-info btn-sm">
-                            ✏️
-                        </a>
-                        <a href="{% url 'lista_candidatos' vacante.id %}" class="btn btn-outline-primary btn-sm">
-                            👥
-                        </a>
-                        <form action="{% url 'cambiar_estado_vacante' vacante.id %}" method="POST" style="display: inline;">
-                            {% csrf_token %}
-                            <label class="switch">
-                                <input type="checkbox" onchange="this.form.submit()" {% if vacante.estado %}checked{% endif %}>
-                                <span class="slider round">
-                                    <span class="switch-text">{% if vacante.estado %}Activa{% else %}Inactiva{% endif %}</span>
-                                </span>
-                            </label>
-                        </form>
-                    </div>
-                    {% endif %}
+
                 </div>
 
                 <div class="badge-container">
@@ -718,6 +437,13 @@ Inicio
                             data-bs-target="#modal-{{ vacante.id }}">
                         Descripción Vacante <i class="fas fa-chevron-down toggle-icon ms-2"></i>
                     </button>
+                    <br>
+                    <div class="checkbox-container">
+                        <input class="selection-checkbox" type="checkbox" id="check{{ vacante.id }}" onchange="handleVacanteSelection('{{ vacante.id }}')">
+                        
+                        <label for="check{{ vacante.id }}"></label>
+                    </div>
+    
                 </div>
             </div>
 
@@ -733,9 +459,8 @@ Inicio
                             <div class="row">
                                 <div class="col-md-12 mb-4">
                                     <h6 class="text-warning mb-3">📝 Descripción de la Vacante</h6>
-                                    <p>{{ vacante.descripcion_vacante }}</p>
-                                </div>
-                                
+                                    <p class="descripcion-vacante">{{ vacante.descripcion_vacante }}</p>
+                                </div>                                                                
                                 <div class="col-md-6">
                                     <h6 class="text-warning mb-3">📊 Información General</h6>
                                     <ul class="list-group list-group-flush bg-transparent">
@@ -944,19 +669,24 @@ let selectedVacantes = [];
 function handleVacanteSelection(vacanteId) {
     const checkbox = document.getElementById('check' + vacanteId);
     const modalCheckbox = document.getElementById('modal-check' + vacanteId);
-    
+    const vacanteCard = checkbox.closest('.vacante-card');
+
     if (checkbox.checked) {
+        vacanteCard.classList.add('selected'); // Aplicar sombra verde al instante
         if (!selectedVacantes.includes(vacanteId)) {
             selectedVacantes.push(vacanteId);
         }
         if (modalCheckbox) modalCheckbox.checked = true;
     } else {
+        vacanteCard.classList.remove('selected'); // Quitar sombra al instante
         selectedVacantes = selectedVacantes.filter(id => id !== vacanteId);
         if (modalCheckbox) modalCheckbox.checked = false;
     }
-    
+
     updateFloatingButton();
+    localStorage.setItem('selectedVacantes', JSON.stringify(selectedVacantes));
 }
+
 document.addEventListener('DOMContentLoaded', function() {
     // Función para formatear con puntos de miles
     const formatNumber = (input) => {
@@ -987,19 +717,45 @@ document.addEventListener('DOMContentLoaded', function() {
 function handleModalSelection(vacanteId) {
     const modalCheckbox = document.getElementById('modal-check' + vacanteId);
     const checkbox = document.getElementById('check' + vacanteId);
-    
+    const vacanteCard = checkbox.closest('.vacante-card');
+
     if (modalCheckbox.checked) {
+        vacanteCard.classList.add('selected'); // Aplicar sombra verde al instante
         if (!selectedVacantes.includes(vacanteId)) {
             selectedVacantes.push(vacanteId);
         }
         checkbox.checked = true;
     } else {
+        vacanteCard.classList.remove('selected'); // Quitar sombra al instante
         selectedVacantes = selectedVacantes.filter(id => id !== vacanteId);
         checkbox.checked = false;
     }
-    
+
     updateFloatingButton();
+    localStorage.setItem('selectedVacantes', JSON.stringify(selectedVacantes));
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    const stored = localStorage.getItem('selectedVacantes');
+    if (stored) {
+        selectedVacantes = JSON.parse(stored);
+        selectedVacantes.forEach(id => {
+            const checkbox = document.getElementById('check' + id);
+            const modalCheckbox = document.getElementById('modal-check' + id);
+            const vacanteCard = checkbox?.closest('.vacante-card');
+
+            if (checkbox && vacanteCard) {
+                checkbox.checked = true;
+                vacanteCard.classList.add('selected'); // Aplicar sombra en la carga
+            }
+            if (modalCheckbox) {
+                modalCheckbox.checked = true;
+            }
+        });
+    }
+    updateFloatingButton();
+});
+
 
 function updateFloatingButton() {
     const button = document.getElementById('registroButton');
