@@ -297,6 +297,15 @@ class RegistroCandidatoForm(forms.ModelForm):
         widget=forms.Select(attrs={'class': 'form-control', 'id': 'ciudad-select'}),
         required=False
     )
+
+    semestre_grado = forms.CharField(
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Ingrese el semestre o grado en curso'
+        }),
+        label="Semestre o grado en curso",
+        required=False
+    )
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
