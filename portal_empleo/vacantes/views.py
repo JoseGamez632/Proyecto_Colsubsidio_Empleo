@@ -57,21 +57,12 @@ def lista_vacantes(request):
         'codigo_vacante': request.GET.get('codigo_vacante'),  # Agregado para filtrar por ID Cargo
     }
 
-    # Depuración: Ver qué valores está recibiendo la vista
-    print(f"Filtros recibidos: {filtros}")
-
     # Obtener todas las vacantes activas si el usuario no está autenticado
     vacantes = Vacante.objects.filter(estado=True) if not request.user.is_authenticated else Vacante.objects.all()
 
-    # Aplicar filtros específicos
+    # Filtro para Codigo Vacante (ID Cargo)
     if filtros['codigo_vacante']:
         vacantes = vacantes.filter(codigo_vacante__icontains=filtros['codigo_vacante'].strip())
-
-    # 🔹 Aplicar filtro para "cargo" con normalización de texto
-    if filtros['cargo']:
-        cargo_normalizado = normalizar_texto(filtros['cargo'])  # Normalizar la entrada del usuario
-        vacantes = vacantes.annotate(cargo_normalizado=Lower('cargo'))  # Normalizar la BD
-        vacantes = vacantes.filter(cargo_normalizado__icontains=cargo_normalizado)
 
     # Aplicar filtros restantes directamente en la consulta
     for campo, valor in filtros.items():
@@ -95,8 +86,8 @@ def lista_vacantes(request):
     # Agregar el conteo de candidatos aplicados
     vacantes = vacantes.annotate(num_candidatos=Count('candidatos'))
 
-    # Ordenar alfabéticamente por cargo después de aplicar los filtros
-    vacantes = sorted(vacantes, key=lambda v: normalizar_texto(v.cargo))
+    # Mantener el orden alfabético por cargo
+    vacantes = sorted(vacantes, key=lambda v: v.cargo.lower())
 
     # Obtener opciones de los campos con choices
     form = VacanteForm()
@@ -117,7 +108,6 @@ def lista_vacantes(request):
         "filtros": filtros,
         **choices_context  # Pasar los choices al template
     })
-
 
 # para cambiar el estado de la vacante
 def cambiar_estado_vacante(request, vacante_id):
