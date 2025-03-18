@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'vacantes',  # Asegúrate de que esta línea esté presente.
     'django.contrib.humanize',
+    'fontawesomefree',
 
 ]
 
