@@ -557,9 +557,20 @@ Inicio
                     <label for="formacion_academica">Formación Académica</label>
                     {{ form.formacion_academica }}
                 </div>
+                <div class="form-group col-md-6" id="semestre-grado-field" style="display: none;">
+                    <label for="semestre_grado">Semestre o grado en curso</label>
+                    {{ form.semestre_grado }}
+                </div>
+            </div>
+
+            <div class="form-row">
                 <div class="form-group col-md-6">
                     <label for="programa_academico">Programa Académico</label>
                     {{ form.programa_academico }}
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="horario_interesado">Horario de Interés</label>
+                    {{ form.horario_interesado }}
                 </div>
             </div>
 
@@ -590,19 +601,14 @@ Inicio
 
             <div class="form-row">
                 <div class="form-group col-md-6">
-                    <label for="horario_interesado">Horario de Interés</label>
-                    {{ form.horario_interesado }}
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group col-md-6">
                     <label for="aspiracion_salarial">Aspiración Salarial</label>
                     {{ form.aspiracion_salarial }}
                 </div>
                 <div class="form-group col-md-6">
+                    {% if request.user.is_authenticated %}
                     <label for="registrado_en_sise">¿Está registrado en SISE?</label>
                     {{ form.registrado_en_sise }}
+                    {% endif %}
                 </div>
                 
             </div>
@@ -814,6 +820,29 @@ Inicio
         
         // Mostrar el tutorial
         showTutorial();
+    });
+
+    $(document).ready(function() {
+        function toggleSemestreGradoField() {
+            var selectedValue = $('#id_formacion_academica').val();
+            var opcionesEstudiante = [
+                'ESTUDIANTE PROFESIONAL',
+                'ESTUDIANTE TECNOLOGO',
+                'ESTUDIANTE TECNICO LABORAL/PROFESIONAL',
+                'ESTUDIANTE BACHILLER ACADEMICO'
+            ];
+            if (opcionesEstudiante.includes(selectedValue)) {
+                $('#semestre-grado-field').show();
+            } else {
+                $('#semestre-grado-field').hide();
+            }
+        }
+
+        $('#id_formacion_academica').change(function() {
+            toggleSemestreGradoField();
+        });
+
+        toggleSemestreGradoField(); // Initial check
     });
 
 </script>

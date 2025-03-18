@@ -268,11 +268,10 @@ class RegistroCandidatoForm(forms.ModelForm):
         required=True
     )
 
-    aspiracion_salarial = forms.CharField(
-        widget=forms.TextInput(attrs={
-            'class': 'form-control',
-            'id': 'aspiracion_salarial',
-            'placeholder': 'Ingresa tu aspiración salarial'
+    aspiracion_salarial = forms.ChoiceField(
+        choices=RegistroCandidato.SALARY_CHOICES,
+        widget=forms.Select(attrs={
+            'class': 'form-control select2'
         }),
         label="Aspiración Salarial",
         required=False
@@ -296,6 +295,15 @@ class RegistroCandidatoForm(forms.ModelForm):
     ciudad = forms.ModelChoiceField(
         queryset=Ciudad.objects.none(),  # Inicialmente vacío
         widget=forms.Select(attrs={'class': 'form-control', 'id': 'ciudad-select'}),
+        required=False
+    )
+
+    semestre_grado = forms.CharField(
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Ingrese el semestre o grado en curso'
+        }),
+        label="Semestre o grado en curso",
         required=False
     )
     
@@ -334,11 +342,6 @@ class RegistroCandidatoForm(forms.ModelForm):
         
         return data
 
-    def clean_aspiracion_salarial(self):
-        data = self.cleaned_data['aspiracion_salarial']
-        # Remover las comas antes de guardar
-        return data.replace(',', '')
-    
     def clean_numero_documento(self):
         data = self.cleaned_data['numero_documento']
         # Verificar que solo contenga números

@@ -203,6 +203,18 @@ class RegistroCandidato(models.Model):
         ('Erika Julieth Cristancho Pérez', 'Erika Julieth Cristancho Pérez'),
     ]
 
+    SALARY_CHOICES = [
+        ('Menos de 1 SMMLV', 'Menos de 1 SMMLV'),
+        ('1 a 2 SMMLV', '1 a 2 SMMLV'),
+        ('2 a 4 SMMLV', '2 a 4 SMMLV'),
+        ('4 a 6 SMMLV', '4 a 6 SMMLV'),
+        ('6 a 9 SMMLV', '6 a 9 SMMLV'),
+        ('9 a 12 SMMLV', '9 a 12 SMMLV'),
+        ('12 a 15 SMMLV', '12 a 15 SMMLV'),
+        ('15 a 19 SMMLV', '15 a 19 SMMLV'),
+        ('20 SMMLV en adelante', '20 SMMLV en adelante'),
+    ]
+
     # Campos
     feria = models.CharField(max_length=100, blank=True, null=True)
     fecha_feria = models.DateField(default=date(2025, 1, 1), blank=True, null=True)
@@ -224,10 +236,12 @@ class RegistroCandidato(models.Model):
     tipo_discapacidad = models.CharField(max_length=100, blank=True, null=True)
     horario_interesado = models.CharField(max_length=20, choices=SCHEDULE_CHOICES)
 
-    # Aspiración salarial como número entero con validación
-    aspiracion_salarial = models.IntegerField(
-        validators=[validar_aspiracion_salarial],
-        help_text="Ingrese un valor numérico mayor a 1,000,000."
+    # Aspiración salarial como campo de selección única
+    aspiracion_salarial = models.CharField(
+        max_length=50,
+        choices=SALARY_CHOICES,
+        help_text="Seleccione una opción de aspiración salarial.",
+        blank=True
     )
 
     registrado_en_sise = models.CharField(max_length=2, choices=SISE_CHOICES)
