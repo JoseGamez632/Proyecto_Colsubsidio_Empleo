@@ -41,20 +41,23 @@ def normalizar_texto(texto):
     
 
 def lista_vacantes(request):
-    # Obtener los filtros de la solicitud GET
+    # Procesar los parámetros de filtro multiselect
+    # Obtener los filtros de la solicitud GET (considerando que pueden ser múltiples)
     filtros = {
-        'cargo': request.GET.get('cargo'),
-        'area': request.GET.get('area'),
-        'modalidad_trabajo': request.GET.get('modalidad_trabajo'),
-        'tipo_contrato': request.GET.get('tipo_contrato'),
-        'jornada_trabajo': request.GET.get('jornada_trabajo'),
-        'tiempo_experiencia': request.GET.get('tiempo_experiencia'),
-        'nivel_estudios': request.GET.get('nivel_estudios'),
-        'departamento': request.GET.get('departamento'),
-        'ciudad': request.GET.get('ciudad'),
-        'rango_salarial_min': request.GET.get('rango_salarial_min'),
-        'rango_salarial_max': request.GET.get('rango_salarial_max'),
-        'codigo_vacante': request.GET.get('codigo_vacante'),  # Agregado para filtrar por ID Cargo
+        'cargo': request.GET.get('cargo', ''),
+        'codigo_vacante': request.GET.get('codigo_vacante', ''),
+        'rango_salarial_min': request.GET.get('rango_salarial_min', ''),
+        'rango_salarial_max': request.GET.get('rango_salarial_max', ''),
+        
+        # Campos multiselect (pueden tener múltiples valores)
+        'area_list': request.GET.getlist('area'),
+        'modalidad_trabajo_list': request.GET.getlist('modalidad_trabajo'),
+        'tipo_contrato_list': request.GET.getlist('tipo_contrato'),
+        'jornada_trabajo_list': request.GET.getlist('jornada_trabajo'),
+        'tiempo_experiencia_list': request.GET.getlist('tiempo_experiencia'),
+        'nivel_estudios_list': request.GET.getlist('nivel_estudios'),
+        'departamento_list': request.GET.getlist('departamento'),
+        'ciudad_list': request.GET.getlist('ciudad'),
     }
 
     # Obtener todas las vacantes activas si el usuario no está autenticado
@@ -63,11 +66,35 @@ def lista_vacantes(request):
     # Filtro para Codigo Vacante (ID Cargo)
     if filtros['codigo_vacante']:
         vacantes = vacantes.filter(codigo_vacante__icontains=filtros['codigo_vacante'].strip())
+    
+    # Filtro para Cargo
+    if filtros['cargo']:
+        vacantes = vacantes.filter(cargo__icontains=filtros['cargo'].strip())
 
-    # Aplicar filtros restantes directamente en la consulta
-    for campo, valor in filtros.items():
-        if valor and campo not in ['cargo', 'codigo_vacante', 'rango_salarial_min', 'rango_salarial_max']:
-            vacantes = vacantes.filter(**{campo: valor})
+    # Aplicar filtros multiselect
+    if filtros['area_list']:
+        vacantes = vacantes.filter(area__in=filtros['area_list'])
+    
+    if filtros['modalidad_trabajo_list']:
+        vacantes = vacantes.filter(modalidad_trabajo__in=filtros['modalidad_trabajo_list'])
+    
+    if filtros['tipo_contrato_list']:
+        vacantes = vacantes.filter(tipo_contrato__in=filtros['tipo_contrato_list'])
+    
+    if filtros['jornada_trabajo_list']:
+        vacantes = vacantes.filter(jornada_trabajo__in=filtros['jornada_trabajo_list'])
+    
+    if filtros['tiempo_experiencia_list']:
+        vacantes = vacantes.filter(tiempo_experiencia__in=filtros['tiempo_experiencia_list'])
+    
+    if filtros['nivel_estudios_list']:
+        vacantes = vacantes.filter(nivel_estudios__in=filtros['nivel_estudios_list'])
+    
+    if filtros['departamento_list']:
+        vacantes = vacantes.filter(departamento__in=filtros['departamento_list'])
+    
+    if filtros['ciudad_list']:
+        vacantes = vacantes.filter(ciudad__in=filtros['ciudad_list'])
 
     # Filtro para Rango Salarial
     rango_salarial_min = filtros['rango_salarial_min']
@@ -99,8 +126,13 @@ def lista_vacantes(request):
         'tiempo_experiencia_choices': form.fields['tiempo_experiencia'].choices,
         'nivel_estudios_choices': form.fields['nivel_estudios'].choices,
         'departamento_choices': form.fields['departamento'].choices,
-        'ciudad_choices': form.fields['ciudad'].choices,
     }
+    
+    # Obtener información de las ciudades seleccionadas para mostrar en el multiselect
+    filtros['ciudad_opciones'] = []
+    if filtros['ciudad_list']:
+        ciudades = Ciudad.objects.filter(id__in=filtros['ciudad_list'])
+        filtros['ciudad_opciones'] = [(str(ciudad.id), ciudad.nombre) for ciudad in ciudades]
 
     # Renderizar la plantilla con las vacantes filtradas y ordenadas
     return render(request, "vacantes/lista.html", {
@@ -109,7 +141,11 @@ def lista_vacantes(request):
         **choices_context  # Pasar los choices al template
     })
 
-# para cambiar el estado de la vacante
+# API para obtener ciudades por departamentos (añadir a urls.py)
+def ciudades_por_departamentos(request):
+    departamentos = request.GET.get('departamentos', '').split(',')
+    ciudades = Ciudad.objects.filter(departamento__in=departamentos).values('id', 'nombre')
+    return JsonResponse(list(ciudades), safe=False)# para cambiar el estado de la vacante
 def cambiar_estado_vacante(request, vacante_id):
     vacante = get_object_or_404(Vacante, id=vacante_id)
     vacante.estado = not vacante.estado
