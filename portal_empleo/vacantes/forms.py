@@ -268,14 +268,6 @@ class RegistroCandidatoForm(forms.ModelForm):
         required=True
     )
 
-    aspiracion_salarial = forms.ChoiceField(
-        choices=RegistroCandidato.SALARY_CHOICES,
-        widget=forms.Select(attrs={
-            'class': 'form-control select2'
-        }),
-        label="Aspiración Salarial",
-        required=False
-    )
     numero_documento = forms.CharField(
         widget=forms.TextInput(attrs={
             'class': 'form-control',
@@ -304,6 +296,15 @@ class RegistroCandidatoForm(forms.ModelForm):
             'placeholder': 'Ingrese el semestre o grado en curso'
         }),
         label="Semestre o grado en curso",
+        required=False
+    )
+    
+    aspiracion_salarial = forms.ChoiceField(
+        choices=[('', '---------')] + RegistroCandidato.SALARY_CHOICES, # Add a blank choice
+        widget=forms.Select(attrs={
+            'class': 'form-control select2'
+        }),
+        label="Aspiración Salarial",
         required=False
     )
     

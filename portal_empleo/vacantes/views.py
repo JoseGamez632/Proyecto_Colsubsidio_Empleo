@@ -197,6 +197,7 @@ def editar_vacante(request, id):
 
 #Registro de candidatos (modificado)
 
+from django.urls import reverse
 
 def registro_candidato_view(request):
     selected_vacantes = request.GET.get('selected_vacantes', '').split(',')
@@ -204,7 +205,7 @@ def registro_candidato_view(request):
         form = RegistroCandidatoForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('inicio')  # Redirigir a una página de éxito
+            return redirect(reverse('registration_guide'))  # Redirigir a la Guía de Registro SISE
     else:
         form = RegistroCandidatoForm()
 

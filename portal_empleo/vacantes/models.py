@@ -244,7 +244,7 @@ class RegistroCandidato(models.Model):
         blank=True
     )
 
-    registrado_en_sise = models.CharField(max_length=2, choices=SISE_CHOICES)
+    registrado_en_sise = models.CharField(max_length=2, choices=SISE_CHOICES, blank=True, null=True)
     tecnico_seleccion = models.CharField(max_length=40, choices=RECRUITER_CHOICES, blank=True, null=True)
     vacantes_disponibles = models.ManyToManyField("Vacante", related_name="candidatos", blank=True)
 
