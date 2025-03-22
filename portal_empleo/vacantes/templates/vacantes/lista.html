@@ -297,7 +297,109 @@ input:checked + .slider:before {
 .selection-checkbox:checked + label:after {
     content: "Aplicado";
 }
+/* Estilos para Select2 */
+.select2-container--bootstrap4 .select2-selection--multiple {
+    background-color: RGB(73, 80, 87);
+    border: 1px solid RGB(73, 80, 87);
+    border-radius: 0.25rem;
+    min-height: 38px;
+}
 
+.select2-container--bootstrap4 .select2-selection--multiple .select2-selection__choice {
+    background-color: #ffc107; /* Amarillo */
+    border: 1px solid #e0a800;
+    border-radius: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    margin-right: 0.5rem;
+    margin-top: 0.25rem;
+    color: #212529; /* Negro */
+    font-weight: 500;
+}
+
+.select2-container--bootstrap4 .select2-selection--multiple .select2-selection__choice__remove {
+    color: #212529;
+    margin-right: 0.25rem;
+    font-weight: bold;
+}
+
+.select2-container--bootstrap4 .select2-selection--multiple .select2-selection__choice__remove:hover {
+    color: #000;
+}
+
+.select2-container--bootstrap4 .select2-dropdown {
+    border-color: RGB(73, 80, 87);
+    border-radius: 0.25rem;
+    background-color: #f8f9fa;
+}
+
+.select2-container--bootstrap4 .select2-results__option--highlighted[aria-selected] {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.select2-container--bootstrap4 .select2-results__option[aria-selected=true] {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+/* Estilos para la sección de filtros activos */
+#active-filters {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 0.25rem;
+    padding: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.filter-badge {
+    display: inline-block;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+    background-color: #ffc107;
+    color: #212529;
+    font-weight: 500;
+    border-radius: 50px;
+}
+
+.filter-badge .remove-filter {
+    cursor: pointer;
+    margin-left: 5px;
+}
+
+.filter-badge .remove-filter:hover {
+    color: #dc3545;
+}
+
+/* Estilo para los formularios y contenedores */
+.offcanvas-body {
+    padding: 1.5rem;
+}
+
+.form-control, .multiselect {
+    background-color: RGB(73, 80, 87);
+    border: 1px solidrgb(64, 64, 65);
+}
+
+.form-label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+/* Estilo para el encabezado de filtros activos */
+#active-filters h6 {
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+/* Personalización para el contenedor de filtros */
+.active-filters-container {
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 0.5rem;
+    background-color: rgba(248, 249, 250, 0.1);
+    border-radius: 0.25rem;
+}
 
 
 
@@ -357,6 +459,12 @@ input:checked + .slider:before {
                 <button type="button" class="btn btn-outline-light btn-sm" onclick="desmarcarVacantes()">
                     ❌ Desmarcar Selección
                 </button>
+            </div>
+        </div>
+        <div class="mb-4" id="active-filters">
+            <h6 class="text-light">✅ Filtros Activos</h6>
+            <div class="active-filters-container" id="active-filters-container">
+                <!-- Los filtros activos se mostrarán aquí dinámicamente -->
             </div>
         </div>
 
@@ -535,7 +643,8 @@ input:checked + .slider:before {
     </div>
     
     <div class="offcanvas-body">
-        <form action="" method="GET">
+
+        <form action="" method="GET" id="filter-form">
             {% if request.user.is_authenticated %}
             <div class="mb-3">
                 <label for="codigo_vacante" class="form-label text-light">🔎 ID Vacante</label>
@@ -548,70 +657,63 @@ input:checked + .slider:before {
             </div>
             <div class="mb-3">
                 <label for="area" class="form-label text-light">🎯 Área</label>
-                <select class="form-control" id="area" name="area">
-                    <option value=""></option>
+                <select class="form-control multiselect" id="area" name="area" multiple="multiple" >
                     {% for value, label in area_choices %}
-                        <option value="{{ value }}" {% if filtros.area == value %}selected{% endif %}>{{ label }}</option>
+                        <option value="{{ value }}" {% if value in filtros.area_list %}selected{% endif %}>{{ label }}</option>
                     {% endfor %}
                 </select>
             </div>
 
             <div class="mb-3">
                 <label for="modalidad_trabajo" class="form-label text-light">🏢 Modalidad de Trabajo</label>
-                <select class="form-control" id="modalidad_trabajo" name="modalidad_trabajo">
-                    <option value=""></option>
+                <select class="form-control multiselect" id="modalidad_trabajo" name="modalidad_trabajo" multiple="multiple" >
                     {% for value, label in modalidad_trabajo_choices %}
-                        <option value="{{ value }}" {% if filtros.modalidad_trabajo == value %}selected{% endif %}>{{ label }}</option>
+                        <option value="{{ value }}" {% if value in filtros.modalidad_trabajo_list %}selected{% endif %}>{{ label }}</option>
                     {% endfor %}
                 </select>
             </div>
 
             <div class="mb-3">
                 <label for="tipo_contrato" class="form-label text-light">📄 Tipo de Contrato</label>
-                <select class="form-control" id="tipo_contrato" name="tipo_contrato">
-                    <option value=""></option>
+                <select class="form-control multiselect" id="tipo_contrato" name="tipo_contrato" multiple="multiple" >
                     {% for value, label in tipo_contrato_choices %}
-                        <option value="{{ value }}" {% if filtros.tipo_contrato == value %}selected{% endif %}>{{ label }}</option>
+                        <option value="{{ value }}" {% if value in filtros.tipo_contrato_list %}selected{% endif %}>{{ label }}</option>
                     {% endfor %}
                 </select>
             </div>
 
             <div class="mb-3">
                 <label for="jornada_trabajo" class="form-label text-light">⏰ Jornada de Trabajo</label>
-                <select class="form-control" id="jornada_trabajo" name="jornada_trabajo">
-                    <option value=""></option>
+                <select class="form-control multiselect" id="jornada_trabajo" name="jornada_trabajo" multiple="multiple" >
                     {% for value, label in jornada_trabajo_choices %}
-                        <option value="{{ value }}" {% if filtros.jornada_trabajo == value %}selected{% endif %}>{{ label }}</option>
+                        <option value="{{ value }}" {% if value in filtros.jornada_trabajo_list %}selected{% endif %}>{{ label }}</option>
                     {% endfor %}
                 </select>
             </div>
 
             <div class="mb-3">
                 <label for="tiempo_experiencia" class="form-label text-light">⌛ Tiempo de Experiencia</label>
-                <select class="form-control" id="tiempo_experiencia" name="tiempo_experiencia">
-                    <option value=""></option>
+                <select class="form-control multiselect" id="tiempo_experiencia" name="tiempo_experiencia" multiple="multiple" >
                     {% for value, label in tiempo_experiencia_choices %}
-                        <option value="{{ value }}" {% if filtros.tiempo_experiencia == value %}selected{% endif %}>{{ label }}</option>
+                        <option value="{{ value }}" {% if value in filtros.tiempo_experiencia_list %}selected{% endif %}>{{ label }}</option>
                     {% endfor %}
                 </select>
             </div>
 
             <div class="mb-3">
                 <label for="nivel_estudios" class="form-label text-light">🎓 Nivel de Estudios</label>
-                <select class="form-control" id="nivel_estudios" name="nivel_estudios">
-                    <option value=""></option>
+                <select class="form-control multiselect" id="nivel_estudios" name="nivel_estudios" multiple="multiple" >
                     {% for value, label in nivel_estudios_choices %}
-                        <option value="{{ value }}" {% if filtros.nivel_estudios == value %}selected{% endif %}>{{ label }}</option>
+                        <option value="{{ value }}" {% if value in filtros.nivel_estudios_list %}selected{% endif %}>{{ label }}</option>
                     {% endfor %}
                 </select>
             </div>
 
             <div class="mb-3">
                 <label for="departamento" class="form-label text-light">🌍 Departamento</label>
-                <select class="form-control" id="departamento" name="departamento">
-                    <option value=""></option>
+                <select class="form-control multiselect" id="departamento" name="departamento" multiple="multiple" >
                     {% for value, label in departamento_choices %}
-                        <option value="{{ value }}" {% if filtros.departamento == value|stringformat:"s" %}selected{% endif %}>
+                        <option value="{{ value }}" {% if value|stringformat:"s" in filtros.departamento_list %}selected{% endif %}>
                             {{ label }}
                         </option>
                     {% endfor %}
@@ -620,10 +722,11 @@ input:checked + .slider:before {
             
             <div class="mb-3">
                 <label for="ciudad" class="form-label text-light">📍 Ciudad</label>
-                <select class="form-control" id="ciudad" name="ciudad">
-                    <option value=""></option>
-                    {% if filtros.ciudad_nombre %}
-                        <option value="{{ filtros.ciudad }}" selected>{{ filtros.ciudad_nombre }}</option>
+                <select class="form-control multiselect" id="ciudad" name="ciudad" multiple="multiple" >
+                    {% if filtros.ciudad_list %}
+                        {% for ciudad_id, ciudad_nombre in filtros.ciudad_opciones %}
+                            <option value="{{ ciudad_id }}" selected>{{ ciudad_nombre }}</option>
+                        {% endfor %}
                     {% endif %}
                 </select>
             </div>
@@ -631,13 +734,12 @@ input:checked + .slider:before {
             <div class="mb-3">
                 <label class="form-label text-light">💰 Rango Salarial</label>
                 <div class="d-flex gap-2">
-                    <input type="text" class="form-control" placeholder="Desde" id="rango_salarial_min" name="rango_salarial_min">
-                    <input type="text" class="form-control" placeholder="Hasta" id="rango_salarial_max" name="rango_salarial_max">
+                    <input type="text" class="form-control" placeholder="Desde" id="rango_salarial_min" name="rango_salarial_min" value="{{ filtros.rango_salarial_min }}">
+                    <input type="text" class="form-control" placeholder="Hasta" id="rango_salarial_max" name="rango_salarial_max" value="{{ filtros.rango_salarial_max }}">
                 </div>
             </div>
             
-
-            <div class="d-grid gap-2">
+            <div class="d-grid gap-2 mt-4">
                 <button type="submit" class="btn btn-primary">
                     🔍 Aplicar Filtros
                 </button>
@@ -650,6 +752,172 @@ input:checked + .slider:before {
 </div>
 
 <script>
+// Inicialización de los multiselect con Select2
+$(document).ready(function() {
+    // Inicializar todos los multiselect
+    $('.multiselect').select2({
+        theme: 'bootstrap4',
+        width: '100%',
+        allowClear: true,
+        closeOnSelect: false,
+        multiple: true
+    });
+
+    // Gestionar relación dinámica entre departamentos y ciudades
+    $('#departamento').on('change', function() {
+        const departamentos = $(this).val() || [];
+        
+        if (departamentos.length > 0) {
+            // Llamada AJAX para obtener ciudades de los departamentos seleccionados
+            $.ajax({
+                url: '/api/ciudades-por-departamentos/',
+                data: { 'departamentos': departamentos.join(',') },
+                dataType: 'json',
+                success: function(data) {
+                    const ciudadSelect = $('#ciudad');
+                    const selectedCiudades = ciudadSelect.val() || [];
+                    
+                    // Mantener las ciudades ya seleccionadas que pertenezcan a los departamentos
+                    ciudadSelect.empty();
+                    
+                    data.forEach(function(ciudad) {
+                        const option = new Option(ciudad.nombre, ciudad.id, false, selectedCiudades.includes(ciudad.id.toString()));
+                        ciudadSelect.append(option);
+                    });
+                    
+                    ciudadSelect.trigger('change');
+                }
+            });
+        }
+    });
+
+    // Actualizar filtros activos cuando cambie cualquier filtro
+    updateActiveFilters();
+    
+    // Eventos para actualizar la visualización de filtros activos
+    $('.multiselect, #cargo, #codigo_vacante, #rango_salarial_min, #rango_salarial_max').on('change', function() {
+        updateActiveFilters();
+    });
+});
+
+// Función para actualizar la sección de filtros activos
+function updateActiveFilters() {
+    const filterContainer = $('#active-filters-container');
+    filterContainer.empty();
+    
+    let hasActiveFilters = false;
+    
+    // Verificar y mostrar cada tipo de filtro
+    const filterTypes = [
+        { id: 'codigo_vacante', label: 'ID Vacante', type: 'text', icon: '🔎' },
+        { id: 'cargo', label: 'Cargo', type: 'text', icon: '💼' },
+        { id: 'area', label: 'Área', type: 'select', icon: '🎯' },
+        { id: 'modalidad_trabajo', label: 'Modalidad', type: 'select', icon: '🏢' },
+        { id: 'tipo_contrato', label: 'Contrato', type: 'select', icon: '📄' },
+        { id: 'jornada_trabajo', label: 'Jornada', type: 'select', icon: '⏰' },
+        { id: 'tiempo_experiencia', label: 'Experiencia', type: 'select', icon: '⌛' },
+        { id: 'nivel_estudios', label: 'Estudios', type: 'select', icon: '🎓' },
+        { id: 'departamento', label: 'Departamento', type: 'select', icon: '🌍' },
+        { id: 'ciudad', label: 'Ciudad', type: 'select', icon: '📍' }
+    ];
+    
+    // Añadir filtros de rango salarial
+    const minSalario = $('#rango_salarial_min').val();
+    const maxSalario = $('#rango_salarial_max').val();
+    
+    if (minSalario || maxSalario) {
+        hasActiveFilters = true;
+        let salarioText = '💰 Salario: ';
+        
+        if (minSalario && maxSalario) {
+            salarioText += `$${minSalario} - $${maxSalario}`;
+        } else if (minSalario) {
+            salarioText += `Desde $${minSalario}`;
+        } else {
+            salarioText += `Hasta $${maxSalario}`;
+        }
+        
+        addFilterBadge(filterContainer, 'salario', salarioText);
+    }
+    
+    // Procesar cada tipo de filtro
+    filterTypes.forEach(filter => {
+        const element = $(`#${filter.id}`);
+        
+        if (filter.type === 'text' && element.val()) {
+            hasActiveFilters = true;
+            addFilterBadge(filterContainer, filter.id, `${filter.icon} ${filter.label}: ${element.val()}`);
+        } 
+        else if (filter.type === 'select') {
+            const selectedValues = element.val();
+            if (selectedValues && selectedValues.length > 0) {
+                hasActiveFilters = true;
+                
+                // Para selects múltiples, mostrar cada selección individual
+                selectedValues.forEach(function(value) {
+                    const optionText = element.find(`option[value="${value}"]`).text();
+                    addFilterBadge(filterContainer, `${filter.id}-${value}`, `${filter.icon} ${filter.label}: ${optionText}`);
+                });
+            }
+        }
+    });
+    
+    // Mostrar mensaje si no hay filtros activos
+    if (!hasActiveFilters) {
+        filterContainer.html('<span class="text-light">No hay filtros aplicados</span>');
+    }
+}
+
+// Función para añadir una insignia de filtro
+function addFilterBadge(container, id, text) {
+    const badge = $(`<span class="badge filter-badge" data-filter-id="${id}">${text} <i class="fas fa-times remove-filter"></i></span>`);
+    
+    // Agregar evento para eliminar filtro individual
+    badge.find('.remove-filter').on('click', function() {
+        removeFilter(id);
+    });
+    
+    container.append(badge);
+}
+
+// Función para eliminar filtro individual
+function removeFilter(filterId) {
+    // Diferentes acciones dependiendo del tipo de filtro
+    if (filterId === 'salario') {
+        $('#rango_salarial_min, #rango_salarial_max').val('');
+    } else if (filterId === 'cargo' || filterId === 'codigo_vacante') {
+        $(`#${filterId}`).val('');
+    } else {
+        // Para filtros multiselect, extraer el ID del campo y el valor
+        const parts = filterId.split('-');
+        if (parts.length === 2) {
+            const fieldId = parts[0];
+            const valueToRemove = parts[1];
+            
+            // Obtener valores actuales, quitar el valor específico
+            const select = $(`#${fieldId}`);
+            const currentValues = select.val() || [];
+            const newValues = currentValues.filter(v => v !== valueToRemove);
+            
+            select.val(newValues).trigger('change');
+        }
+    }
+    
+    // Actualizar visualización de filtros
+    updateActiveFilters();
+}
+
+// Función para limpiar todos los filtros
+function clearFilters() {
+    // Limpiar los campos de texto
+    $('#cargo, #codigo_vacante, #rango_salarial_min, #rango_salarial_max').val('');
+    
+    // Limpiar los select múltiples
+    $('.multiselect').val(null).trigger('change');
+    
+    // Actualizar los filtros activos
+    updateActiveFilters();
+}
     document.addEventListener('DOMContentLoaded', function() {
         const form = document.querySelector('.offcanvas-body form');
         
