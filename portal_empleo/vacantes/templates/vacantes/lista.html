@@ -401,7 +401,136 @@ input:checked + .slider:before {
     border-radius: 0.25rem;
 }
 
+/* CSS para mejorar la visualización de Bootstrap-Multiselect */
+.btn-group > .multiselect.dropdown-toggle {
+    text-align: left;
+    height: auto;
+    min-height: 38px;
+    white-space: normal;
+    padding: 5px 12px;
+    background-color: #fff;
+    border: 1px solid #ced4da;
+}
 
+.btn-group > .multiselect:after {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.btn-group > .multiselect.show {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.multiselect-container {
+    width: 100%;
+    padding: 5px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.multiselect-container .dropdown-item {
+    padding: 5px;
+}
+
+.multiselect-container .dropdown-item label {
+    cursor: pointer;
+    width: 100%;
+    margin: 0;
+}
+
+.multiselect-container .dropdown-item.active {
+    background-color: #f8f9fa;
+    color: #212529;
+}
+
+.multiselect-container .dropdown-item.active label {
+    color: #212529;
+}
+
+.multiselect-selected-text {
+    display: block;
+    width: 100%;
+    white-space: normal;
+    word-wrap: break-word;
+    padding-right: 15px;
+}
+    /* Estilo para el offcanvas */
+    .offcanvas {
+        max-width: 400px;
+    }
+    
+    /* Estilos para los multiselect */
+    .multiselect-improved + .btn-group {
+        width: 100% !important;
+    }
+    
+    .multiselect-improved + .btn-group > .multiselect-container {
+        width: 100% !important;
+        max-height: 200px;
+        overflow-y: auto;
+    }
+    
+    .multiselect-improved + .btn-group > button {
+        text-align: left;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: 100%;
+        position: relative;
+        padding-right: 25px;
+    }
+    
+    .multiselect-container > li > a > label {
+        padding: 5px 20px 5px 40px;
+        white-space: normal;
+        word-wrap: break-word;
+    }
+    
+    /* Estilo para las etiquetas de selección */
+    .selected-options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        margin-top: 5px;
+    }
+    
+    .option-tag {
+        background-color: #f8f9fa;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        padding: 2px 8px;
+        margin: 2px;
+        display: inline-flex;
+        align-items: center;
+        font-size: 0.85rem;
+    }
+    
+    .option-tag .remove-option {
+        margin-left: 5px;
+        cursor: pointer;
+    }
+    
+    /* Estilos adicionales para mejorar la visualización en el offcanvas */
+    .offcanvas-body {
+        padding-right: 10px;
+        padding-left: 10px;
+    }
+    
+    .filters-container::-webkit-scrollbar {
+        width: 5px;
+    }
+    
+    .filters-container::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .filters-container::-webkit-scrollbar-thumb {
+        background-color: rgba(255, 255, 255, 0.3);
+        border-radius: 5px;
+    }
 
 </style>
 {% if not user.is_authenticated %}
@@ -639,115 +768,301 @@ input:checked + .slider:before {
     </div>
     
     <div class="offcanvas-body">
-
-        <form action="" method="GET" id="filter-form">
-            {% if request.user.is_authenticated %}
-            <div class="mb-3">
-                <label for="codigo_vacante" class="form-label text-light">🔎 ID Vacante</label>
-                <input type="text" class="form-control" id="codigo_vacante" name="codigo_vacante" value="{{ request.GET.codigo_vacante }}">
-            </div>
-            {% endif %}
-            <div class="mb-3">
-                <label for="cargo" class="form-label text-light">💼 Cargo</label>
-                <input type="text" class="form-control" id="cargo" name="cargo" value="{{ request.GET.cargo }}">
-            </div>
-            <div class="mb-3">
-                <label for="area" class="form-label text-light">🎯 Área</label>
-                <select class="form-control multiselect" id="area" name="area" multiple="multiple" >
-                    {% for value, label in area_choices %}
-                        <option value="{{ value }}" {% if value in filtros.area_list %}selected{% endif %}>{{ label }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            <div class="mb-3">
-                <label for="modalidad_trabajo" class="form-label text-light">🏢 Modalidad de Trabajo</label>
-                <select class="form-control multiselect" id="modalidad_trabajo" name="modalidad_trabajo" multiple="multiple" >
-                    {% for value, label in modalidad_trabajo_choices %}
-                        <option value="{{ value }}" {% if value in filtros.modalidad_trabajo_list %}selected{% endif %}>{{ label }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            <div class="mb-3">
-                <label for="tipo_contrato" class="form-label text-light">📄 Tipo de Contrato</label>
-                <select class="form-control multiselect" id="tipo_contrato" name="tipo_contrato" multiple="multiple" >
-                    {% for value, label in tipo_contrato_choices %}
-                        <option value="{{ value }}" {% if value in filtros.tipo_contrato_list %}selected{% endif %}>{{ label }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            <div class="mb-3">
-                <label for="jornada_trabajo" class="form-label text-light">⏰ Jornada de Trabajo</label>
-                <select class="form-control multiselect" id="jornada_trabajo" name="jornada_trabajo" multiple="multiple" >
-                    {% for value, label in jornada_trabajo_choices %}
-                        <option value="{{ value }}" {% if value in filtros.jornada_trabajo_list %}selected{% endif %}>{{ label }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            <div class="mb-3">
-                <label for="tiempo_experiencia" class="form-label text-light">⌛ Tiempo de Experiencia</label>
-                <select class="form-control multiselect" id="tiempo_experiencia" name="tiempo_experiencia" multiple="multiple" >
-                    {% for value, label in tiempo_experiencia_choices %}
-                        <option value="{{ value }}" {% if value in filtros.tiempo_experiencia_list %}selected{% endif %}>{{ label }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            <div class="mb-3">
-                <label for="nivel_estudios" class="form-label text-light">🎓 Nivel de Estudios</label>
-                <select class="form-control multiselect" id="nivel_estudios" name="nivel_estudios" multiple="multiple" >
-                    {% for value, label in nivel_estudios_choices %}
-                        <option value="{{ value }}" {% if value in filtros.nivel_estudios_list %}selected{% endif %}>{{ label }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            <div class="mb-3">
-                <label for="departamento" class="form-label text-light">🌍 Departamento</label>
-                <select class="form-control multiselect" id="departamento" name="departamento" multiple="multiple" >
-                    {% for value, label in departamento_choices %}
-                        <option value="{{ value }}" {% if value|stringformat:"s" in filtros.departamento_list %}selected{% endif %}>
-                            {{ label }}
-                        </option>
-                    {% endfor %}
-                </select>
-            </div>
-            
-            <div class="mb-3">
-                <label for="ciudad" class="form-label text-light">📍 Ciudad</label>
-                <select class="form-control multiselect" id="ciudad" name="ciudad" multiple="multiple" >
-                    {% if filtros.ciudad_list %}
-                        {% for ciudad_id, ciudad_nombre in filtros.ciudad_opciones %}
-                            <option value="{{ ciudad_id }}" selected>{{ ciudad_nombre }}</option>
-                        {% endfor %}
-                    {% endif %}
-                </select>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label text-light">💰 Rango Salarial</label>
-                <div class="d-flex gap-2">
-                    <input type="text" class="form-control" placeholder="Desde" id="rango_salarial_min" name="rango_salarial_min" value="{{ filtros.rango_salarial_min }}">
-                    <input type="text" class="form-control" placeholder="Hasta" id="rango_salarial_max" name="rango_salarial_max" value="{{ filtros.rango_salarial_max }}">
+        <!-- Contenedor con desplazamiento para manejo de contenido largo -->
+        <div class="filters-container" style="max-height: calc(100vh - 70px); overflow-y: auto;">
+            <form action="" method="GET" id="filter-form">
+                {% if request.user.is_authenticated %}
+                <div class="mb-3">
+                    <label for="codigo_vacante" class="form-label text-light">🔎 ID Vacante</label>
+                    <input type="text" class="form-control" id="codigo_vacante" name="codigo_vacante" value="{{ request.GET.codigo_vacante }}">
                 </div>
-            </div>
-            
-            <div class="d-grid gap-2 mt-4">
-                <button type="submit" class="btn btn-primary">
-                    🔍 Aplicar Filtros
-                </button>
-                <button type="button" class="btn btn-danger" onclick="clearFilters()">
-                    🧹 Borrar Filtros
-                </button>
-            </div>
-        </form>
+                {% endif %}
+                <div class="mb-3">
+                    <label for="cargo" class="form-label text-light">💼 Cargo</label>
+                    <input type="text" class="form-control" id="cargo" name="cargo" value="{{ request.GET.cargo }}">
+                </div>
+                <div class="mb-3">
+                    <label for="area" class="form-label text-light">🎯 Área</label>
+                    <select class="form-control multiselect-improved" id="area" name="area" multiple="multiple">
+                        {% for value, label in area_choices %}
+                            <option value="{{ value }}" {% if value in filtros.area_list %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="modalidad_trabajo" class="form-label text-light">🏢 Modalidad de Trabajo</label>
+                    <select class="form-control multiselect-improved" id="modalidad_trabajo" name="modalidad_trabajo" multiple="multiple">
+                        {% for value, label in modalidad_trabajo_choices %}
+                            <option value="{{ value }}" {% if value in filtros.modalidad_trabajo_list %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="tipo_contrato" class="form-label text-light">📄 Tipo de Contrato</label>
+                    <select class="form-control multiselect-improved" id="tipo_contrato" name="tipo_contrato" multiple="multiple">
+                        {% for value, label in tipo_contrato_choices %}
+                            <option value="{{ value }}" {% if value in filtros.tipo_contrato_list %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="jornada_trabajo" class="form-label text-light">⏰ Jornada de Trabajo</label>
+                    <select class="form-control multiselect-improved" id="jornada_trabajo" name="jornada_trabajo" multiple="multiple">
+                        {% for value, label in jornada_trabajo_choices %}
+                            <option value="{{ value }}" {% if value in filtros.jornada_trabajo_list %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="tiempo_experiencia" class="form-label text-light">⌛ Tiempo de Experiencia</label>
+                    <select class="form-control multiselect-improved" id="tiempo_experiencia" name="tiempo_experiencia" multiple="multiple">
+                        {% for value, label in tiempo_experiencia_choices %}
+                            <option value="{{ value }}" {% if value in filtros.tiempo_experiencia_list %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="nivel_estudios" class="form-label text-light">🎓 Nivel de Estudios</label>
+                    <select class="form-control multiselect-improved" id="nivel_estudios" name="nivel_estudios" multiple="multiple">
+                        {% for value, label in nivel_estudios_choices %}
+                            <option value="{{ value }}" {% if value in filtros.nivel_estudios_list %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="departamento" class="form-label text-light">🌍 Departamento</label>
+                    <select class="form-control multiselect-improved" id="departamento" name="departamento" multiple="multiple">
+                        {% for value, label in departamento_choices %}
+                            <option value="{{ value }}" {% if value|stringformat:"s" in filtros.departamento_list %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="ciudad" class="form-label text-light">📍 Ciudad</label>
+                    <select class="form-control multiselect-improved" id="ciudad" name="ciudad" multiple="multiple">
+                        {% if filtros.ciudad_list %}
+                            {% for ciudad_id, ciudad_nombre in filtros.ciudad_opciones %}
+                                <option value="{{ ciudad_id }}" selected>{{ ciudad_nombre }}</option>
+                            {% endfor %}
+                        {% endif %}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label text-light">💰 Rango Salarial</label>
+                    <div class="d-flex gap-2">
+                        <input type="text" class="form-control" placeholder="Desde" id="rango_salarial_min" name="rango_salarial_min" value="{{ filtros.rango_salarial_min }}">
+                        <input type="text" class="form-control" placeholder="Hasta" id="rango_salarial_max" name="rango_salarial_max" value="{{ filtros.rango_salarial_max }}">
+                    </div>
+                </div>
+                
+                <div class="d-grid gap-2 mt-4 mb-3">
+                    <button type="submit" class="btn btn-primary">
+                        🔍 Aplicar Filtros
+                    </button>
+                    <button type="button" class="btn btn-danger" onclick="clearFilters()">
+                        🧹 Borrar Filtros
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
 <script>
+    $(document).ready(function() {
+        // Inicializar todos los multiselect con configuración mejorada
+        $('.multiselect-improved').each(function() {
+            var selectId = $(this).attr('id');
+            
+            $(this).multiselect({
+                buttonClass: 'btn btn-outline-secondary',
+                enableFiltering: true,
+                enableCaseInsensitiveFiltering: true,
+                buttonWidth: '100%',
+                maxHeight: 200,
+                buttonText: function(options, select) {
+                    if (options.length === 0) {
+                        return 'Ninguno seleccionado';
+                    }
+                    else if (options.length <= 2) {
+                        var labels = [];
+                        options.each(function() {
+                            if ($(this).attr('label') !== undefined) {
+                                labels.push($(this).attr('label'));
+                            } else {
+                                labels.push($(this).text());
+                            }
+                        });
+                        return labels.join(', ');
+                    }
+                    else {
+                        return options.length + ' seleccionados';
+                    }
+                },
+                onDropdownShown: function() {
+                    // Asegurar que el dropdown no se salga del offcanvas
+                    var $dropdown = $(this.$ul[0]);
+                    var dropdownHeight = $dropdown.height();
+                    var viewportHeight = $('.offcanvas-body').height();
+                    var dropdownTop = $dropdown.offset().top - $('.offcanvas-body').offset().top;
+                    
+                    if (dropdownTop + dropdownHeight > viewportHeight) {
+                        $dropdown.css('top', 'auto');
+                        $dropdown.css('bottom', '100%');
+                    }
+                },
+                onChange: function(option, checked) {
+                    // Crear o actualizar el contenedor de etiquetas
+                    var selectId = $(option).parent().attr('id');
+                    var optionContainer = $('#' + selectId + '-options');
+                    
+                    if (optionContainer.length === 0) {
+                        $('#' + selectId).after('<div id="' + selectId + '-options" class="selected-options"></div>');
+                        optionContainer = $('#' + selectId + '-options');
+                    }
+                    
+                    // Actualizar las etiquetas visuales
+                    updateOptionTags(selectId);
+                }
+            });
+            
+            // Crear contenedor para mostrar opciones seleccionadas como etiquetas
+            var optionsContainer = $('<div id="' + selectId + '-options" class="selected-options"></div>');
+            $('#' + selectId).after(optionsContainer);
+            
+            // Inicializar etiquetas para opciones ya seleccionadas
+            updateOptionTags(selectId);
+        });
+        
+        // Función para actualizar las etiquetas visuales de las opciones seleccionadas
+        function updateOptionTags(selectId) {
+            var select = $('#' + selectId);
+            var container = $('#' + selectId + '-options');
+            container.empty();
+            
+            select.find('option:selected').each(function() {
+                var value = $(this).val();
+                var text = $(this).text();
+                
+                var tag = $('<span class="option-tag">' + text + 
+                            '<span class="remove-option" data-value="' + value + '">×</span></span>');
+                
+                container.append(tag);
+            });
+            
+            // Manejar clics en el botón de eliminar
+            container.find('.remove-option').on('click', function() {
+                var value = $(this).data('value');
+                
+                // Deseleccionar la opción en el select
+                select.multiselect('deselect', value);
+                
+                // Eliminar la etiqueta
+                $(this).parent().remove();
+            });
+        }
+        
+        // Función para limpiar los filtros
+        window.clearFilters = function() {
+            $('#filter-form input[type="text"]').val('');
+            $('.multiselect-improved').multiselect('deselectAll', false);
+            $('.multiselect-improved').each(function() {
+                var selectId = $(this).attr('id');
+                $('#' + selectId + '-options').empty();
+            });
+            $('#filter-form').submit();
+        };
+    });
+    
+// Agregar este código después de cargar jQuery y Bootstrap-Multiselect
+
+$(document).ready(function() {
+    // Inicializar multiselect con configuración personalizada
+    $('.multiselect').multiselect({
+        buttonWidth: '100%',
+        enableHTML: true,
+        buttonClass: 'form-control text-start',
+        templates: {
+            button: '<button type="button" class="multiselect dropdown-toggle" data-bs-toggle="dropdown"><span class="multiselect-selected-text"></span></button>',
+            ul: '<ul class="multiselect-container dropdown-menu p-1 w-100"></ul>',
+            li: '<li><a tabindex="0" class="dropdown-item"><label></label></a></li>',
+            // Personalizar el contenedor de los elementos seleccionados
+            buttonContainer: '<div class="btn-group w-100 multiselect-selected-container"></div>'
+        },
+        buttonText: function(options, select) {
+            if (options.length === 0) {
+                return 'Seleccionar...';
+            }
+            else {
+                var labels = [];
+                options.each(function() {
+                    if ($(this).attr('label') !== undefined) {
+                        labels.push($(this).attr('label'));
+                    }
+                    else {
+                        labels.push($(this).html());
+                    }
+                });
+                
+                // Limitar a mostrar solo 2 elementos y añadir contador
+                if (labels.length > 2) {
+                    return labels.slice(0, 2).join(', ') + ' <span class="badge bg-primary">' + '+' + (labels.length - 2) + '</span>';
+                }
+                return labels.join(', ');
+            }
+        },
+        onDropdownShown: function(event) {
+            // Ajustar altura del dropdown si hay muchos elementos
+            var dropdownMenu = $(event.target).siblings('.multiselect-container');
+            if (dropdownMenu.find('li').length > 10) {
+                dropdownMenu.css({
+                    'max-height': '300px',
+                    'overflow-y': 'auto'
+                });
+            }
+        }
+    });
+
+    // CSS personalizado para la visualización de los elementos seleccionados
+    $('<style>')
+        .prop('type', 'text/css')
+        .html(`
+            .multiselect-selected-container {
+                display: block;
+                width: 100%;
+            }
+            .multiselect-selected-text {
+                white-space: normal;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                display: block;
+                text-align: left;
+                max-height: 60px;
+                overflow-y: auto;
+            }
+            .multiselect-container label {
+                display: block;
+                width: 100%;
+                padding: 3px;
+                margin: 0;
+            }
+            .badge.bg-primary {
+                margin-left: 5px;
+            }
+        `)
+        .appendTo('head');
+});
+
 // Inicialización de los multiselect con Select2
 $(document).ready(function() {
     // Inicializar todos los multiselect
