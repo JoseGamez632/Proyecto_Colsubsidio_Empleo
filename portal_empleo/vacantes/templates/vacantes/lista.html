@@ -533,7 +533,11 @@ input:checked + .slider:before {
                         🏢 {{ vacante.modalidad_trabajo }}
                     </div>
                     <div class="info-badge">
-                        💰 ${{ vacante.rango_salarial|intcomma }}
+                            {% if vacante.rango_salarial %}
+                            💰 $  {{ vacante.rango_salarial|intcomma }}
+                            {% else %}
+                                Salario a convenir
+                            {% endif %}
                     </div>
                 </div>
                 <br>
