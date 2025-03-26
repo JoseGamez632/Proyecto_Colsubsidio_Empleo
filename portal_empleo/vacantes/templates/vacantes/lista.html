@@ -579,15 +579,15 @@ input:checked + .slider:before {
                 <button type="button" class="btn btn-outline-light btn-sm" onclick="clearFilters()">
                     🧹 Borrar Filtros
                 </button>
+                <button type="button" class="btn btn-outline-light btn-sm" onclick="desmarcarVacantes()">
+                    ❌ Desmarcar Selección
+                </button>
                 {% if request.user.is_authenticated %}
                 <a class="btn btn-outline-warning btn-sm" href="{% url 'agregar_vacante' %}">
                     ➕ Agregar Vacante
                 </a>
                 <a href="{% url 'descargar_excel' %}" class="btn btn-success btn-sm">Descargar Excel Vacantes</a>
                 {% endif %}
-                <button type="button" class="btn btn-outline-light btn-sm" onclick="desmarcarVacantes()">
-                    ❌ Desmarcar Selección
-                </button>
             </div>
         </div>
         <div class="mb-4" id="active-filters">
