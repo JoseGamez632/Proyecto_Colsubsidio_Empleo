@@ -686,15 +686,14 @@ Candidatos para la Vacante
                 mostrarHojaDeVida(candidatoId);
             }
         }
-
         function mostrarHojaDeVida(candidatoId) {
             const candidato = candidatos.find(c => c.id === candidatoId);
             const vacanteId = window.location.pathname.split('/')[2]; // Extraer vacanteId de la URL
             if (!candidato) return;
             const cvContent = document.getElementById('cvContent');
-            // Construye la URL para obtener los comentarios del candidato
             const urlComentarios = `/vacantes/${vacanteId}/candidatos/${candidatoId}/comentarios/`;
-            // Define el HTML básico del contenido del modal
+            
+        
             let html = `
                 <div class="cv-section">
                     <h4>Información Personal</h4>
@@ -714,6 +713,7 @@ Candidatos para la Vacante
                     <h4>Formación y Experiencia</h4>
                     <p><strong>Formación académica:</strong> ${sanitizeHTML(candidato.formacion_academica)}</p>
                     <p><strong>Programa académico:</strong> ${sanitizeHTML(candidato.programa_academico)}</p>
+                    <p><strong>Semestre o grado en curso:</strong> ${sanitizeHTML(candidato.semestre_grado)}</p>
                     <p><strong>Experiencia laboral:</strong> ${sanitizeHTML(candidato.experiencia_laboral)}</p>
                 </div>
                 <div class="cv-section">
@@ -739,27 +739,24 @@ Candidatos para la Vacante
                             <div class="input-group">
                                 <textarea name="comentario" class="form-control" rows="3" placeholder="Escribe un nuevo comentario..."></textarea>
                                 <button type="submit" class="btn btn-primary ml-2">
-                                <i class="fa fa-comment"></i> Guardar
-                            </button>
+                                    <i class="fa fa-comment"></i> Guardar
+                                </button>
                             </div>
-                            
                         </form>
                     </div>
                 </div>`;
-
-            
-            // Cargar el HTML al div cvContent
+        
             cvContent.innerHTML = html;
-            // Cargar los comentarios existentes mediante fetch
+        
+            // Cargar comentarios existentes
             fetch(urlComentarios)
                 .then(response => response.json())
                 .then(data => {
-                    // Si hay comentarios, los agrega al div de comentarios
                     const comentariosDiv = document.getElementById('comentarios-candidato');
                     if (data.comentarios && data.comentarios.length > 0) {
                         data.comentarios.forEach(comentario => {
                             const comentarioElement = document.createElement('div');
-                            comentarioElement.classList.add('card', 'mb-2','bg-dark','text-white');
+                            comentarioElement.classList.add('card', 'mb-2', 'bg-dark', 'text-white');
                             comentarioElement.innerHTML = `
                                 <div class="card-body">
                                     <p class="card-text">${sanitizeHTML(comentario.comentario)}</p>
@@ -774,10 +771,11 @@ Candidatos para la Vacante
                 .catch(error => {
                     console.error('Error al cargar los comentarios:', error);
                 });
+        
             // Manejo del formulario para guardar un comentario
             const formComentario = document.getElementById('form-comentario');
             formComentario.addEventListener('submit', (event) => {
-                event.preventDefault(); // Prevenir la recarga de la página
+                event.preventDefault();
                 const formData = new FormData(formComentario);
                 const csrftoken = getCSRFToken();
                 fetch(formComentario.action, {
@@ -787,23 +785,17 @@ Candidatos para la Vacante
                     },
                     body: formData,
                 })
-                .then(response => {
-                    if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
+                .then(response => response.json())
                 .then(data => {
-                    // Recargar los comentarios después de guardar uno nuevo
                     fetch(urlComentarios)
                         .then(response => response.json())
                         .then(data => {
                             const comentariosDiv = document.getElementById('comentarios-candidato');
-                            comentariosDiv.innerHTML = ''; // Limpia los comentarios existentes
+                            comentariosDiv.innerHTML = '';
                             if (data.comentarios && data.comentarios.length > 0) {
                                 data.comentarios.forEach(comentario => {
                                     const comentarioElement = document.createElement('div');
-                                    comentarioElement.classList.add('card', 'mb-2','bg-dark','text-white');
+                                    comentarioElement.classList.add('card', 'mb-2', 'bg-dark', 'text-white');
                                     comentarioElement.innerHTML = `
                                         <div class="card-body">
                                             <p class="card-text">${sanitizeHTML(comentario.comentario)}</p>
@@ -824,8 +816,10 @@ Candidatos para la Vacante
                     console.error('Error al guardar el comentario:', error);
                 });
             });
+        
             modal.show();
         }
+        
         
 
         // --- Filtering Functions ---
