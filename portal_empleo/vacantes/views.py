@@ -561,7 +561,7 @@ def exportar_candidatos_excel(request):
     columnas = [
         "Feria", "Fecha Feria", "Sexo", "Tipo Documento", "Número Documento", 
         "Nombres", "Apellidos", "Número Celular", "Correo Electrónico", 
-        "Fecha Nacimiento", "Formación Académica", "Programa Académico", "En proceso",
+        "Fecha Nacimiento", "Formación Académica", "Programa Académico", "En Proceso",
         "Experiencia Laboral", "Interés Ocupacional", "Departamento", "Ciudad", 
         "Discapacidad", "Tipo Discapacidad", "Horario Interesado", 
         "Aspiración Salarial", "Registrado en SISE", "Técnico Selección", "Vacantes Aplicadas"
