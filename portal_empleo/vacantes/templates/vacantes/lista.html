@@ -593,10 +593,26 @@ input:checked + .slider:before {
         <div class="mb-4" id="active-filters">
             <h6 class="text-light">✅ Filtros Activos</h6>
             <div class="active-filters-container" id="active-filters-container">
-                <!-- Los filtros activos se mostrarán aquí dinámicamente -->
+                {% for key, value in filtros.items %}
+                    {% if value %}
+                        {% if value is list %}
+                            {% for val in value %}
+                                <span class="filter-badge">
+                                    {{ key|title }}: <strong>{{ val }}</strong>
+                                    <span class="remove-filter" data-filter-key="{{ key }}" data-filter-value="{{ val }}">❌</span>
+                                </span>
+                            {% endfor %}
+                        {% else %}
+                            <span class="filter-badge">
+                                {{ key|title }}: <strong>{{ value }}</strong>
+                                <span class="remove-filter" data-filter-key="{{ key }}" data-filter-value="{{ value }}">❌</span>
+                            </span>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
             </div>
         </div>
-
+        
         <!-- Job Listings -->
         <div class="grid-container">
             {% for vacante in vacantes %}
@@ -879,6 +895,35 @@ input:checked + .slider:before {
 </div>
 
 <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("active-filters-container").addEventListener("click", function (event) {
+            if (event.target.classList.contains("remove-filter")) {
+                let filterKey = event.target.getAttribute("data-filter-key");
+                let filterValue = event.target.getAttribute("data-filter-value");
+    
+                // Eliminar el filtro correspondiente
+                let filterElement = document.getElementById(filterKey);
+                if (filterElement) {
+                    if (filterElement.tagName === "SELECT") {
+                        // Si es un select múltiple, eliminar solo el valor específico
+                        let selectedValues = Array.from(filterElement.selectedOptions)
+                            .map(option => option.value)
+                            .filter(value => value !== filterValue);
+    
+                        // Actualizar valores del select
+                        $(filterElement).val(selectedValues).trigger('change');
+                    } else {
+                        // Si es un input de texto, simplemente vaciarlo
+                        filterElement.value = "";
+                    }
+                }
+    
+                // Enviar el formulario automáticamente para actualizar los resultados
+                document.getElementById("filter-form").submit();
+            }
+        });
+    });
+    
     $(document).ready(function() {
         // Inicializar todos los multiselect con configuración mejorada
         $('.multiselect-improved').each(function() {
