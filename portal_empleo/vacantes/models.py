@@ -235,6 +235,7 @@ class RegistroCandidato(models.Model):
     candidato_discapacidad = models.CharField(max_length=2, choices=DISABILITY_CHOICES)
     tipo_discapacidad = models.CharField(max_length=100, blank=True, null=True)
     horario_interesado = models.CharField(max_length=20, choices=SCHEDULE_CHOICES)
+    semestre_grado = models.CharField(max_length=100, blank=True, null=True)
 
     # Aspiración salarial como campo de selección única
     aspiracion_salarial = models.CharField(
