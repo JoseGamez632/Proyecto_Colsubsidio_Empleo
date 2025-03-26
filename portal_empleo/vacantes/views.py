@@ -561,7 +561,7 @@ def exportar_candidatos_excel(request):
     columnas = [
         "Feria", "Fecha Feria", "Sexo", "Tipo Documento", "Número Documento", 
         "Nombres", "Apellidos", "Número Celular", "Correo Electrónico", 
-        "Fecha Nacimiento", "Formación Académica", "Programa Académico", 
+        "Fecha Nacimiento", "Formación Académica", "Programa Académico", "En proceso",
         "Experiencia Laboral", "Interés Ocupacional", "Departamento", "Ciudad", 
         "Discapacidad", "Tipo Discapacidad", "Horario Interesado", 
         "Aspiración Salarial", "Registrado en SISE", "Técnico Selección", "Vacantes Aplicadas"
@@ -587,6 +587,7 @@ def exportar_candidatos_excel(request):
             candidato.fecha_nacimiento.strftime("%Y-%m-%d"),
             candidato.get_formacion_academica_display(),
             candidato.programa_academico,
+            candidato.semestre_grado,
             candidato.experiencia_laboral,
             candidato.interes_ocupacional,
             str(candidato.departamento) if candidato.departamento else "",
