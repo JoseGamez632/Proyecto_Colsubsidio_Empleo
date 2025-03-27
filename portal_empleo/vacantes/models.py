@@ -251,7 +251,6 @@ class RegistroCandidato(models.Model):
     correo_electronico = models.EmailField()
     fecha_nacimiento = models.DateField()
     formacion_academica = models.CharField(max_length=40, choices=EDUCATION_LEVEL_CHOICES)
-    semestre_grado = models.CharField(max_length=50, blank=True, null=True)
     programa_academico = models.CharField(max_length=100)
     experiencia_laboral = models.TextField(blank=True, null=True)
     interes_ocupacional = models.TextField(blank=True, null=True)
