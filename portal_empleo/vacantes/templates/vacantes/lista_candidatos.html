@@ -217,7 +217,7 @@ Candidatos para la Vacante
                         </select>
                     </div>
                     <div class="mb-2">
-                        <label class="form-label">Departamento</label>
+                        <label class="form-label">Departamento o Ciudad</label>
                         <select id="filterDepartamento" name="departamento" class="form-select form-select-sm">
                             <option value=""></option>
                             {% for value, label in departamento_choices %}
@@ -228,7 +228,7 @@ Candidatos para la Vacante
                         </select>
                     </div>
                     <div class="mb-2">
-                        <label class="form-label">Ciudad</label>
+                        <label class="form-label">Municipio o Localidad</label>
                         <select id="filterCiudad" name="ciudad" class="form-select form-select-sm">
                             <option value=""></option>
                             {% if filtros.ciudad_nombre %}
