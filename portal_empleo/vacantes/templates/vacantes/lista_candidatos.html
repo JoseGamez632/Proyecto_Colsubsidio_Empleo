@@ -586,6 +586,7 @@ Candidatos para la Vacante
                 correo_electronico: "{{ candidato.correo_electronico|escapejs }}",
                 fecha_nacimiento: "{{ candidato.fecha_nacimiento|escapejs }}",
                 formacion_academica: "{{ candidato.formacion_academica|escapejs }}",
+                semestre_grado: "{{ candidato.semestre_grado|escapejs }}", // Agregar este campo
                 programa_academico: "{{ candidato.programa_academico|escapejs }}",
                 experiencia_laboral: "{{ candidato.experiencia_laboral|escapejs }}",
                 interes_ocupacional: "{{ candidato.interes_ocupacional|escapejs }}",
@@ -712,7 +713,11 @@ Candidatos para la Vacante
                 </div>
                 <div class="cv-section">
                     <h4>Formación y Experiencia</h4>
-                    <p><strong>Formación académica:</strong> ${sanitizeHTML(candidato.formacion_academica)}</p>
+                    <p><strong>Formación académica:</strong> ${sanitizeHTML(candidato.formacion_academica)}</p>`;
+            if (candidato.semestre_grado) {
+                html += `<p><strong>Semestre o grado en curso:</strong> ${sanitizeHTML(candidato.semestre_grado)}</p>`;
+            }
+            html += `
                     <p><strong>Programa académico:</strong> ${sanitizeHTML(candidato.programa_academico)}</p>
                     <p><strong>Experiencia laboral:</strong> ${sanitizeHTML(candidato.experiencia_laboral)}</p>
                 </div>
