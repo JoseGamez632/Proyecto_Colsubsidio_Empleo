@@ -553,29 +553,28 @@ class RegistrationGuideView(TemplateView):
     template_name = 'registration/guide.html'
     
 def exportar_candidatos_excel(request):
-    """Genera y descarga un archivo Excel con la lista de candidatos registrados."""
+    """Genera y descarga un archivo Excel con la lista de candidatos registrados y las vacantes a las que aplicaron."""
     
-    # Crear un nuevo libro de trabajo y una hoja de Excel
     wb = openpyxl.Workbook()
     ws = wb.active
     ws.title = "Candidatos"
 
-    # Definir los encabezados de las columnas
     columnas = [
         "Feria", "Fecha Feria", "Sexo", "Tipo Documento", "Número Documento", 
         "Nombres", "Apellidos", "Número Celular", "Correo Electrónico", 
-        "Fecha Nacimiento", "Formación Académica", "Programa Académico", 
+        "Fecha Nacimiento", "Formación Académica", "Programa Académico", "En Proceso",
         "Experiencia Laboral", "Interés Ocupacional", "Departamento", "Ciudad", 
         "Discapacidad", "Tipo Discapacidad", "Horario Interesado", 
-        "Aspiración Salarial", "Registrado en SISE", "Técnico Selección"
+        "Aspiración Salarial", "Registrado en SISE", "Técnico Selección", "Vacantes Aplicadas"
     ]
     
-    ws.append(columnas)  # Agregar encabezados a la hoja
+    ws.append(columnas)
 
-    # Obtener los datos de los candidatos
     candidatos = RegistroCandidato.objects.all()
 
     for candidato in candidatos:
+        vacantes_aplicadas = ", ".join([f"[{vacante.codigo_vacante}] {vacante.cargo}" for vacante in candidato.vacantes_disponibles.all()]) if candidato.vacantes_disponibles.exists() else "No aplica"
+        
         ws.append([
             candidato.feria,
             candidato.fecha_feria.strftime("%Y-%m-%d") if candidato.fecha_feria else "",
@@ -589,6 +588,7 @@ def exportar_candidatos_excel(request):
             candidato.fecha_nacimiento.strftime("%Y-%m-%d"),
             candidato.get_formacion_academica_display(),
             candidato.programa_academico,
+            candidato.semestre_grado,
             candidato.experiencia_laboral,
             candidato.interes_ocupacional,
             str(candidato.departamento) if candidato.departamento else "",
@@ -598,20 +598,15 @@ def exportar_candidatos_excel(request):
             candidato.get_horario_interesado_display(),
             candidato.aspiracion_salarial,
             candidato.get_registrado_en_sise_display(),
-            candidato.get_tecnico_seleccion_display()
+            candidato.get_tecnico_seleccion_display(),
+            vacantes_aplicadas
         ])
-
-    # Crear la respuesta HTTP con el archivo Excel
-    response = HttpResponse(
-        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    )
+    
+    response = HttpResponse(content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
     response["Content-Disposition"] = f'attachment; filename="candidatos_{datetime.now().strftime("%Y%m%d_%H%M%S")}.xlsx"'
     
-    # Guardar el archivo en la respuesta
     wb.save(response)
-
     return response
-
 @require_POST
 @require_POST
 def descargar_candidatos(request):

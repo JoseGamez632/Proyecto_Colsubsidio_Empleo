@@ -44,12 +44,27 @@ class Vacante(models.Model):
         max_length=100, 
         null=True, 
         blank=True, 
-        choices=[
-            ('Administración', 'Administración'),
-            ('Finanzas', 'Finanzas'),
-            ('Tecnología', 'Tecnología'),
+        choices = [
+            ('Administración y Gestión', 'Administración y Gestión'),
+            ('Finanzas y Contabilidad', 'Finanzas y Contabilidad'),
+            ('Tecnología e Informática', 'Tecnología e Informática'),
             ('Recursos Humanos', 'Recursos Humanos'),
-            ('Ventas', 'Ventas'),
+            ('Ventas y Comercial', 'Ventas y Comercial'),
+            ('Atención al Cliente y Servicios', 'Atención al Cliente y Servicios'),
+            ('Marketing y Publicidad', 'Marketing y Publicidad'),
+            ('Logística y Transporte', 'Logística y Transporte'),
+            ('Logística y Bodega', 'Logística y Bodega'),
+            ('Producción y Manufactura', 'Producción y Manufactura'),
+            ('Ingeniería y Construcción', 'Ingeniería y Construcción'),
+            ('Salud y Bienestar', 'Salud y Bienestar'),
+            ('Educación y Formación', 'Educación y Formación'),
+            ('Legal y Asesoría', 'Legal y Asesoría'),
+            ('Hostelería y Turismo', 'Hostelería y Turismo'),
+            ('Arte, Cultura y Entretenimiento', 'Arte, Cultura y Entretenimiento'),
+            ('Medio Ambiente y Energía', 'Medio Ambiente y Energía'),
+            ('Ciencia e Investigación', 'Ciencia e Investigación'),
+            ('Seguridad y Defensa', 'Seguridad y Defensa'),
+            ('Servicios Generales', 'Servicios Generales'),
         ]
     )
     numero_puestos = models.IntegerField(
@@ -67,11 +82,13 @@ class Vacante(models.Model):
     )
     tipo_contrato = models.CharField(
         max_length=50, 
-        choices=[
+        choices = [
             ('Indefinido', 'Indefinido'),
-            ('Temporal', 'Temporal'),
+            ('Fijo', 'Fijo'),
+            ('Obra o Labor', 'Obra o Labor'),
             ('Prácticas', 'Prácticas'),
-            ('Freelance', 'Freelance'),
+            ('Aprendizaje', 'Aprendizaje'),
+            ('Prestación de Servicios', 'Prestación de Servicios'),
         ]
     )
     jornada_trabajo = models.CharField(
@@ -87,6 +104,7 @@ class Vacante(models.Model):
         max_length=50, 
         choices=[
             ('Sin experiencia', 'Sin experiencia'),
+            ('Menos de 1 año', 'Menos de 1 año'),
             ('1 año', '1 año'),
             ('2 años', '2 años'),
             ('3 años o más', '3 años o más'),
@@ -197,10 +215,16 @@ class RegistroCandidato(models.Model):
     ]
 
     RECRUITER_CHOICES = [
-        ('No conoce el nombre', 'No conoce el nombre'),
-        ('Angel Andres Moyano Molano', 'Angel Andres Moyano Molano'),
         ('Diego Alejandro Parra Pinto', 'Diego Alejandro Parra Pinto'),
-        ('Erika Julieth Cristancho Pérez', 'Erika Julieth Cristancho Pérez'),
+        ('Jony Edilberto Chisaba Rojas', 'Jony Edilberto Chisaba Rojas'),
+        ('Jose Luis Gamez Torres', 'Jose Luis Gamez Torres'),
+        ('Jully Andrea Galindo Fonseca', 'Jully Andrea Galindo Fonseca'),
+        ('Maria Alejandra Moreno Pedraza', 'Maria Alejandra Moreno Pedraza'),
+        ('Sergio Daniel García Donado', 'Sergio Daniel García Donado'),
+        ('Steven Alejandro Arevalo Benitez', 'Steven Alejandro Arevalo Benitez'),
+        ('Victor De Jesus Fagua Cogollo', 'Victor De Jesus Fagua Cogollo'),
+        ('Yennifer Alexandra Ruiz', 'Yennifer Alexandra Ruiz'),
+        ('Yesica Natalia Lemos Lemos', 'Yesica Natalia Lemos Lemos'),
     ]
 
     SALARY_CHOICES = [
@@ -227,6 +251,7 @@ class RegistroCandidato(models.Model):
     correo_electronico = models.EmailField()
     fecha_nacimiento = models.DateField()
     formacion_academica = models.CharField(max_length=40, choices=EDUCATION_LEVEL_CHOICES)
+    semestre_grado = models.CharField(max_length=50, blank=True, null=True)
     programa_academico = models.CharField(max_length=100)
     experiencia_laboral = models.TextField(blank=True, null=True)
     interes_ocupacional = models.TextField(blank=True, null=True)
