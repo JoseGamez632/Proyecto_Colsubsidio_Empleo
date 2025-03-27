@@ -113,7 +113,10 @@ class Vacante(models.Model):
     nivel_estudios = models.CharField(
         max_length=50,  
         choices=[
-            ('Secundaria', 'Secundaria'),
+            ('No Requiere', 'No Requiere'),
+            ('Primaria', 'Primaria'),
+            ('Bachiller Básico (Hasta 9°)', 'Bachiller Básico (Hasta 9°)'),
+            ('Bachiller', 'Bachiller'),
             ('Técnico', 'Técnico'),
             ('Tecnólogo', 'Tecnólogo'),
             ('Profesional', 'Profesional'),
