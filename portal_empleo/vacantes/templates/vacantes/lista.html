@@ -6,6 +6,102 @@ Inicio
 {% endblock %}
 
 {% block contenido %}
+<style> // Filtros Vacantes
+    /* Estilos personalizados para Select2 */
+    .select2-container {
+        width: 100% !important;
+    }
+    
+    .select2-container--bootstrap-5 .select2-selection {
+        background-color: #495057 !important;
+        border: 1px solid rgba(255,255,255,0.2) !important;
+        border-radius: 0.375rem !important;
+        color: white !important;
+        min-height: 38px !important;
+    }
+    
+    /* Estilos para selección múltiple */
+    .select2-container--bootstrap-5 .select2-selection--multiple {
+        padding: 0.25rem 0.5rem !important;
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 0.25rem !important;
+        min-height: 38px !important;
+    }
+    
+    .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__rendered {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        align-items: center !important;
+        gap: 0.25rem !important;
+        width: 100% !important;
+    }
+    
+    .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__placeholder {
+        color: white !important;
+        opacity: 0.7 !important;
+        position: absolute !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+    }
+    
+    .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice {
+        background-color: #3498db !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 0.25rem !important;
+        margin: 0.1rem !important;
+        padding: 0.2rem 0.5rem !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        font-size: 0.875rem !important;
+        max-width: calc(100% - 0.5rem) !important;
+    }
+    
+    .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice__remove {
+        color: white !important;
+        margin-left: 0.25rem !important;
+        opacity: 0.7 !important;
+    }
+    
+    .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice__display {
+        max-width: 150px !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+    
+    /* Estilos para el dropdown */
+    .select2-dropdown {
+        background-color: #34495e !important;
+        color: white !important;
+    }
+    
+    .select2-results__option {
+        background-color: #34495e !important;
+        color: white !important;
+        padding: 0.5rem !important;
+    }
+    
+    .select2-results__option--highlighted {
+        background-color: #3498db !important;
+        color: white !important;
+    }
+    
+    /* Responsividad */
+    @media (max-width: 576px) {
+        .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice {
+            margin: 0.1rem !important;
+            padding: 0.1rem 0.3rem !important;
+            font-size: 0.75rem !important;
+        }
+    
+        .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice__display {
+            max-width: 100px !important;
+        }
+    }
+</style>
+    
 <style>
     .vacante-card.selected {
     box-shadow: 0 0 10px 3px rgba(40, 167, 69, 0.8);
@@ -809,20 +905,16 @@ input:checked + .slider:before {
                     <label for="area" class="form-label text-light">🎯 Área</label>
                     <select class="form-control multiselect-improved" id="area" name="area" multiple="multiple">
                         {% for value, label in area_choices %}
-                            {% if label != '---------' %}
                             <option value="{{ value }}" {% if value in filtros.area_list %}selected{% endif %}>{{ label }}</option>
-                            {% endif %}
-                            {% endfor %}
-                        </select>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="modalidad_trabajo" class="form-label text-light">🏢 Modalidad de Trabajo</label>
-                        <select class="form-control multiselect-improved" id="modalidad_trabajo" name="modalidad_trabajo" multiple="multiple">
-                            {% for value, label in modalidad_trabajo_choices %}
-                                {% if label != '---------' %}
-                                <option value="{{ value }}" {% if value in filtros.modalidad_trabajo_list %}selected{% endif %}>{{ label }}</option>
-                                {% endif %}                            
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="modalidad_trabajo" class="form-label text-light">🏢 Modalidad de Trabajo</label>
+                    <select class="form-control multiselect-improved" id="modalidad_trabajo" name="modalidad_trabajo" multiple="multiple">
+                        {% for value, label in modalidad_trabajo_choices %}
+                            <option value="{{ value }}" {% if value in filtros.modalidad_trabajo_list %}selected{% endif %}>{{ label }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -831,9 +923,7 @@ input:checked + .slider:before {
                     <label for="tipo_contrato" class="form-label text-light">📄 Tipo de Contrato</label>
                     <select class="form-control multiselect-improved" id="tipo_contrato" name="tipo_contrato" multiple="multiple">
                         {% for value, label in tipo_contrato_choices %}
-                            {% if label != '---------' %}
                             <option value="{{ value }}" {% if value in filtros.tipo_contrato_list %}selected{% endif %}>{{ label }}</option>
-                            {% endif %}                            
                         {% endfor %}
                     </select>
                 </div>
@@ -842,9 +932,7 @@ input:checked + .slider:before {
                     <label for="jornada_trabajo" class="form-label text-light">⏰ Jornada de Trabajo</label>
                     <select class="form-control multiselect-improved" id="jornada_trabajo" name="jornada_trabajo" multiple="multiple">
                         {% for value, label in jornada_trabajo_choices %}
-                            {% if label != '---------' %}
                             <option value="{{ value }}" {% if value in filtros.jornada_trabajo_list %}selected{% endif %}>{{ label }}</option>
-                            {% endif %}                            
                         {% endfor %}
                     </select>
                 </div>
@@ -853,9 +941,7 @@ input:checked + .slider:before {
                     <label for="tiempo_experiencia" class="form-label text-light">⌛ Tiempo de Experiencia</label>
                     <select class="form-control multiselect-improved" id="tiempo_experiencia" name="tiempo_experiencia" multiple="multiple">
                         {% for value, label in tiempo_experiencia_choices %}
-                            {% if label != '---------' %}
                             <option value="{{ value }}" {% if value in filtros.tiempo_experiencia_list %}selected{% endif %}>{{ label }}</option>
-                            {% endif %}                            
                         {% endfor %}
                     </select>
                 </div>
@@ -864,9 +950,7 @@ input:checked + .slider:before {
                     <label for="nivel_estudios" class="form-label text-light">🎓 Nivel de Estudios</label>
                     <select class="form-control multiselect-improved" id="nivel_estudios" name="nivel_estudios" multiple="multiple">
                         {% for value, label in nivel_estudios_choices %}
-                            {% if label != '---------' %}
                             <option value="{{ value }}" {% if value in filtros.nivel_estudios_list %}selected{% endif %}>{{ label }}</option>
-                            {% endif %}                            
                         {% endfor %}
                     </select>
                 </div>
@@ -875,11 +959,9 @@ input:checked + .slider:before {
                     <label for="departamento" class="form-label text-light">🌍 Departamento</label>
                     <select class="form-control multiselect-improved" id="departamento" name="departamento" multiple="multiple">
                         {% for value, label in departamento_choices %}
-                            {% if label != '---------' %}
                             <option value="{{ value }}" {% if value|stringformat:"s" in filtros.departamento_list %}selected{% endif %}>
                                 {{ label }}
                             </option>
-                            {% endif %}                            
                         {% endfor %}
                     </select>
                 </div>
@@ -915,7 +997,46 @@ input:checked + .slider:before {
         </div>
     </div>
 </div>
-
+<script> // Filtros Vacantes
+    $(document).ready(function() {
+        $('.multiselect-improved').select2({
+            theme: 'bootstrap-5',
+            placeholder: 'Seleccionar',
+            allowClear: true,
+            width: '100%',
+            dropdownParent: $('#offcanvasExample'),
+            language: {
+                noResults: function () {
+                    return "No se encontraron resultados";
+                },
+                maximumSelected: function(maximum) {
+                    return `Máximo ${maximum} elementos permitidos`;
+                }
+            },
+            templateSelection: function(data, container) {
+                // Truncar texto largo
+                if (data.text.length > 20) {
+                    $(container).attr('title', data.text);
+                    return data.text.substr(0, 20) + '...';
+                }
+                return data.text;
+            }
+        });
+    
+        // Tooltip para botón de limpiar
+        $('.select2-selection__clear').attr('title', 'Eliminar todas las selecciones');
+    });
+    
+    // Función para limpiar filtros
+    function clearFilters() {
+        // Limpia todos los select2
+        $('.multiselect-improved').val(null).trigger('change');
+        
+        // Limpia inputs de texto
+        $('#codigo_vacante, #cargo, #rango_salarial_min, #rango_salarial_max').val('');
+    }
+    </script>
+    
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("active-filters-container").addEventListener("click", function (event) {
