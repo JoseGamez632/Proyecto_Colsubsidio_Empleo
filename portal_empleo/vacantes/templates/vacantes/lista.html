@@ -809,16 +809,20 @@ input:checked + .slider:before {
                     <label for="area" class="form-label text-light">🎯 Área</label>
                     <select class="form-control multiselect-improved" id="area" name="area" multiple="multiple">
                         {% for value, label in area_choices %}
+                            {% if label != '---------' %}
                             <option value="{{ value }}" {% if value in filtros.area_list %}selected{% endif %}>{{ label }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <div class="mb-3">
-                    <label for="modalidad_trabajo" class="form-label text-light">🏢 Modalidad de Trabajo</label>
-                    <select class="form-control multiselect-improved" id="modalidad_trabajo" name="modalidad_trabajo" multiple="multiple">
-                        {% for value, label in modalidad_trabajo_choices %}
-                            <option value="{{ value }}" {% if value in filtros.modalidad_trabajo_list %}selected{% endif %}>{{ label }}</option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="modalidad_trabajo" class="form-label text-light">🏢 Modalidad de Trabajo</label>
+                        <select class="form-control multiselect-improved" id="modalidad_trabajo" name="modalidad_trabajo" multiple="multiple">
+                            {% for value, label in modalidad_trabajo_choices %}
+                                {% if label != '---------' %}
+                                <option value="{{ value }}" {% if value in filtros.modalidad_trabajo_list %}selected{% endif %}>{{ label }}</option>
+                                {% endif %}                            
                         {% endfor %}
                     </select>
                 </div>
@@ -827,7 +831,9 @@ input:checked + .slider:before {
                     <label for="tipo_contrato" class="form-label text-light">📄 Tipo de Contrato</label>
                     <select class="form-control multiselect-improved" id="tipo_contrato" name="tipo_contrato" multiple="multiple">
                         {% for value, label in tipo_contrato_choices %}
+                            {% if label != '---------' %}
                             <option value="{{ value }}" {% if value in filtros.tipo_contrato_list %}selected{% endif %}>{{ label }}</option>
+                            {% endif %}                            
                         {% endfor %}
                     </select>
                 </div>
@@ -836,7 +842,9 @@ input:checked + .slider:before {
                     <label for="jornada_trabajo" class="form-label text-light">⏰ Jornada de Trabajo</label>
                     <select class="form-control multiselect-improved" id="jornada_trabajo" name="jornada_trabajo" multiple="multiple">
                         {% for value, label in jornada_trabajo_choices %}
+                            {% if label != '---------' %}
                             <option value="{{ value }}" {% if value in filtros.jornada_trabajo_list %}selected{% endif %}>{{ label }}</option>
+                            {% endif %}                            
                         {% endfor %}
                     </select>
                 </div>
@@ -845,7 +853,9 @@ input:checked + .slider:before {
                     <label for="tiempo_experiencia" class="form-label text-light">⌛ Tiempo de Experiencia</label>
                     <select class="form-control multiselect-improved" id="tiempo_experiencia" name="tiempo_experiencia" multiple="multiple">
                         {% for value, label in tiempo_experiencia_choices %}
+                            {% if label != '---------' %}
                             <option value="{{ value }}" {% if value in filtros.tiempo_experiencia_list %}selected{% endif %}>{{ label }}</option>
+                            {% endif %}                            
                         {% endfor %}
                     </select>
                 </div>
@@ -854,7 +864,9 @@ input:checked + .slider:before {
                     <label for="nivel_estudios" class="form-label text-light">🎓 Nivel de Estudios</label>
                     <select class="form-control multiselect-improved" id="nivel_estudios" name="nivel_estudios" multiple="multiple">
                         {% for value, label in nivel_estudios_choices %}
+                            {% if label != '---------' %}
                             <option value="{{ value }}" {% if value in filtros.nivel_estudios_list %}selected{% endif %}>{{ label }}</option>
+                            {% endif %}                            
                         {% endfor %}
                     </select>
                 </div>
@@ -863,9 +875,11 @@ input:checked + .slider:before {
                     <label for="departamento" class="form-label text-light">🌍 Departamento</label>
                     <select class="form-control multiselect-improved" id="departamento" name="departamento" multiple="multiple">
                         {% for value, label in departamento_choices %}
+                            {% if label != '---------' %}
                             <option value="{{ value }}" {% if value|stringformat:"s" in filtros.departamento_list %}selected{% endif %}>
                                 {{ label }}
                             </option>
+                            {% endif %}                            
                         {% endfor %}
                     </select>
                 </div>
