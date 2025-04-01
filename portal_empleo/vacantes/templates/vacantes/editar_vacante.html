@@ -177,10 +177,10 @@ Editar Vacante
 
                     <div class="form-row">
                         <div class="form-group col-md-6">
-                            <label for="{{ form.departamento.id_for_label }}">Departamento</label>
+                            <label for="{{ form.departamento.id_for_label }}">Departamento o Ciudad</label>
                             {{ form.departamento }}
                         </div>
-                        <div class="form-group col-md-6">
+                        <div class="form-group col-md-6" id="ciudad-container" style="display: none;">
                             <label for="{{ form.ciudad.id_for_label }}">Ciudad o Municipio</label>
                             {{ form.ciudad }}
                         </div>
@@ -229,6 +229,24 @@ Editar Vacante
                 $("#ciudad-select").empty().append('<option value="">Seleccione un departamento primero</option>');
             }
         });
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const departamentoSelect = document.getElementById('{{ form.departamento.id_for_label }}');
+        const ciudadContainer = document.getElementById('ciudad-container');
+
+        departamentoSelect.addEventListener('change', function () {
+            if (departamentoSelect.options[departamentoSelect.selectedIndex].text === "Cundinamarca") {
+                ciudadContainer.style.display = 'block';
+            } else {
+                ciudadContainer.style.display = 'none';
+            }
+        });
+
+        // Verificar al cargar la página si el departamento ya es "Cundinamarca"
+        if (departamentoSelect.options[departamentoSelect.selectedIndex].text === "Cundinamarca") {
+            ciudadContainer.style.display = 'block';
+        }
     });
 </script>
 

@@ -760,7 +760,16 @@ input:checked + .slider:before {
                     <div class="checkbox-container">
                             <div class="vacante-info">
                             <div class="vacante-title">{{ vacante.cargo }}</div>
-                            <div class="vacante-location">📍 {{ vacante.ciudad }}</div>
+                            <div class="vacante-location">
+    📍 
+    {% if vacante.ciudad %}
+        {{ vacante.ciudad }}
+    {% elif vacante.departamento %}
+        {{ vacante.departamento }}
+    {% else %}
+        No especificado
+    {% endif %}
+</div>
                             {% if request.user.is_authenticated %}
                             {% if request.user.is_authenticated %}
                             <br>
@@ -870,8 +879,15 @@ input:checked + .slider:before {
                                             <strong>🎓 Nivel de estudios:</strong> {{ vacante.nivel_estudios }}
                                         </li>
                                         <li class="list-group-item bg-transparent border-secondary">
-                                            <strong>📍 Ubicación:</strong> {{ vacante.ciudad }}
-                                        </li>
+                                            <strong>📍 Ubicación:</strong> 
+    {% if vacante.ciudad %}
+        {{ vacante.ciudad }}
+    {% elif vacante.departamento %}
+        {{ vacante.departamento }}
+    {% else %}
+        No especificado
+    {% endif %}
+</li>
                                     </ul>
                                 </div>
                                 
