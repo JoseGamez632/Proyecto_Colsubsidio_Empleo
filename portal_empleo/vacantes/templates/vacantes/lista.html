@@ -1020,8 +1020,8 @@ input:checked + .slider:before {
                         {% endfor %}
                     </select>
                 </div>
-                
-                <div class="mb-3">
+
+                <div class="mb-3" id="ciudad-container" style="display: none;">
                     <label for="ciudad" class="form-label text-light">📍 Ciudad</label>
                     <select class="form-control multiselect-improved" id="ciudad" name="ciudad" multiple="multiple">
                         {% if filtros.ciudad_list %}
@@ -1728,5 +1728,24 @@ document.addEventListener('DOMContentLoaded', function() {
     showTutorial();
 });
 
+document.addEventListener('DOMContentLoaded', function () {
+    const departamentoSelect = document.getElementById('departamento');
+    const ciudadContainer = document.getElementById('ciudad-container');
+
+    departamentoSelect.addEventListener('change', function () {
+        const selectedOptions = Array.from(departamentoSelect.selectedOptions).map(option => option.text);
+        if (selectedOptions.includes("Cundinamarca")) {
+            ciudadContainer.style.display = 'block';
+        } else {
+            ciudadContainer.style.display = 'none';
+        }
+    });
+
+    // Verificar al cargar la página si "Cundinamarca" ya está seleccionado
+    const initialSelectedOptions = Array.from(departamentoSelect.selectedOptions).map(option => option.text);
+    if (initialSelectedOptions.includes("Cundinamarca")) {
+        ciudadContainer.style.display = 'block';
+    }
+});
 </script>
 {% endblock %}
