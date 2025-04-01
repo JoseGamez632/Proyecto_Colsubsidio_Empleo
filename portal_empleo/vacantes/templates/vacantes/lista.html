@@ -6,6 +6,141 @@ Inicio
 {% endblock %}
 
 {% block contenido %}
+<style> // Filtros Vacantes
+    /* Asegurar desplazamiento en el dropdown de Select2 */
+    .select2-dropdown {
+        max-height: 300px !important; /* Altura máxima del dropdown */
+        overflow-y: auto !important; /* Habilitar scroll vertical */
+        scrollbar-width: thin !important; /* Para Firefox */
+        scrollbar-color: #3498db #34495e !important; /* Color de scrollbar */
+    }
+
+    /* Estilos de scrollbar para webkit (Chrome, Safari, newer versions of Opera) */
+    .select2-dropdown::-webkit-scrollbar {
+        width: 8px !important; /* Ancho del scrollbar */
+    }
+
+    .select2-dropdown::-webkit-scrollbar-track {
+        background: #34495e !important; /* Color de fondo del track */
+    }
+
+    .select2-dropdown::-webkit-scrollbar-thumb {
+        background-color: #3498db !important; /* Color del thumb */
+        border-radius: 4px !important; /* Bordes redondeados */
+    }
+
+    .select2-dropdown::-webkit-scrollbar-thumb:hover {
+        background-color: #2980b9 !important; /* Color al pasar el mouse */
+    }
+
+    /* Asegurar que el contenido del dropdown sea scrollable */
+    .select2-results {
+        max-height: 280px !important;
+        overflow-y: auto !important;
+    }
+
+    /* Mejorar la interacción táctil */
+    @media (max-width: 768px) {
+        .select2-dropdown {
+            max-height: 50vh !important; /* 50% de la altura de la ventana en dispositivos móviles */
+        }
+    }
+
+    /* Estilos personalizados para Select2 */
+    .select2-container {
+        width: 100% !important;
+    }
+    
+    .select2-container--bootstrap-5 .select2-selection {
+        background-color:rgb(255, 255, 255) !important;
+        border: 1px solid #343A40 !important;
+        border-radius: 0.375rem !important;
+        color: white !important;
+        min-height: 38px !important;
+    }
+    
+    /* Estilos para selección múltiple */
+    .select2-container--bootstrap-5 .select2-selection--multiple {
+        padding: 0.25rem 0.5rem !important;
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 0.25rem !important;
+        min-height: 38px !important;
+    }
+    
+    .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__rendered {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        align-items: center !important;
+        gap: 0.25rem !important;
+        width: 100% !important;
+    }
+    
+    .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__placeholder {
+        color: white !important;
+        opacity: 0.7 !important;
+        position: absolute !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+    }
+    
+    .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice {
+        background-color: #3498db !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 0.25rem !important;
+        margin: 0.1rem !important;
+        padding: 0.2rem 0.5rem !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        font-size: 0.875rem !important;
+        max-width: calc(100% - 0.5rem) !important;
+    }
+    
+    .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice__remove {
+        color: white !important;
+        margin-left: 0.25rem !important;
+        opacity: 0.7 !important;
+    }
+    
+    .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice__display {
+        max-width: 150px !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+    
+    /* Estilos para el dropdown */
+    .select2-dropdown {
+        background-color: #34495e !important;
+        color: white !important;
+    }
+    
+    .select2-results__option {
+        background-color: #34495e !important;
+        color: white !important;
+        padding: 0.5rem !important;
+    }
+    
+    .select2-results__option--highlighted {
+        background-color: #3498db !important;
+        color: white !important;
+    }
+    
+    /* Responsividad */
+    @media (max-width: 576px) {
+        .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice {
+            margin: 0.1rem !important;
+            padding: 0.1rem 0.3rem !important;
+            font-size: 0.75rem !important;
+        }
+    
+        .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice__display {
+            max-width: 100px !important;
+        }
+    }
+</style>
+    
 <style>
     .vacante-card.selected {
     box-shadow: 0 0 10px 3px rgba(40, 167, 69, 0.8);
@@ -180,7 +315,7 @@ input:checked + .slider:before {
 }
 
 .form-control {
-    background-color: #495057 !important;
+    background-color:rgb(255, 255, 255) !important;
     color: white !important;
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
@@ -377,7 +512,7 @@ input:checked + .slider:before {
 }
 
 .form-control, .multiselect {
-    background-color: RGB(73, 80, 87);
+    background-color: #FFFFFF;
     border: 1px solidrgb(64, 64, 65);
 }
 
@@ -901,7 +1036,35 @@ input:checked + .slider:before {
         </div>
     </div>
 </div>
-
+<script> // Filtros Vacantes
+    $(document).ready(function() {
+        $('.multiselect-improved').select2({
+            theme: 'bootstrap-5',
+            placeholder: 'Seleccionar',
+            allowClear: true,
+            width: '100%',
+            dropdownParent: $('#offcanvasExample'),
+            multiple: true,
+            closeOnSelect: false,
+            selectOnClose: false,
+            language: {
+                noResults: function () {
+                    return "No se encontraron resultados";
+                }
+            },
+        });
+    });
+    
+    // Función para limpiar filtros
+    function clearFilters() {
+        // Limpia todos los select2
+        $('.multiselect-improved').val(null).trigger('change');
+        
+        // Limpia inputs de texto
+        $('#codigo_vacante, #cargo, #rango_salarial_min, #rango_salarial_max').val('');
+    }
+    </script>
+    
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("active-filters-container").addEventListener("click", function (event) {
