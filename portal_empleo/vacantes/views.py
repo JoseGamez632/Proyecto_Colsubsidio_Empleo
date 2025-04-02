@@ -42,13 +42,12 @@ def normalizar_texto(texto):
 
 def lista_vacantes(request):
     # Procesar los parámetros de filtro multiselect
-    # Obtener los filtros de la solicitud GET (considerando que pueden ser múltiples)
     filtros = {
         'cargo': request.GET.get('cargo', ''),
         'codigo_vacante': request.GET.get('codigo_vacante', ''),
         'rango_salarial_min': request.GET.get('rango_salarial_min', ''),
         'rango_salarial_max': request.GET.get('rango_salarial_max', ''),
-        
+
         # Campos multiselect (pueden tener múltiples valores)
         'area_list': request.GET.getlist('area'),
         'modalidad_trabajo_list': request.GET.getlist('modalidad_trabajo'),
@@ -93,13 +92,40 @@ def lista_vacantes(request):
     if filtros['departamento_list']:
         vacantes = vacantes.filter(departamento__in=filtros['departamento_list'])
     
+    # Manejo especial para Bogotá en el filtro de ciudad
+    ciudad_bogota = False
+    otras_ciudades = []
+    
     if filtros['ciudad_list']:
-        vacantes = vacantes.filter(ciudad__in=filtros['ciudad_list'])
+        # Separar "bogota" del resto de las ciudades
+        from django.db.models import Q
+        filtro_ciudades = Q()
+        
+        for ciudad_id in filtros['ciudad_list']:
+            if ciudad_id == 'bogota':
+                ciudad_bogota = True
+            else:
+                otras_ciudades.append(ciudad_id)
+        
+        # Agregar filtro para Bogotá como departamento si fue seleccionada
+        if ciudad_bogota:
+            # Obtén el departamento "Bogotá D.C." o crea una referencia
+            bogota_departamento = Departamento.objects.filter(nombre__icontains="Bogotá").first()
+            if bogota_departamento:
+                filtro_ciudades |= Q(departamento=bogota_departamento)
+        
+        # Agregar filtro para el resto de ciudades si existen
+        if otras_ciudades:
+            filtro_ciudades |= Q(ciudad__in=otras_ciudades)
+        
+        # Aplicar el filtro combinado si hay alguna condición
+        if filtro_ciudades:
+            vacantes = vacantes.filter(filtro_ciudades)
 
     # Filtro para Rango Salarial
     rango_salarial_min = filtros['rango_salarial_min']
     rango_salarial_max = filtros['rango_salarial_max']
-
+    
     if rango_salarial_min and rango_salarial_max:
         vacantes = vacantes.filter(
             rango_salarial__gte=rango_salarial_min,
@@ -128,20 +154,36 @@ def lista_vacantes(request):
         'departamento_choices': form.fields['departamento'].choices,
     }
     
-    # Obtener información de las ciudades seleccionadas para mostrar en el multiselect
-    filtros['ciudad_opciones'] = []
-    if filtros['ciudad_list']:
-        ciudades = Ciudad.objects.filter(id__in=filtros['ciudad_list'])
-        filtros['ciudad_opciones'] = [(str(ciudad.id), ciudad.nombre) for ciudad in ciudades]
+    # Obtener el departamento "Cundinamarca" y sus ciudades
+    cundinamarca = Departamento.objects.filter(nombre="Cundinamarca").first()
+    ciudades_cundinamarca = Ciudad.objects.filter(departamento=cundinamarca) if cundinamarca else []
+
+    # Preparar la información de ciudades seleccionadas para mostrar en filtros activos
+    filtros['ciudad_info'] = []
+    
+    # Agregar Bogotá si está seleccionada
+    if ciudad_bogota:
+        filtros['ciudad_info'].append({
+            'id': 'bogota',
+            'nombre': 'Bogotá'
+        })
+    
+    # Agregar el resto de ciudades seleccionadas
+    if otras_ciudades:
+        ciudades_seleccionadas = Ciudad.objects.filter(id__in=otras_ciudades)
+        for ciudad in ciudades_seleccionadas:
+            filtros['ciudad_info'].append({
+                'id': str(ciudad.id),
+                'nombre': ciudad.nombre
+            })
 
     # Renderizar la plantilla con las vacantes filtradas y ordenadas
     return render(request, "vacantes/lista.html", {
         "vacantes": vacantes,
         "filtros": filtros,
+        "ciudades_cundinamarca": ciudades_cundinamarca,
         **choices_context  # Pasar los choices al template
-    })
-
-# API para obtener ciudades por departamentos (añadir a urls.py)
+    })# API para obtener ciudades por departamentos (añadir a urls.py)
 def ciudades_por_departamentos(request):
     departamentos = request.GET.get('departamentos', '').split(',')
     ciudades = Ciudad.objects.filter(departamento__in=departamentos).values('id', 'nombre')
