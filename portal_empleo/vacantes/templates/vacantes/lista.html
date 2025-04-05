@@ -6,7 +6,19 @@ Inicio
 {% endblock %}
 
 {% block contenido %}
-<style> // Filtros Vacantes
+
+<style> /* Texto de letras en filtros negro */
+    .offcanvas-body input.form-control,
+    .offcanvas-body select.form-control,
+    .offcanvas-body .multiselect-improved {
+        color: black !important;
+    }
+</style>
+
+    
+
+
+<style> /* Filtros Vacantes */
     /* Asegurar desplazamiento en el dropdown de Select2 */
     .select2-dropdown {
         max-height: 300px !important; /* Altura máxima del dropdown */
