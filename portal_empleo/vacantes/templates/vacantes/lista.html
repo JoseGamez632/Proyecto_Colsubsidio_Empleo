@@ -1010,28 +1010,20 @@ input:checked + .slider:before {
                     </select>
                 </div>
 
-                <div class="mb-3">
-                    <label for="departamento" class="form-label text-light">🌍 Departamento</label>
-                    <select class="form-control multiselect-improved" id="departamento" name="departamento" multiple="multiple">
-                        {% for value, label in departamento_choices %}
-                            <option value="{{ value }}" {% if value|stringformat:"s" in filtros.departamento_list %}selected{% endif %}>
-                                {{ label }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                </div>
                 
                 <div class="mb-3">
                     <label for="ciudad" class="form-label text-light">📍 Ciudad</label>
                     <select class="form-control multiselect-improved" id="ciudad" name="ciudad" multiple="multiple">
-                        {% if filtros.ciudad_list %}
-                            {% for ciudad_id, ciudad_nombre in filtros.ciudad_opciones %}
-                                <option value="{{ ciudad_id }}" selected>{{ ciudad_nombre }}</option>
-                            {% endfor %}
-                        {% endif %}
+                        <!-- Agregar Bogotá a la lista de opciones -->
+                        <option value="bogota" {% if 'bogota' in filtros.ciudad_list %}selected{% endif %}>Bogotá</option>
+                    
+                        <!-- Recorrer las ciudades de Cundinamarca -->
+                        {% for ciudad in ciudades_cundinamarca %}
+                            <option value="{{ ciudad.id }}" {% if ciudad.id in filtros.ciudad_list %}selected{% endif %}>{{ ciudad.nombre }}</option>
+                        {% endfor %}
                     </select>
-                </div>
-
+                    </div>
+                
                 <div class="mb-3">
                     <label class="form-label text-light">💰 Rango Salarial</label>
                     <div class="d-flex gap-2">
@@ -1344,6 +1336,7 @@ $(document).ready(function() {
 });
 
 // Función para actualizar la sección de filtros activos
+// Función para actualizar la sección de filtros activos
 function updateActiveFilters() {
     const filterContainer = $('#active-filters-container');
     filterContainer.empty();
@@ -1360,8 +1353,7 @@ function updateActiveFilters() {
         { id: 'jornada_trabajo', label: 'Jornada', type: 'select', icon: '⏰' },
         { id: 'tiempo_experiencia', label: 'Experiencia', type: 'select', icon: '⌛' },
         { id: 'nivel_estudios', label: 'Estudios', type: 'select', icon: '🎓' },
-        { id: 'departamento', label: 'Departamento', type: 'select', icon: '🌍' },
-        { id: 'ciudad', label: 'Ciudad', type: 'select', icon: '📍' }
+        { id: 'departamento', label: 'Departamento', type: 'select', icon: '🌍' }
     ];
     
     // Añadir filtros de rango salarial
@@ -1405,13 +1397,34 @@ function updateActiveFilters() {
         }
     });
     
+    // Manejo especial para ciudades
+    const citySelect = $('#ciudad');
+    const selectedCities = citySelect.val();
+    if (selectedCities && selectedCities.length > 0) {
+        hasActiveFilters = true;
+        
+        selectedCities.forEach(function(value) {
+            let optionText;
+            // Manejo especial para Bogotá
+            if (value === 'bogota') {
+                optionText = 'Bogotá';
+            } else {
+                optionText = citySelect.find(`option[value="${value}"]`).text();
+                // Si no encuentra el texto, usar el valor como respaldo
+                if (!optionText || optionText.trim() === '') {
+                    optionText = `Ciudad ID: ${value}`;
+                }
+            }
+            
+            addFilterBadge(filterContainer, `ciudad-${value}`, `📍 Ciudad: ${optionText}`);
+        });
+    }
+    
     // Mostrar mensaje si no hay filtros activos
     if (!hasActiveFilters) {
         filterContainer.html('<span class="text-light">No hay filtros aplicados</span>');
     }
-}
-
-// Función para añadir una insignia de filtro
+}// Función para añadir una insignia de filtro
 function addFilterBadge(container, id, text) {
     const badge = $(`<span class="badge filter-badge" data-filter-id="${id}">${text} <i class="fas fa-times remove-filter"></i></span>`);
     
