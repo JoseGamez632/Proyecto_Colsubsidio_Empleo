@@ -210,7 +210,6 @@ class VacanteForm(forms.ModelForm):
 # # forms.py
 
 
-
 class RegistroCandidatoForm(forms.ModelForm):
     vacantes_disponibles = forms.ModelMultipleChoiceField(
         queryset=Vacante.objects.all(),
@@ -238,6 +237,46 @@ class RegistroCandidatoForm(forms.ModelForm):
         }),
         required=False,
         input_formats=['%Y-%m-%d']
+    )
+    
+    # Nuevos campos
+    tipo_feria = forms.ChoiceField(
+        choices=[('', '---------')] + RegistroCandidato.TIPO_FERIA_CHOICES,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+            'id': 'tipo_feria'
+        }),
+        label="Tipo de Feria",
+        required=False
+    )
+    
+    codigo_sise = forms.CharField(
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'id': 'codigo_sise',
+            'placeholder': 'Ingrese código SISE'
+        }),
+        label="Código SISE",
+        required=False
+    )
+    
+    empresa_sise = forms.CharField(
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'id': 'empresa_sise',
+            'placeholder': 'Ingrese empresa SISE'
+        }),
+        label="Empresa SISE",
+        required=False
+    )
+    
+    interes_practica = forms.BooleanField(
+        widget=forms.CheckboxInput(attrs={
+            'class': 'form-check-input',
+            'id': 'interes_practica'
+        }),
+        label="¿Interés en prácticas?",
+        required=False
     )
 
     experiencia_laboral = forms.CharField(
@@ -354,8 +393,8 @@ class RegistroCandidatoForm(forms.ModelForm):
     class Meta:
         model = RegistroCandidato
         fields = '__all__'
-        
-        
+
+
 class ComentarioCandidatoForm(forms.ModelForm):
     class Meta:
         model = ComentarioCandidato
