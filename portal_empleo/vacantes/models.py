@@ -242,9 +242,23 @@ class RegistroCandidato(models.Model):
         ('20 SMMLV en adelante', '20 SMMLV en adelante'),
     ]
 
+    # Nueva opción para tipo de feria
+    TIPO_FERIA_CHOICES = [
+        ('FERIA PROPIA', 'FERIA PROPIA'),
+        ('FERIA INVITADO', 'FERIA INVITADO'),
+        ('FERIA MOVIL', 'FERIA MOVIL'),
+    ]
+
     # Campos
     feria = models.CharField(max_length=100, blank=True, null=True)
     fecha_feria = models.DateField(default=date(2025, 1, 1), blank=True, null=True)
+    # Nuevo campo tipo_feria
+    tipo_feria = models.CharField(max_length=20, choices=TIPO_FERIA_CHOICES, blank=True, null=True)
+    # Nuevos campos para FERIA MOVIL
+    codigo_sise = models.CharField(max_length=50, blank=True, null=True)
+    empresa_sise = models.CharField(max_length=100, blank=True, null=True)
+    # Nuevo campo para interés en prácticas
+    interes_practica = models.BooleanField(default=False, blank=True, null=True)
     sexo = models.CharField(max_length=16, choices=SEX_CHOICES)
     tipo_documento = models.CharField(max_length=50, choices=DOCUMENT_TYPE_CHOICES)
     numero_documento = models.CharField(max_length=20, unique=True)
@@ -283,7 +297,6 @@ class RegistroCandidato(models.Model):
 
     def __str__(self):
         return f"{self.nombres} {self.apellidos} - {self.tipo_documento}: {self.numero_documento}"
-
 
 class EstadoAplicacion(models.Model):
     ESTADO_CHOICES = [

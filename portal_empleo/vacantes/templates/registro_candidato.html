@@ -496,19 +496,30 @@ Inicio
             {% csrf_token %}
 
             {% if request.user.is_authenticated %}
-            <div class="form-row">
-                <div class="form-group col-md-6">
+            <div class="row">
+                <div class="form-group col-12 col-md-6">
                     <label for="feria">Feria</label>
                     {{ form.feria }}
                 </div>
-                <div class="form-group col-md-6">
+                <div class="form-group col-12 col-md-6">
+                    <label for="tipo_feria">Tipo de Feria</label>
+                    {{ form.tipo_feria }}
+                </div>
+                <div class="form-group col-12 col-md-6" id="campo-codigo-sise" style="display: none;">
+                    <label for="codigo_sise">Código SISE</label>
+                    {{ form.codigo_sise }}
+                </div>
+                <div class="form-group col-12 col-md-6" id="campo-empresa-sise" style="display: none;">
+                    <label for="empresa_sise">Empresa SISE</label>
+                    {{ form.empresa_sise }}
+                </div>
+                <div class="form-group col-12 col-md-6">
                     <label for="fecha_feria">Fecha de Feria</label>
                     <input type="date" name="fecha_feria" id="fecha_feria" 
                            class="form-control" 
                            value="{{ form.fecha_feria.value|date:'Y-m-d' }}"
                            {% if form.fecha_feria.field.required %}required{% endif %}>
                 </div>
-            </div>
             {% endif %}   
 
             <div class="form-row">
@@ -587,6 +598,11 @@ Inicio
                     <small id="sem-info" style="display: none;">Ya que seleccionaste que estas estudiando, digita el semestre o tiempo cursado a la fecha Ejemplo: 5 Semestre</small>
                     {{ form.semestre_grado }}
                 </div>
+                    <div class="form-group col-md-6" id="campo-interes-practica" style="display: none;">
+                        <label for="interes_practica">¿Interés en Prácticas?</label>
+                        {{ form.interes_practica }}
+                </div>
+
             </div>
             
             <div class="form-row">
@@ -607,13 +623,18 @@ Inicio
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label for="experiencia_laboral">Experiencia Laboral</label>
-                    <span class="info-icon" onclick="mostrarInstruccion('exper-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
+                    {% comment %} <span class="info-icon" onclick="mostrarInstruccion('exper-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span> {% endcomment %}
                     <small id="exper-info" style="display: none;">Ingresa las ultimas 3 experiencia laborales iniciando por la mas reciente con el siguiente formato:<br>
                         Ultimo cargo - Fecha de inicio a Fecha de retiro<br> Penultimo cargo - Feha de inicio a Fecha de retiro <br> Tercer cargo - Fecha de inicio a Fecha de retiro <br>
                         NOTA: En caso de no tener experiencia colocar "NO TENGO EXPERIENCIA"</small>
-                        <h6><strong>Registra tus últimas 3 experiencias laborales con el siguiente formato:</strong></h6>
-                        <h6><strong>Último cargo - Fecha inicio a Fecha fin </strong></h6><br>
-                        {{ form.experiencia_laboral }}
+                        <h2 style="font-size: 14px; font-weight: 300; margin-bottom: 1rem;">
+                            Ingresa las últimas 3 experiencias laborales iniciando por la más reciente con el siguiente formato:<br>
+                            Último cargo - Fecha de inicio a Fecha de retiro<br>
+                            Penúltimo cargo - Fecha de inicio a Fecha de retiro<br>
+                            Tercer cargo - Fecha de inicio a Fecha de retiro<br>
+                            <strong>NOTA:</strong> En caso de no tener experiencia colocar "NO TENGO EXPERIENCIA"<br>
+                        </h2>
+                                                {{ form.experiencia_laboral }}
                     </div>
                     <div class="form-group col-md-6">
                         <label for="interes_ocupacional">Cargos de Interés</label>
@@ -705,6 +726,63 @@ Inicio
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 
 <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Mostrar/ocultar campos de SISE
+        function toggleCamposSise() {
+            const tipoFeria = document.getElementById('tipo_feria');
+            const codigoSise = document.getElementById('campo-codigo-sise');
+            const empresaSise = document.getElementById('campo-empresa-sise');
+    
+            if (!tipoFeria || !codigoSise || !empresaSise) return;
+    
+            if (tipoFeria.value === 'FERIA MOVIL') {
+                codigoSise.style.display = 'block';
+                empresaSise.style.display = 'block';
+            } else {
+                codigoSise.style.display = 'none';
+                empresaSise.style.display = 'none';
+            }
+        }
+    
+        // Mostrar/ocultar campo de interés en prácticas
+        function toggleInteresPractica() {
+            const formacion = document.getElementById('id_formacion_academica');
+            const interes = document.getElementById('campo-interes-practica');
+    
+            if (!formacion || !interes) return;
+    
+            const opcionesValidas = [
+                'ESTUDIANTE TECNICO LABORAL/PROFESIONAL',
+                'ESTUDIANTE TECNOLOGO',
+                'ESTUDIANTE PROFESIONAL'
+            ];
+    
+            if (opcionesValidas.includes(formacion.value)) {
+                interes.style.display = 'block';
+            } else {
+                interes.style.display = 'none';
+            }
+        }
+    
+        // Ejecutar ambas funciones al cargar
+        const tipoFeriaSelect = document.getElementById('tipo_feria');
+        const formacionSelect = document.getElementById('id_formacion_academica');
+    
+        if (tipoFeriaSelect) {
+            tipoFeriaSelect.addEventListener('change', toggleCamposSise);
+            toggleCamposSise(); // inicial
+        }
+    
+        if (formacionSelect) {
+            formacionSelect.addEventListener('change', toggleInteresPractica);
+            toggleInteresPractica(); // inicial
+        }
+    });
+    </script>
+    
+
+<script>
+    
     document.addEventListener('DOMContentLoaded', function() {
         // Validación en tiempo real para Número de Celular
         const celularInput = document.getElementById('numero_celular');
