@@ -269,7 +269,15 @@ class RegistroCandidatoForm(forms.ModelForm):
         label="Empresa SISE",
         required=False
     )
-    
+    cargo_sise = forms.CharField(
+    widget=forms.TextInput(attrs={
+        'class': 'form-control',
+        'id': 'cargo_sise',
+        'placeholder': 'Ingrese cargo SISE'
+    }),
+    label="Cargo SISE",
+    required=False
+    )
     interes_practica = forms.BooleanField(
         widget=forms.CheckboxInput(attrs={
             'class': 'form-check-input',

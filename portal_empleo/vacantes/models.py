@@ -257,6 +257,7 @@ class RegistroCandidato(models.Model):
     # Nuevos campos para FERIA MOVIL
     codigo_sise = models.CharField(max_length=50, blank=True, null=True)
     empresa_sise = models.CharField(max_length=100, blank=True, null=True)
+    cargo_sise = models.CharField(max_length=100, blank=True, null=True)
     # Nuevo campo para interés en prácticas
     interes_practica = models.BooleanField(default=False, blank=True, null=True)
     sexo = models.CharField(max_length=16, choices=SEX_CHOICES)

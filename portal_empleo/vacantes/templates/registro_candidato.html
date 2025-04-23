@@ -513,6 +513,10 @@ Inicio
                     <label for="empresa_sise">Empresa SISE</label>
                     {{ form.empresa_sise }}
                 </div>
+                <div class="form-group col-12 col-md-6" id="campo-cargo-sise" style="display: none;">
+                    <label for="cargo_sise">Cargo SISE</label>
+                    {{ form.cargo_sise }}
+                </div>                
                 <div class="form-group col-12 col-md-6">
                     <label for="fecha_feria">Fecha de Feria</label>
                     <input type="date" name="fecha_feria" id="fecha_feria" 
@@ -735,38 +739,21 @@ Inicio
             const tipoFeria = document.getElementById('tipo_feria');
             const codigoSise = document.getElementById('campo-codigo-sise');
             const empresaSise = document.getElementById('campo-empresa-sise');
-    
-            if (!tipoFeria || !codigoSise || !empresaSise) return;
-    
+            const cargoSise = document.getElementById('campo-cargo-sise');
+        
+            if (!tipoFeria || !codigoSise || !empresaSise || !cargoSise) return;
+        
             if (tipoFeria.value === 'FERIA MOVIL') {
                 codigoSise.style.display = 'block';
                 empresaSise.style.display = 'block';
+                cargoSise.style.display = 'block';
             } else {
                 codigoSise.style.display = 'none';
                 empresaSise.style.display = 'none';
+                cargoSise.style.display = 'none';
             }
         }
-    
-        // Mostrar/ocultar campo de interés en prácticas
-        function toggleInteresPractica() {
-            const formacion = document.getElementById('id_formacion_academica');
-            const interes = document.getElementById('campo-interes-practica');
-    
-            if (!formacion || !interes) return;
-    
-            const opcionesValidas = [
-                'ESTUDIANTE TECNICO LABORAL/PROFESIONAL',
-                'ESTUDIANTE TECNOLOGO',
-                'ESTUDIANTE PROFESIONAL'
-            ];
-    
-            if (opcionesValidas.includes(formacion.value)) {
-                interes.style.display = 'block';
-            } else {
-                interes.style.display = 'none';
-            }
-        }
-    
+            
         // Ejecutar ambas funciones al cargar
         const tipoFeriaSelect = document.getElementById('tipo_feria');
         const formacionSelect = document.getElementById('id_formacion_academica');
