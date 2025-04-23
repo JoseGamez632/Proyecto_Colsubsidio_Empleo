@@ -401,7 +401,7 @@ Inicio
                     <h6>Experiencia Laboral</h6>
                     <p>Registra tus últimas 3 experiencias laborales con el siguiente formato:</p>
                     <div class="example-box">
-                        Último cargo - Fecha inicio a Fecha fin
+                        Último cargo - Empresa - Fecha inicio a Fecha fin
                     </div>
                 </div>
             </div>
@@ -629,9 +629,9 @@ Inicio
                         NOTA: En caso de no tener experiencia colocar "NO TENGO EXPERIENCIA"</small>
                         <h2 style="font-size: 14px; font-weight: 300; margin-bottom: 1rem;">
                             Ingresa las últimas 3 experiencias laborales iniciando por la más reciente con el siguiente formato:<br>
-                            Último cargo - Fecha de inicio a Fecha de retiro<br>
-                            Penúltimo cargo - Fecha de inicio a Fecha de retiro<br>
-                            Tercer cargo - Fecha de inicio a Fecha de retiro<br>
+                            Último cargo - Empresa - Fecha de inicio a Fecha de retiro<br>
+                            Penúltimo cargo - Empresa - Fecha de inicio a Fecha de retiro<br>
+                            Tercer cargo - Empresa - Fecha de inicio a Fecha de retiro<br>
                             <strong>NOTA:</strong> En caso de no tener experiencia colocar "NO TENGO EXPERIENCIA"<br>
                         </h2>
                                                 {{ form.experiencia_laboral }}
@@ -684,19 +684,22 @@ Inicio
                     </div>
                     {% endif %}
                     <div class="form-group col-md-6">
-                        <label for="vacantes">Vacantes disponibles</label>
-                        <span class="info-icon" onclick="mostrarInstruccion('vacd-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
+                        <label for="vacantes">Vacantes aplicadas</label>
+                        <span class="info-icon" onclick="mostrarInstruccion('vacd-info')">
+                            <i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i>
+                        </span>
                         <small id="vacd-info" style="display: none;">En esta parte podras ver las vacantes a las que vas a aplicar</small>
-                        <select id="vacantes" name="vacantes_disponibles" class="form-control" multiple="multiple" >
+                        <select id="vacantes" name="vacantes_disponibles" class="form-control" multiple="multiple"
+                            {% if not user.is_authenticated %}disabled{% endif %}>
                             {% for vacante in form.fields.vacantes_disponibles.queryset %}
                             <option value="{{ vacante.id }}" 
-                            {% if vacante in selected_vacantes %}selected{% endif %}>
-                            {{ vacante }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                </div>   
-            </div>
+                                {% if vacante in selected_vacantes %}selected{% endif %}>
+                                {{ vacante }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
             
             <div class="form-row">
                 <div class="form-group col-md-6">
