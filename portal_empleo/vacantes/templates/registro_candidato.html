@@ -8,6 +8,44 @@ Inicio
 {% block contenido %}
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
 <style>
+    .custom-check {
+        display: flex;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.03);
+        padding: 12px;
+        border-radius: 10px;
+        border: 1px solid #404040;
+        transition: all 0.3s ease;
+        margin-top: 10px;
+    }
+    
+    .custom-check:hover {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: #f8d047;
+    }
+    
+    .custom-check-input {
+        width: 20px;
+        height: 20px;
+        margin-right: 12px;
+        accent-color: #f8d047;
+        cursor: pointer;
+    }
+    
+    .custom-check-label {
+        margin: 0;
+        font-weight: 500;
+        color: #f0f0f0;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        font-size: 0.95rem;
+    }
+    
+    .custom-check-input:checked + .custom-check-label {
+        color: #f8d047;
+    }
+    
     h1.text-center {
         font-size: 2rem !important; /* Ajusta el tamaño */
         font-weight: bold !important;
@@ -401,7 +439,7 @@ Inicio
                     <h6>Experiencia Laboral</h6>
                     <p>Registra tus últimas 3 experiencias laborales con el siguiente formato:</p>
                     <div class="example-box">
-                        Último cargo - Fecha inicio a Fecha fin
+                        Último cargo - Empresa - Fecha inicio a Fecha fin
                     </div>
                 </div>
             </div>
@@ -505,14 +543,30 @@ Inicio
                     <label for="tipo_feria">Tipo de Feria</label>
                     {{ form.tipo_feria }}
                 </div>
+                <div class="form-group col-12 col-md-6" id="campo-no-citado" style="display: none;">
+                    <div class="custom-check">
+                        <input type="checkbox" class="custom-check-input" id="no_citado_checkbox">
+                        <label for="no_citado_checkbox" class="custom-check-label">
+                            <i class="fa-solid fa-ban" style="color: #f8d047; margin-right: 8px;"></i> Marcar como <strong>"No Citado"</strong>
+                        </label>
+                    </div>
+                </div>
+                
                 <div class="form-group col-12 col-md-6" id="campo-codigo-sise" style="display: none;">
                     <label for="codigo_sise">Código SISE</label>
                     {{ form.codigo_sise }}
                 </div>
+                
                 <div class="form-group col-12 col-md-6" id="campo-empresa-sise" style="display: none;">
                     <label for="empresa_sise">Empresa SISE</label>
                     {{ form.empresa_sise }}
                 </div>
+                
+                <div class="form-group col-12 col-md-6" id="campo-cargo-sise" style="display: none;">
+                    <label for="cargo_sise">Cargo SISE</label>
+                    {{ form.cargo_sise }}
+                </div>
+                
                 <div class="form-group col-12 col-md-6">
                     <label for="fecha_feria">Fecha de Feria</label>
                     <input type="date" name="fecha_feria" id="fecha_feria" 
@@ -629,9 +683,9 @@ Inicio
                         NOTA: En caso de no tener experiencia colocar "NO TENGO EXPERIENCIA"</small>
                         <h2 style="font-size: 14px; font-weight: 300; margin-bottom: 1rem;">
                             Ingresa las últimas 3 experiencias laborales iniciando por la más reciente con el siguiente formato:<br>
-                            Último cargo - Fecha de inicio a Fecha de retiro<br>
-                            Penúltimo cargo - Fecha de inicio a Fecha de retiro<br>
-                            Tercer cargo - Fecha de inicio a Fecha de retiro<br>
+                            Último cargo - Empresa - Fecha de inicio a Fecha de retiro<br>
+                            Penúltimo cargo - Empresa - Fecha de inicio a Fecha de retiro<br>
+                            Tercer cargo - Empresa - Fecha de inicio a Fecha de retiro<br>
                             <strong>NOTA:</strong> En caso de no tener experiencia colocar "NO TENGO EXPERIENCIA"<br>
                         </h2>
                                                 {{ form.experiencia_laboral }}
@@ -684,19 +738,22 @@ Inicio
                     </div>
                     {% endif %}
                     <div class="form-group col-md-6">
-                        <label for="vacantes">Vacantes disponibles</label>
-                        <span class="info-icon" onclick="mostrarInstruccion('vacd-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
+                        <label for="vacantes">Vacantes aplicadas</label>
+                        <span class="info-icon" onclick="mostrarInstruccion('vacd-info')">
+                            <i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i>
+                        </span>
                         <small id="vacd-info" style="display: none;">En esta parte podras ver las vacantes a las que vas a aplicar</small>
-                        <select id="vacantes" name="vacantes_disponibles" class="form-control" multiple="multiple" >
+                        <select id="vacantes" name="vacantes_disponibles" class="form-control" multiple="multiple"
+                            {% if not user.is_authenticated %}disabled{% endif %}>
                             {% for vacante in form.fields.vacantes_disponibles.queryset %}
                             <option value="{{ vacante.id }}" 
-                            {% if vacante in selected_vacantes %}selected{% endif %}>
-                            {{ vacante }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                </div>   
-            </div>
+                                {% if vacante in selected_vacantes %}selected{% endif %}>
+                                {{ vacante }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
             
             <div class="form-row">
                 <div class="form-group col-md-6">
@@ -727,29 +784,89 @@ Inicio
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Mostrar/ocultar campos de SISE
+        const tipoFeriaSelect = document.getElementById('tipo_feria');
+        const formacionSelect = document.getElementById('id_formacion_academica');
+        const codigoSise = document.getElementById('campo-codigo-sise');
+        const empresaSise = document.getElementById('campo-empresa-sise');
+        const cargoSise = document.getElementById('campo-cargo-sise');
+        const noCitado = document.getElementById('campo-no-citado');
+        const noCitadoCheckbox = document.getElementById('no_citado_checkbox');
+        const codigoInput = document.getElementById('codigo_sise');
+        const empresaInput = document.getElementById('empresa_sise');
+        const cargoInput = document.getElementById('cargo_sise');
+        const interesPractica = document.getElementById('campo-interes-practica');
+    
         function toggleCamposSise() {
-            const tipoFeria = document.getElementById('tipo_feria');
-            const codigoSise = document.getElementById('campo-codigo-sise');
-            const empresaSise = document.getElementById('campo-empresa-sise');
+            if (!tipoFeriaSelect) return;
     
-            if (!tipoFeria || !codigoSise || !empresaSise) return;
-    
-            if (tipoFeria.value === 'FERIA MOVIL') {
+            if (tipoFeriaSelect.value === 'FERIA MOVIL') {
                 codigoSise.style.display = 'block';
                 empresaSise.style.display = 'block';
+                cargoSise.style.display = 'block';
+                noCitado.style.display = 'block';
             } else {
                 codigoSise.style.display = 'none';
                 empresaSise.style.display = 'none';
+                cargoSise.style.display = 'none';
+                noCitado.style.display = 'none';
+    
+                // Limpiar y habilitar campos si cambian de feria
+                limpiarCamposSise();
+                if (noCitadoCheckbox) noCitadoCheckbox.checked = false;
+                habilitarCamposSise();
             }
+        }
+    
+        function deshabilitarCamposSise() {
+            if (codigoInput) {
+                codigoInput.value = 'NO CITADO';
+                codigoInput.setAttribute('readonly', true);
+            }
+            if (empresaInput) {
+                empresaInput.value = 'NO CITADO';
+                empresaInput.setAttribute('readonly', true);
+            }
+            if (cargoInput) {
+                cargoInput.value = 'NO CITADO';
+                cargoInput.setAttribute('readonly', true);
+            }
+        }
+    
+        function habilitarCamposSise() {
+            if (codigoInput) {
+                codigoInput.removeAttribute('readonly');
+                codigoInput.value = '';
+            }
+            if (empresaInput) {
+                empresaInput.removeAttribute('readonly');
+                empresaInput.value = '';
+            }
+            if (cargoInput) {
+                cargoInput.removeAttribute('readonly');
+                cargoInput.value = '';
+            }
+        }
+    
+        function limpiarCamposSise() {
+            if (codigoInput) codigoInput.value = '';
+            if (empresaInput) empresaInput.value = '';
+            if (cargoInput) cargoInput.value = '';
+        }
+    
+        // Evento para checkbox No Citado
+        if (noCitadoCheckbox) {
+            noCitadoCheckbox.addEventListener('change', function () {
+                if (this.checked) {
+                    deshabilitarCamposSise();
+                } else {
+                    habilitarCamposSise();
+                }
+            });
         }
     
         // Mostrar/ocultar campo de interés en prácticas
         function toggleInteresPractica() {
-            const formacion = document.getElementById('id_formacion_academica');
-            const interes = document.getElementById('campo-interes-practica');
-    
-            if (!formacion || !interes) return;
+            if (!formacionSelect || !interesPractica) return;
     
             const opcionesValidas = [
                 'ESTUDIANTE TECNICO LABORAL/PROFESIONAL',
@@ -757,17 +874,14 @@ Inicio
                 'ESTUDIANTE PROFESIONAL'
             ];
     
-            if (opcionesValidas.includes(formacion.value)) {
-                interes.style.display = 'block';
+            if (opcionesValidas.includes(formacionSelect.value)) {
+                interesPractica.style.display = 'block';
             } else {
-                interes.style.display = 'none';
+                interesPractica.style.display = 'none';
             }
         }
     
-        // Ejecutar ambas funciones al cargar
-        const tipoFeriaSelect = document.getElementById('tipo_feria');
-        const formacionSelect = document.getElementById('id_formacion_academica');
-    
+        // Inicializar listeners
         if (tipoFeriaSelect) {
             tipoFeriaSelect.addEventListener('change', toggleCamposSise);
             toggleCamposSise(); // inicial
@@ -778,8 +892,8 @@ Inicio
             toggleInteresPractica(); // inicial
         }
     });
-    </script>
-    
+</script>
+        
 
 <script>
     

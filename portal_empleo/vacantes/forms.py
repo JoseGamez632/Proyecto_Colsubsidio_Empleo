@@ -16,7 +16,8 @@ class VacanteForm(forms.ModelForm):
             'cargo', 'area', 'numero_puestos', 'modalidad_trabajo',
             'tipo_contrato', 'jornada_trabajo', 'descripcion_vacante',
             'tiempo_experiencia', 'nivel_estudios', 'departamento',
-            'ciudad', 'rango_salarial', 'empresa_usuaria'
+            'ciudad', 'rango_salarial', 'empresa_usuaria',
+            'tipo_vacante', 'citacion_convocatoria'
         ]
         exclude = ['usuario_publicador', 'usuario_actualizador', 'fecha_creacion', 'fecha_actualizacion']
         widgets = {
@@ -33,28 +34,29 @@ class VacanteForm(forms.ModelForm):
             'ciudad': forms.Select(attrs={'class': 'form-control', 'id': 'ciudad-select'}),
             'rango_salarial': forms.TextInput(attrs={'class': 'form-control'}),
             'empresa_usuaria': forms.TextInput(attrs={'class': 'form-control'}),
+            'tipo_vacante': forms.Select(attrs={'class': 'form-control', 'id': 'tipo-vacante-select'}),
+            'citacion_convocatoria': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Solo diligenciar si la vacante es de tipo convocatoria.'}),
         }
-    
+
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop('user', None)  # Recibir el usuario como argumento
+        user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
         self.fields['departamento'].queryset = Departamento.objects.all()
-        self.fields['ciudad'].queryset = Ciudad.objects.none()  # Inicialmente vacío
+        self.fields['ciudad'].queryset = Ciudad.objects.none()
 
         if user and not self.instance.pk:
-            self.instance.usuario_publicador = user  # Asignar usuario al crear
+            self.instance.usuario_publicador = user
 
-        # Si ya hay un departamento seleccionado (edición de formulario)
         if 'departamento' in self.data:
             try:
                 departamento_id = int(self.data.get('departamento'))
                 self.fields['ciudad'].queryset = Ciudad.objects.filter(departamento_id=departamento_id)
             except (ValueError, TypeError):
-                pass  # En caso de error, dejar vacío
+                pass
         elif self.instance.pk:
-            # Si estamos editando una instancia existente
             self.fields['ciudad'].queryset = Ciudad.objects.filter(departamento_id=self.instance.departamento_id)
             self.fields['ciudad'].initial = self.instance.ciudad
+            
 # Registro de candidatos
 
 
@@ -269,7 +271,15 @@ class RegistroCandidatoForm(forms.ModelForm):
         label="Empresa SISE",
         required=False
     )
-    
+    cargo_sise = forms.CharField(
+    widget=forms.TextInput(attrs={
+        'class': 'form-control',
+        'id': 'cargo_sise',
+        'placeholder': 'Ingrese cargo SISE'
+    }),
+    label="Cargo SISE",
+    required=False
+    )
     interes_practica = forms.BooleanField(
         widget=forms.CheckboxInput(attrs={
             'class': 'form-check-input',
