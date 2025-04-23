@@ -8,6 +8,44 @@ Inicio
 {% block contenido %}
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
 <style>
+    .custom-check {
+        display: flex;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.03);
+        padding: 12px;
+        border-radius: 10px;
+        border: 1px solid #404040;
+        transition: all 0.3s ease;
+        margin-top: 10px;
+    }
+    
+    .custom-check:hover {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: #f8d047;
+    }
+    
+    .custom-check-input {
+        width: 20px;
+        height: 20px;
+        margin-right: 12px;
+        accent-color: #f8d047;
+        cursor: pointer;
+    }
+    
+    .custom-check-label {
+        margin: 0;
+        font-weight: 500;
+        color: #f0f0f0;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        font-size: 0.95rem;
+    }
+    
+    .custom-check-input:checked + .custom-check-label {
+        color: #f8d047;
+    }
+    
     h1.text-center {
         font-size: 2rem !important; /* Ajusta el tamaño */
         font-weight: bold !important;
@@ -505,18 +543,30 @@ Inicio
                     <label for="tipo_feria">Tipo de Feria</label>
                     {{ form.tipo_feria }}
                 </div>
+                <div class="form-group col-12 col-md-6" id="campo-no-citado" style="display: none;">
+                    <div class="custom-check">
+                        <input type="checkbox" class="custom-check-input" id="no_citado_checkbox">
+                        <label for="no_citado_checkbox" class="custom-check-label">
+                            <i class="fa-solid fa-ban" style="color: #f8d047; margin-right: 8px;"></i> Marcar como <strong>"No Citado"</strong>
+                        </label>
+                    </div>
+                </div>
+                
                 <div class="form-group col-12 col-md-6" id="campo-codigo-sise" style="display: none;">
                     <label for="codigo_sise">Código SISE</label>
                     {{ form.codigo_sise }}
                 </div>
+                
                 <div class="form-group col-12 col-md-6" id="campo-empresa-sise" style="display: none;">
                     <label for="empresa_sise">Empresa SISE</label>
                     {{ form.empresa_sise }}
                 </div>
+                
                 <div class="form-group col-12 col-md-6" id="campo-cargo-sise" style="display: none;">
                     <label for="cargo_sise">Cargo SISE</label>
                     {{ form.cargo_sise }}
-                </div>                
+                </div>
+                
                 <div class="form-group col-12 col-md-6">
                     <label for="fecha_feria">Fecha de Feria</label>
                     <input type="date" name="fecha_feria" id="fecha_feria" 
@@ -734,30 +784,104 @@ Inicio
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Mostrar/ocultar campos de SISE
+        const tipoFeriaSelect = document.getElementById('tipo_feria');
+        const formacionSelect = document.getElementById('id_formacion_academica');
+        const codigoSise = document.getElementById('campo-codigo-sise');
+        const empresaSise = document.getElementById('campo-empresa-sise');
+        const cargoSise = document.getElementById('campo-cargo-sise');
+        const noCitado = document.getElementById('campo-no-citado');
+        const noCitadoCheckbox = document.getElementById('no_citado_checkbox');
+        const codigoInput = document.getElementById('codigo_sise');
+        const empresaInput = document.getElementById('empresa_sise');
+        const cargoInput = document.getElementById('cargo_sise');
+        const interesPractica = document.getElementById('campo-interes-practica');
+    
         function toggleCamposSise() {
-            const tipoFeria = document.getElementById('tipo_feria');
-            const codigoSise = document.getElementById('campo-codigo-sise');
-            const empresaSise = document.getElementById('campo-empresa-sise');
-            const cargoSise = document.getElementById('campo-cargo-sise');
-        
-            if (!tipoFeria || !codigoSise || !empresaSise || !cargoSise) return;
-        
-            if (tipoFeria.value === 'FERIA MOVIL') {
+            if (!tipoFeriaSelect) return;
+    
+            if (tipoFeriaSelect.value === 'FERIA MOVIL') {
                 codigoSise.style.display = 'block';
                 empresaSise.style.display = 'block';
                 cargoSise.style.display = 'block';
+                noCitado.style.display = 'block';
             } else {
                 codigoSise.style.display = 'none';
                 empresaSise.style.display = 'none';
                 cargoSise.style.display = 'none';
+                noCitado.style.display = 'none';
+    
+                // Limpiar y habilitar campos si cambian de feria
+                limpiarCamposSise();
+                if (noCitadoCheckbox) noCitadoCheckbox.checked = false;
+                habilitarCamposSise();
             }
         }
-            
-        // Ejecutar ambas funciones al cargar
-        const tipoFeriaSelect = document.getElementById('tipo_feria');
-        const formacionSelect = document.getElementById('id_formacion_academica');
     
+        function deshabilitarCamposSise() {
+            if (codigoInput) {
+                codigoInput.value = 'NO CITADO';
+                codigoInput.setAttribute('readonly', true);
+            }
+            if (empresaInput) {
+                empresaInput.value = 'NO CITADO';
+                empresaInput.setAttribute('readonly', true);
+            }
+            if (cargoInput) {
+                cargoInput.value = 'NO CITADO';
+                cargoInput.setAttribute('readonly', true);
+            }
+        }
+    
+        function habilitarCamposSise() {
+            if (codigoInput) {
+                codigoInput.removeAttribute('readonly');
+                codigoInput.value = '';
+            }
+            if (empresaInput) {
+                empresaInput.removeAttribute('readonly');
+                empresaInput.value = '';
+            }
+            if (cargoInput) {
+                cargoInput.removeAttribute('readonly');
+                cargoInput.value = '';
+            }
+        }
+    
+        function limpiarCamposSise() {
+            if (codigoInput) codigoInput.value = '';
+            if (empresaInput) empresaInput.value = '';
+            if (cargoInput) cargoInput.value = '';
+        }
+    
+        // Evento para checkbox No Citado
+        if (noCitadoCheckbox) {
+            noCitadoCheckbox.addEventListener('change', function () {
+                if (this.checked) {
+                    deshabilitarCamposSise();
+                } else {
+                    habilitarCamposSise();
+                }
+            });
+        }
+    
+        // Mostrar/ocultar campo de interés en prácticas
+        function toggleInteresPractica() {
+            if (!formacionSelect || !interesPractica) return;
+    
+            const opcionesValidas = [
+                'ESTUDIANTE TECNICO LABORAL/PROFESIONAL',
+                'ESTUDIANTE TECNOLOGO',
+                'ESTUDIANTE PROFESIONAL'
+            ];
+    
+            if (opcionesValidas.includes(formacionSelect.value)) {
+                interesPractica.style.display = 'block';
+            } else {
+                interesPractica.style.display = 'none';
+            }
+        }
+    
+        // Inicializar listeners
         if (tipoFeriaSelect) {
             tipoFeriaSelect.addEventListener('change', toggleCamposSise);
             toggleCamposSise(); // inicial
@@ -768,8 +892,8 @@ Inicio
             toggleInteresPractica(); // inicial
         }
     });
-    </script>
-    
+</script>
+        
 
 <script>
     
