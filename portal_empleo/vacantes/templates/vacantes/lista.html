@@ -920,11 +920,13 @@ input:checked + .slider:before {
                                         </li>
                                     </ul>
                                 </div>
+                                {% if request.user.is_authenticated %}
                                 <div class="col-md-12 mb-4">
                                     <br>
                                     <h6 class="text-warning mb-3">📅 Datos de citación a convocatoria</h6>
                                     <p class="descripcion-vacante">{{ vacante.citacion_convocatoria }}</p>
-                                </div>                                                                
+                                </div> 
+                                {% endif %}                                                               
 
                             </div>
                         </div>
