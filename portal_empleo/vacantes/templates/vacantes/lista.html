@@ -916,7 +916,12 @@ input:checked + .slider:before {
                                             <strong>⏰ Jornada:</strong> {{ vacante.jornada_trabajo }}
                                         </li>
                                         <li class="list-group-item bg-transparent border-secondary">
-                                            <strong>💰 Salario: $</strong> {{ vacante.rango_salarial|intcomma }}
+                                            <strong>💰 Salario:</strong>
+                                            {% if vacante.rango_salarial %}
+                                                $ {{ vacante.rango_salarial|intcomma }}
+                                            {% else %}
+                                                A convenir
+                                            {% endif %}
                                         </li>
                                     </ul>
                                 </div>
