@@ -966,6 +966,20 @@ input:checked + .slider:before {
         <!-- Contenedor con desplazamiento para manejo de contenido largo -->
         <div class="filters-container" style="max-height: calc(100vh - 70px); overflow-y: auto;">
             <form action="" method="GET" id="filter-form">
+                <div class="mb-3">
+                {# --- FILTRO DE ESTADO (Estilo Área - Adaptado para Boolean) --- #}
+                <div class="mb-3">
+                    <label for="estado" class="form-label text-light">📊 Estado</label>
+                    {# Asegúrate de usar la misma clase JS que para Área si usas una librería #}
+                    <select class="form-control multiselect-improved" id="estado" name="estado" multiple="multiple">
+                        {# Opciones escritas directamente con value="True" y value="False" #}
+                        {# La condición 'selected' busca los strings 'True' o 'False' en la lista de filtros #}
+                        <option value="True" {% if 'True' in filtros.estado_list %}selected{% endif %}>Activa</option>
+                        <option value="False" {% if 'False' in filtros.estado_list %}selected{% endif %}>Inactiva</option>
+                    </select>
+                    {# Ya NO necesitas el bucle {% for %} ni la variable estado_choices #}
+                </div>
+                {# --- FIN FILTRO DE ESTADO --- #}
                 {% if request.user.is_authenticated %}
                 <div class="mb-3">
                     <label for="codigo_vacante" class="form-label text-light">🔎 ID Vacante</label>

@@ -129,7 +129,8 @@ class Vacante(models.Model):
     fecha_publicacion = models.DateField(auto_now_add=True)
     empresa_usuaria = models.CharField(max_length=100)
     candidatos_registrados = models.ManyToManyField('RegistroCandidato', related_name='vacantes', blank=True)
-    estado = models.BooleanField(default=True)
+    estado = models.BooleanField(default=True) # True = Activa, False = Inactiva
+
 
     # Nuevo campo: Tipo Vacante
     tipo_vacante = models.CharField(
