@@ -957,8 +957,8 @@ Inicio
         }
     });
     
-    document.addEventListener('DOMContentLoaded', function() {
-        // Validación y formateo de Fecha de Nacimiento
+    {% comment %} document.addEventListener('DOMContentLoaded', function() {
+        // Validación y formateo de Fecha de Nacimiento (desactivada por problemas con Iphones)
         const fechaNacimientoInput = document.getElementById('fecha_nacimiento');
         if (fechaNacimientoInput) {
             const today = new Date();
@@ -978,7 +978,7 @@ Inicio
                     this.value = ''; // Limpia el campo de fecha
                 }
             });
-        }
+        } {% endcomment %}
     
         // Formateo de Millares para Aspiración Salarial
         const salarioInput = document.getElementById('aspiracion_salarial');

@@ -973,6 +973,7 @@ input:checked + .slider:before {
             <form action="" method="GET" id="filter-form">
                 <div class="mb-3">
                 {# --- FILTRO DE ESTADO (Estilo Área - Adaptado para Boolean) --- #}
+                {% if request.user.is_authenticated %}
                 <div class="mb-3">
                     <label for="estado" class="form-label text-light">📊 Estado</label>
                     {# Asegúrate de usar la misma clase JS que para Área si usas una librería #}
@@ -984,6 +985,7 @@ input:checked + .slider:before {
                     </select>
                     {# Ya NO necesitas el bucle {% for %} ni la variable estado_choices #}
                 </div>
+                {% endif %}
                 {# --- FIN FILTRO DE ESTADO --- #}
                 {% if request.user.is_authenticated %}
                 <div class="mb-3">
