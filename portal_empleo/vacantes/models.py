@@ -35,16 +35,16 @@ class Ciudad(models.Model):
 class Vacante(models.Model):
     # Datos obligatorios
     codigo_vacante = models.CharField(
-        max_length=50, 
-        unique=True, 
+        max_length=50,
+        unique=True,
         default=generate_unique_codigo
     )
     cargo = models.CharField(max_length=100)
     area = models.CharField(
-        max_length=100, 
-        null=True, 
-        blank=True, 
-        choices = [
+        max_length=100,
+        null=True,
+        blank=True,
+        choices=[
             ('Administración y Gestión', 'Administración y Gestión'),
             ('Finanzas y Contabilidad', 'Finanzas y Contabilidad'),
             ('Tecnología e Informática', 'Tecnología e Informática'),
@@ -68,12 +68,12 @@ class Vacante(models.Model):
         ]
     )
     numero_puestos = models.IntegerField(
-        null=True, 
-        blank=True, 
-        default=1  
+        null=True,
+        blank=True,
+        default=1
     )
     modalidad_trabajo = models.CharField(
-        max_length=50, 
+        max_length=50,
         choices=[
             ('Presencial', 'Presencial'),
             ('Remoto', 'Remoto'),
@@ -81,8 +81,8 @@ class Vacante(models.Model):
         ]
     )
     tipo_contrato = models.CharField(
-        max_length=50, 
-        choices = [
+        max_length=50,
+        choices=[
             ('Indefinido', 'Indefinido'),
             ('Fijo', 'Fijo'),
             ('Obra o Labor', 'Obra o Labor'),
@@ -92,7 +92,7 @@ class Vacante(models.Model):
         ]
     )
     jornada_trabajo = models.CharField(
-        max_length=50, 
+        max_length=50,
         choices=[
             ('Tiempo completo', 'Tiempo completo'),
             ('Medio tiempo', 'Medio tiempo'),
@@ -101,7 +101,7 @@ class Vacante(models.Model):
     )
     descripcion_vacante = models.TextField(max_length=6000)
     tiempo_experiencia = models.CharField(
-        max_length=50, 
+        max_length=50,
         choices=[
             ('Sin experiencia', 'Sin experiencia'),
             ('Menos de 1 año', 'Menos de 1 año'),
@@ -111,7 +111,7 @@ class Vacante(models.Model):
         ]
     )
     nivel_estudios = models.CharField(
-        max_length=50,  
+        max_length=50,
         choices=[
             ('No Requiere', 'No Requiere'),
             ('Primaria', 'Primaria'),
@@ -129,21 +129,38 @@ class Vacante(models.Model):
     fecha_publicacion = models.DateField(auto_now_add=True)
     empresa_usuaria = models.CharField(max_length=100)
     candidatos_registrados = models.ManyToManyField('RegistroCandidato', related_name='vacantes', blank=True)
-    estado = models.BooleanField(default=True)  # True para activa, False para inactiva
+    estado = models.BooleanField(default=True)
+
+    # Nuevo campo: Tipo Vacante
+    tipo_vacante = models.CharField(
+        max_length=20,
+        choices=[
+            ('Tradicional', 'Tradicional'),
+            ('Convocatoria', 'Convocatoria'),
+        ],
+        default='Tradicional'
+    )
+
+    # Nuevo campo: Citación Convocatoria (opcional)
+    citacion_convocatoria = models.TextField(
+        max_length=3000,
+        null=True,
+        blank=True,
+        help_text="Solo se diligencia si la vacante es de tipo Convocatoria"
+    )
 
     # Datos de auditoría
     usuario_publicador = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='vacantes_publicadas')
     usuario_actualizador = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='vacantes_actualizadas')
-    fecha_creacion = models.DateTimeField(auto_now_add=True)  # Solo se guarda al crear
-    fecha_actualizacion = models.DateTimeField(null=True, blank=True)  # Se actualizará manualmente
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    fecha_actualizacion = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         verbose_name = "Vacante"
         verbose_name_plural = "Vacantes"
 
     def save(self, *args, **kwargs):
-        """ Sobrescribir save para actualizar fecha_actualizacion solo si hubo cambios """
-        if self.pk:  # Si ya existe en la base de datos
+        if self.pk:
             vacante_anterior = Vacante.objects.get(pk=self.pk)
             if any([
                 getattr(vacante_anterior, field) != getattr(self, field)
@@ -151,7 +168,8 @@ class Vacante(models.Model):
                     'cargo', 'area', 'numero_puestos', 'modalidad_trabajo',
                     'tipo_contrato', 'jornada_trabajo', 'descripcion_vacante',
                     'tiempo_experiencia', 'nivel_estudios', 'departamento',
-                    'ciudad', 'rango_salarial', 'empresa_usuaria', 'estado'
+                    'ciudad', 'rango_salarial', 'empresa_usuaria', 'estado',
+                    'tipo_vacante', 'citacion_convocatoria'
                 ]
             ]):
                 self.fecha_actualizacion = now()
@@ -159,7 +177,6 @@ class Vacante(models.Model):
 
     def __str__(self):
         return f"[{self.codigo_vacante}] {self.cargo} - Publicado por {self.usuario_publicador.username if self.usuario_publicador else 'Desconocido'}"
-
 
 
 
@@ -242,9 +259,24 @@ class RegistroCandidato(models.Model):
         ('20 SMMLV en adelante', '20 SMMLV en adelante'),
     ]
 
+    # Nueva opción para tipo de feria
+    TIPO_FERIA_CHOICES = [
+        ('FERIA PROPIA', 'FERIA PROPIA'),
+        ('FERIA INVITADO', 'FERIA INVITADO'),
+        ('FERIA MOVIL', 'FERIA MOVIL'),
+    ]
+
     # Campos
     feria = models.CharField(max_length=100, blank=True, null=True)
     fecha_feria = models.DateField(default=date(2025, 1, 1), blank=True, null=True)
+    # Nuevo campo tipo_feria
+    tipo_feria = models.CharField(max_length=20, choices=TIPO_FERIA_CHOICES, blank=True, null=True)
+    # Nuevos campos para FERIA MOVIL
+    codigo_sise = models.CharField(max_length=50, blank=True, null=True)
+    empresa_sise = models.CharField(max_length=100, blank=True, null=True)
+    cargo_sise = models.CharField(max_length=100, blank=True, null=True)
+    # Nuevo campo para interés en prácticas
+    interes_practica = models.BooleanField(default=False, blank=True, null=True)
     sexo = models.CharField(max_length=16, choices=SEX_CHOICES)
     tipo_documento = models.CharField(max_length=50, choices=DOCUMENT_TYPE_CHOICES)
     numero_documento = models.CharField(max_length=20, unique=True)
@@ -283,7 +315,6 @@ class RegistroCandidato(models.Model):
 
     def __str__(self):
         return f"{self.nombres} {self.apellidos} - {self.tipo_documento}: {self.numero_documento}"
-
 
 class EstadoAplicacion(models.Model):
     ESTADO_CHOICES = [

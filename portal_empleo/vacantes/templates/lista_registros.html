@@ -4,15 +4,39 @@
 {% block contenido %}
 <style>
     h1.text-center {
-    font-size: 3rem !important; /* Ajusta el tamaño */
-    font-weight: bold !important;
-    color: #4d4017 !important; /* Color dorado */
-    text-transform: uppercase !important;
-    line-height: 1.2;
-    margin-bottom: 1.5rem;
-    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
-}
-
+        font-size: 3rem !important; /* Ajusta el tamaño */
+        font-weight: bold !important;
+        color: #4d4017 !important; /* Color dorado */
+        text-transform: uppercase !important;
+        line-height: 1.2;
+        margin-bottom: 1.5rem;
+        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    }
+    
+    .sort-icon {
+        display: inline-block;
+        margin-left: 5px;
+        cursor: pointer;
+    }
+    
+    th {
+        position: relative;
+    }
+    
+    th a {
+        color: inherit;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+    }
+    
+    th a:hover {
+        text-decoration: underline;
+    }
+    
+    .current-sort {
+        color: #007bff;
+    }
 </style>
 <div class="container mt-5">
     <h1 class="text-center">Lista de Registros</h1>
@@ -33,10 +57,62 @@
         <thead>
             <tr>
                 <th>#</th>
-                <th>Nombre Completo</th>
-                <th>Cédula</th>
-                <th>Feria</th>
-                <th>Fecha Registro</th>
+                <th>
+                    <a href="?{% if order_by == 'nombres' and order_dir == 'asc' %}order_by=nombres&order_dir=desc{% else %}order_by=nombres&order_dir=asc{% endif %}{% if query %}&q={{ query }}{% endif %}">
+                        Nombre Completo
+                        {% if order_by == 'nombres' %}
+                            {% if order_dir == 'asc' %}
+                                <span class="sort-icon current-sort">▲</span>
+                            {% else %}
+                                <span class="sort-icon current-sort">▼</span>
+                            {% endif %}
+                        {% else %}
+                            <span class="sort-icon">⇅</span>
+                        {% endif %}
+                    </a>
+                </th>
+                <th>
+                    <a href="?{% if order_by == 'numero_documento' and order_dir == 'asc' %}order_by=numero_documento&order_dir=desc{% else %}order_by=numero_documento&order_dir=asc{% endif %}{% if query %}&q={{ query }}{% endif %}">
+                        Cédula
+                        {% if order_by == 'numero_documento' %}
+                            {% if order_dir == 'asc' %}
+                                <span class="sort-icon current-sort">▲</span>
+                            {% else %}
+                                <span class="sort-icon current-sort">▼</span>
+                            {% endif %}
+                        {% else %}
+                            <span class="sort-icon">⇅</span>
+                        {% endif %}
+                    </a>
+                </th>
+                <th>
+                    <a href="?{% if order_by == 'feria' and order_dir == 'asc' %}order_by=feria&order_dir=desc{% else %}order_by=feria&order_dir=asc{% endif %}{% if query %}&q={{ query }}{% endif %}">
+                        Feria
+                        {% if order_by == 'feria' %}
+                            {% if order_dir == 'asc' %}
+                                <span class="sort-icon current-sort">▲</span>
+                            {% else %}
+                                <span class="sort-icon current-sort">▼</span>
+                            {% endif %}
+                        {% else %}
+                            <span class="sort-icon">⇅</span>
+                        {% endif %}
+                    </a>
+                </th>
+                <th>
+                    <a href="?{% if order_by == 'fecha_feria' and order_dir == 'asc' %}order_by=fecha_feria&order_dir=desc{% else %}order_by=fecha_feria&order_dir=asc{% endif %}{% if query %}&q={{ query }}{% endif %}">
+                        Fecha Registro
+                        {% if order_by == 'fecha_feria' %}
+                            {% if order_dir == 'asc' %}
+                                <span class="sort-icon current-sort">▲</span>
+                            {% else %}
+                                <span class="sort-icon current-sort">▼</span>
+                            {% endif %}
+                        {% else %}
+                            <span class="sort-icon">⇅</span>
+                        {% endif %}
+                    </a>
+                </th>
                 <th>Acciones</th>
             </tr>
         </thead>
@@ -54,7 +130,7 @@
                 </tr>
             {% empty %}
                 <tr>
-                    <td colspan="5" class="text-center">No se encontraron registros.</td>
+                    <td colspan="6" class="text-center">No se encontraron registros.</td>
                 </tr>
             {% endfor %}
         </tbody>

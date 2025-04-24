@@ -892,14 +892,14 @@ input:checked + .slider:before {
                                         </li>
                                         <li class="list-group-item bg-transparent border-secondary">
                                             <strong>📍 Ubicación:</strong> 
-    {% if vacante.ciudad %}
-        {{ vacante.ciudad }}
-    {% elif vacante.departamento %}
-        {{ vacante.departamento }}
-    {% else %}
-        No especificado
-    {% endif %}
-</li>
+                                            {% if vacante.ciudad %}
+                                                {{ vacante.ciudad }}
+                                            {% elif vacante.departamento %}
+                                                {{ vacante.departamento }}
+                                            {% else %}
+                                                No especificado
+                                            {% endif %}
+                                        </li>
                                     </ul>
                                 </div>
                                 
@@ -920,6 +920,14 @@ input:checked + .slider:before {
                                         </li>
                                     </ul>
                                 </div>
+                                {% if request.user.is_authenticated %}
+                                <div class="col-md-12 mb-4">
+                                    <br>
+                                    <h6 class="text-warning mb-3">📅 Datos de citación a convocatoria</h6>
+                                    <p class="descripcion-vacante">{{ vacante.citacion_convocatoria }}</p>
+                                </div> 
+                                {% endif %}                                                               
+
                             </div>
                         </div>
                         <div class="modal-footer">
