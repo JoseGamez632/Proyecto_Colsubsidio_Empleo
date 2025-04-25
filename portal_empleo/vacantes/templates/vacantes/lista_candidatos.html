@@ -90,7 +90,7 @@ Candidatos para la Vacante
                                     </label>
                                 </div>
                                 <!-- Badge a la derecha, centrado verticalmente -->
-                                <span class="badge 
+                                <span id="estado-candidato-{{ candidato.id }}" class="badge 
                                     {% if candidato.estado_aplicacion == 'No visto' %}bg-secondary
                                     {% elif candidato.estado_aplicacion == 'Visto' %}bg-info
                                     {% elif candidato.estado_aplicacion == 'Descartado' %}bg-danger
@@ -151,7 +151,6 @@ Candidatos para la Vacante
                                 <button class="btn btn-primary btn-sm flex-grow-1 view-details d-flex align-items-center justify-content-center gap-2" 
                                     data-candidato-id="{{ candidato.id }}"
                                     data-estado-actual="{{ candidato.estado_aplicacion }}"
-                                    onclick="verHojaDeVida({{ vacante.id }}, {{ candidato.id }}, this)">
                                     <i class="fas fa-eye"></i> Ver Hoja de Vida
                                 </button>
                                 
@@ -644,49 +643,78 @@ Candidatos para la Vacante
             });
         }
 
-        function getCSRFToken() {
-            let csrfToken = null;
-            const cookies = document.cookie.split(';');
-            cookies.forEach(cookie => {
-                const [name, value] = cookie.trim().split('=');
-                if (name === 'csrftoken') {
-                    csrfToken = value;
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
                 }
-            });
-            return csrfToken;
+            }
+            return cookieValue;
         }
+        const csrftoken = getCookie('csrftoken');
+    
 
         // --- Candidate Card Functions ---
-        function verHojaDeVida(vacanteId, candidatoId, boton) {
-            const estadoActual = boton.getAttribute("data-estado-actual");
-            if (estadoActual === "No visto") {
-                const csrftoken = getCSRFToken();
-                fetch(`/vacantes/${vacanteId}/candidatos/${candidatoId}/cambiar_a_visto/`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRFToken': csrftoken,
-                        'Content-Type': 'application/json'
-                    }
-                }).then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            const estadoElemento = document.getElementById(`estado-${candidatoId}`);
-                            estadoElemento.textContent = "Estado: Visto";
-                            estadoElemento.classList.remove("bg-secondary");
-                            estadoElemento.classList.add("bg-info");
-                            boton.setAttribute("data-estado-actual", "Visto");
-                            mostrarHojaDeVida(candidatoId);
+        async function verHojaDeVida(vacanteId, candidatoId, buttonElement) {
+            const estadoActual = buttonElement.getAttribute('data-estado-actual');
+            const urlCambiarEstado = `/vacantes/${vacanteId}/candidatos/${candidatoId}/cambiar_a_visto/`;
+        
+            // 1. Intentar cambiar el estado en el backend SOLO si es "No visto"
+            if (estadoActual === 'No visto') {
+                try {
+                    const response = await fetch(urlCambiarEstado, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': csrftoken, // Usa la variable global
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                    });
+        
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success && data.nuevo_estado === 'Visto') {
+                            console.log('Estado cambiado a Visto en el backend.');
+                            // 2. Actualizar la interfaz de usuario
+                            const estadoElement = document.getElementById(`estado-candidato-${candidatoId}`); // Busca el ID que añadiste al span
+                            if (estadoElement) {
+                                // Actualiza el texto y la clase del badge de estado
+                                estadoElement.textContent = 'Estado: Visto'; // <-- Actualiza el texto completo
+                                estadoElement.classList.remove('bg-secondary');
+                                estadoElement.classList.add('bg-info'); // Clase para 'Visto'
+        
+                                // Actualiza el atributo del botón
+                                buttonElement.setAttribute('data-estado-actual', 'Visto');
+                            } else {
+                                console.warn(`Elemento con ID estado-candidato-${candidatoId} no encontrado.`);
+                            }
                         } else {
-                            console.log("No se cambió el estado:", data.message);
-                            mostrarHojaDeVida(candidatoId);
+                            console.log('El estado no se cambió en el backend:', data.message);
                         }
-                    }).catch(error => {
-                    console.error("Error en la petición:", error);
-                });
+                    } else {
+                        console.error('Error en la petición para cambiar estado:', response.statusText);
+                    }
+                } catch (error) {
+                    console.error('Error en fetch para cambiar estado:', error);
+                }
             } else {
-                mostrarHojaDeVida(candidatoId);
+                console.log('El estado actual no es "No visto", no se intenta cambiar.');
             }
+        
+            // 3. Mostrar el modal (tu lógica actual)
+            console.log(`Mostrando modal para candidato ${candidatoId}`);
+            mostrarHojaDeVida(candidatoId); // Llama a tu función existente para mostrar el modal
         }
+        
+
+        
         function mostrarHojaDeVida(candidatoId) {
             const candidato = candidatos.find(c => c.id === candidatoId);
             const vacanteId = window.location.pathname.split('/')[2]; // Extraer vacanteId de la URL
@@ -922,12 +950,15 @@ Candidatos para la Vacante
         });
 
         document.querySelectorAll('.view-details').forEach(button => {
-            button.addEventListener('click', () => {
-                const candidatoId = parseInt(button.dataset.candidatoId);
-                currentCandidatoIndex = candidatos.findIndex(c => c.id === candidatoId);
-                if (currentCandidatoIndex !== -1) {
-                    mostrarHojaDeVida(candidatos[currentCandidatoIndex].id); //showCV(candidatos[currentCandidatoIndex]);
-                }
+            button.addEventListener('click', (event) => {
+                const buttonElement = event.currentTarget; // El botón que se clickeó
+                const candidatoId = parseInt(buttonElement.dataset.candidatoId);
+                // Necesitamos el ID de la vacante. Asumiendo que está disponible globalmente
+                // o lo puedes obtener del contexto Django si es necesario.
+                const vacanteId = {{ vacante.id }}; // Obtén el ID de la vacante actual
+        
+                // Llama a la función verHojaDeVida (que ahora está dentro de este scope)
+                verHojaDeVida(vacanteId, candidatoId, buttonElement);
             });
         });
 
