@@ -22,6 +22,8 @@ from openpyxl.utils import get_column_letter
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.models import User 
+
 
 
 
@@ -41,6 +43,7 @@ def normalizar_texto(texto):
     
 
 def lista_vacantes(request):
+    
     # Procesar los parámetros de filtro multiselect
     filtros = {
         'cargo': request.GET.get('cargo', ''),
@@ -49,6 +52,8 @@ def lista_vacantes(request):
         'rango_salarial_max': request.GET.get('rango_salarial_max', ''),
 
         # Campos multiselect (pueden tener múltiples valores)
+        'usuario_publicador_list': request.GET.getlist('usuario_publicador'),
+        'estado_list': request.GET.getlist('estado'), # Recibe ['True'], ['False'], o ['True', 'False']
         'area_list': request.GET.getlist('area'),
         'modalidad_trabajo_list': request.GET.getlist('modalidad_trabajo'),
         'tipo_contrato_list': request.GET.getlist('tipo_contrato'),
@@ -62,9 +67,13 @@ def lista_vacantes(request):
     # Obtener todas las vacantes activas si el usuario no está autenticado
     vacantes = Vacante.objects.filter(estado=True) if not request.user.is_authenticated else Vacante.objects.all()
 
+    usuarios_publicadores = User.objects.all().order_by('username')
+
+
     # Filtro para Codigo Vacante (ID Cargo)
     if filtros['codigo_vacante']:
         vacantes = vacantes.filter(codigo_vacante__icontains=filtros['codigo_vacante'].strip())
+    
     
     # Filtro para Cargo
     if filtros['cargo']:
@@ -73,6 +82,24 @@ def lista_vacantes(request):
     # Aplicar filtros multiselect
     if filtros['area_list']:
         vacantes = vacantes.filter(area__in=filtros['area_list'])
+        
+    # filtro estado    
+    if filtros['estado_list']:
+        # Convertir los strings 'True'/'False' de la URL a booleanos
+        estados_booleanos = []
+        if 'True' in filtros['estado_list']:
+            estados_booleanos.append(True)
+        if 'False' in filtros['estado_list']:
+            estados_booleanos.append(False)
+            
+        if estados_booleanos: # Solo filtra si se seleccionó algo válido
+            vacantes = vacantes.filter(estado__in=estados_booleanos)
+            
+    #filtro usuario publicador
+    if filtros['usuario_publicador_list']:
+        vacantes = vacantes.filter(usuario_publicador__id__in=filtros['usuario_publicador_list'])
+
+    
     
     if filtros['modalidad_trabajo_list']:
         vacantes = vacantes.filter(modalidad_trabajo__in=filtros['modalidad_trabajo_list'])
@@ -182,6 +209,7 @@ def lista_vacantes(request):
         "vacantes": vacantes,
         "filtros": filtros,
         "ciudades_cundinamarca": ciudades_cundinamarca,
+        "usuarios_publicadores": usuarios_publicadores, # <--- Asegúrate de que esta línea exista
         **choices_context  # Pasar los choices al template
     })# API para obtener ciudades por departamentos (añadir a urls.py)
 def ciudades_por_departamentos(request):

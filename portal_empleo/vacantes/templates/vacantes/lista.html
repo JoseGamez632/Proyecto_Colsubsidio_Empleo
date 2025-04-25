@@ -916,7 +916,12 @@ input:checked + .slider:before {
                                             <strong>⏰ Jornada:</strong> {{ vacante.jornada_trabajo }}
                                         </li>
                                         <li class="list-group-item bg-transparent border-secondary">
-                                            <strong>💰 Salario: $</strong> {{ vacante.rango_salarial|intcomma }}
+                                            <strong>💰 Salario:</strong>
+                                            {% if vacante.rango_salarial %}
+                                                $ {{ vacante.rango_salarial|intcomma }}
+                                            {% else %}
+                                                A convenir
+                                            {% endif %}
                                         </li>
                                     </ul>
                                 </div>
@@ -966,12 +971,45 @@ input:checked + .slider:before {
         <!-- Contenedor con desplazamiento para manejo de contenido largo -->
         <div class="filters-container" style="max-height: calc(100vh - 70px); overflow-y: auto;">
             <form action="" method="GET" id="filter-form">
+                <div class="mb-3">
+                {# --- FILTRO DE ESTADO (Estilo Área - Adaptado para Boolean) --- #}
+                {% if request.user.is_authenticated %}
+                <div class="mb-3">
+                    <label for="estado" class="form-label text-light">📊 Estado</label>
+                    {# Asegúrate de usar la misma clase JS que para Área si usas una librería #}
+                    <select class="form-control multiselect-improved" id="estado" name="estado" multiple="multiple">
+                        {# Opciones escritas directamente con value="True" y value="False" #}
+                        {# La condición 'selected' busca los strings 'True' o 'False' en la lista de filtros #}
+                        <option value="True" {% if 'True' in filtros.estado_list %}selected{% endif %}>Activa</option>
+                        <option value="False" {% if 'False' in filtros.estado_list %}selected{% endif %}>Inactiva</option>
+                    </select>
+                    {# Ya NO necesitas el bucle {% for %} ni la variable estado_choices #}
+                </div>
+                {% endif %}
+                {# --- FIN FILTRO DE ESTADO --- #}
                 {% if request.user.is_authenticated %}
                 <div class="mb-3">
                     <label for="codigo_vacante" class="form-label text-light">🔎 ID Vacante</label>
                     <input type="text" class="form-control" id="codigo_vacante" name="codigo_vacante" value="{{ request.GET.codigo_vacante }}">
                 </div>
                 {% endif %}
+
+                {% if request.user.is_authenticated %}
+                {# Filtro por Usuario Publicador #}
+                <div class="mb-3">
+                    <label for="usuario_publicador" class="form-label text-light">👤 Creado por</label>
+                    {# Asume que pasas 'usuarios_publicadores' desde la vista #}
+                    {# Y 'filtros.usuario_publicador_list' contiene los IDs seleccionados #}
+                    <select class="form-control multiselect-improved" id="usuario_publicador" name="usuario_publicador" multiple="multiple">
+                        {% for usuario in usuarios_publicadores %}
+                            <option value="{{ usuario.id }}" {% if usuario.id|stringformat:"s" in filtros.usuario_publicador_list %}selected{% endif %}>
+                                {{ usuario.username }} {# O usuario.get_full_name si prefieres #}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% endif %}
+
                 <div class="mb-3">
                     <label for="cargo" class="form-label text-light">💼 Cargo</label>
                     <input type="text" class="form-control" id="cargo" name="cargo" value="{{ request.GET.cargo }}">
@@ -984,6 +1022,8 @@ input:checked + .slider:before {
                         {% endfor %}
                     </select>
                 </div>
+
+
 
                 <div class="mb-3">
                     <label for="modalidad_trabajo" class="form-label text-light">🏢 Modalidad de Trabajo</label>
@@ -1368,6 +1408,9 @@ function updateActiveFilters() {
         { id: 'codigo_vacante', label: 'ID Vacante', type: 'text', icon: '🔎' },
         { id: 'cargo', label: 'Cargo', type: 'text', icon: '💼' },
         { id: 'area', label: 'Área', type: 'select', icon: '🎯' },
+        { id: 'estado', label: 'Estado', type: 'select', icon: '📊' },
+        { id: 'usuario_publicador', label: 'Publicador', type: 'select', icon: '👤' },
+        { id: 'ciudad', label: 'Ciudad', type: 'select', icon: '📍' },
         { id: 'modalidad_trabajo', label: 'Modalidad', type: 'select', icon: '🏢' },
         { id: 'tipo_contrato', label: 'Contrato', type: 'select', icon: '📄' },
         { id: 'jornada_trabajo', label: 'Jornada', type: 'select', icon: '⏰' },
