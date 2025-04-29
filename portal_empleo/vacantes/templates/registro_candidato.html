@@ -844,11 +844,105 @@ Inicio
     </div>
 </div>
 
+<div class="modal fade" id="registroExitosoModal" tabindex="-1" role="dialog" aria-labelledby="registroExitosoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content" style="
+        background: linear-gradient(135deg, #1a1a1a, #2b2b2b);
+        color: #fff;
+        border-radius: 20px;
+        border: 1px solid #444;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+        overflow: hidden;
+        animation: fadeInModal 0.6s ease;">
+        
+        <div class="modal-header" style="border-bottom: none; text-align:center; display:block;">
+          <div style="
+            font-size: 60px;
+            margin-bottom: 10px;
+            animation: pulse 1.2s infinite;
+            color: #f8d047;">
+            🎉
+          </div>
+          <h4 class="modal-title" id="registroExitosoModalLabel" style="
+            color: #f8d047;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align:center;">
+            ¡Registro Exitoso!
+          </h4>
+        </div>
+  
+        <div class="modal-body" style="font-size: 1.2rem; text-align:center; line-height: 1.6; padding: 25px 30px;">
+          Tus datos de registro se han guardado correctamente.<br>
+          <strong>Acércate a uno de nuestros profesionales de selección</strong><br>
+          para completar tu registro y aplicar a las vacantes.
+        </div>
+  
+        <div class="modal-footer" style="border-top: none; justify-content: center; padding: 20px;">
+          <button type="button" class="btn" id="aceptarRegistroModal" style="
+            background: linear-gradient(145deg, #f8d047, #e6b800);
+            color: #333;
+            padding: 14px 30px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(248, 208, 71, 0.4);
+            border: none;">
+            Continuar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <style>
+  @keyframes fadeInModal {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+  }
+  #aceptarRegistroModal:hover {
+    background: linear-gradient(145deg, #e6b800, #d9a600);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 25px rgba(248, 208, 71, 0.6);
+  }
+  </style>
+  
+
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const formulario = document.querySelector('form');
+    
+        if (formulario) {
+            // Eliminar listeners previos con un clon
+            const newForm = formulario.cloneNode(true);
+            formulario.parentNode.replaceChild(newForm, formulario);
+    
+            // Forzar listener
+            newForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+                $('#registroExitosoModal').modal('show');
+            });
+    
+            // Redirigir al aceptar
+            document.getElementById('aceptarRegistroModal').addEventListener('click', function () {
+                window.location.href = "{% url 'registration_guide' %}";
+            });
+        }
+    });
+    
     $(document).ready(function() {
         $('#vacantes').select2({
             placeholder: "Seleccione vacantes",
