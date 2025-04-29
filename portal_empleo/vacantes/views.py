@@ -23,6 +23,8 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User 
+from django.utils.timezone import localtime
+
 
 
 
@@ -343,28 +345,103 @@ def registro_candidato_view(request):
 #Descargar Excel
 
 def descargar_excel(request):
-    """Genera y descarga un archivo Excel con los datos de las vacantes."""
+    """Genera y descarga un archivo Excel con todos los datos de las vacantes, incluyendo descripción completa."""
+    import openpyxl
+    from django.http import HttpResponse
+    from django.utils.timezone import now
+    from django.db import connection
+    import logging
 
-    # Crear un nuevo libro de trabajo y hoja
+    # Configurar logging
+    logger = logging.getLogger('django')
+    logger.info("Iniciando descarga de Excel con descripción completa...")
+
+    # Crear el libro Excel
     wb = openpyxl.Workbook()
     ws = wb.active
     ws.title = "Vacantes"
-
-    # Encabezados de la tabla
+    
+    # Encabezados estándar
     headers = [
         "Código Vacante", "Cargo", "Área", "Número de Puestos", 
         "Modalidad Trabajo", "Tipo Contrato", "Jornada Trabajo",
         "Descripción", "Experiencia", "Nivel Estudios",
         "Departamento", "Ciudad", "Rango Salarial",
-        "Empresa", "Estado", "Fecha Publicación"
+        "Empresa", "Estado", "Fecha Publicación",
+        "Tipo Vacante", "Citacion Convocatoria", "Cantidad Candidatos Registrados",
+        "Usuario Publicador", "Fecha Creación", "Fecha Actualización"
     ]
     ws.append(headers)
-
-    # Obtener todas las vacantes activas
+    
+    # Consulta de vacantes
     vacantes = Vacante.objects.all()
-
-    # Agregar los datos de cada vacante
+    
     for vacante in vacantes:
+        # Usar la función que ya sabemos que funciona para contar candidatos
+        cantidad_candidatos = 0
+        
+        try:
+            # Este bloque debe contener lo que encontraste que funciona para contar candidatos
+            # Por ejemplo, si una de estas técnicas funcionó, úsala:
+            relevant_tables = []
+            with connection.cursor() as cursor:
+                # Obtener tablas relevantes (esto es una simplificación del código anterior)
+                if connection.vendor == 'postgresql':
+                    cursor.execute("""
+                        SELECT table_name FROM information_schema.tables 
+                        WHERE table_schema = 'public'
+                    """)
+                elif connection.vendor == 'mysql':
+                    cursor.execute("SHOW TABLES")
+                else:
+                    cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
+                
+                tables = [table[0] for table in cursor.fetchall()]
+                
+                # Examinar cada tabla
+                for table in tables:
+                    try:
+                        if connection.vendor == 'postgresql':
+                            cursor.execute(f"""
+                                SELECT column_name FROM information_schema.columns 
+                                WHERE table_name = '{table}'
+                            """)
+                        elif connection.vendor == 'mysql':
+                            cursor.execute(f"DESCRIBE {table}")
+                        else:
+                            cursor.execute(f"PRAGMA table_info({table})")
+                            
+                        columns_data = cursor.fetchall()
+                        columns = []
+                        
+                        # Obtener nombres de columnas según el tipo de BD
+                        if connection.vendor == 'postgresql':
+                            columns = [col[0] for col in columns_data]
+                        elif connection.vendor == 'mysql':
+                            columns = [col[0] for col in columns_data]
+                        else:
+                            columns = [col[1] for col in columns_data]
+                        
+                        if 'vacante_id' in columns:
+                            relevant_tables.append((table, columns))
+                    except:
+                        continue
+            
+            # Probar cada tabla relevante para contar candidatos
+            for table, columns in relevant_tables:
+                if 'vacante_id' in columns:
+                    with connection.cursor() as cursor:
+                        query = f"SELECT COUNT(*) FROM {table} WHERE vacante_id = %s"
+                        cursor.execute(query, [vacante.id])
+                        count = cursor.fetchone()[0]
+                        if count > 0:
+                            cantidad_candidatos = count
+                            break
+                            
+        except Exception as e:
+            logger.error(f"Error al contar candidatos para vacante {vacante.codigo_vacante}: {e}")
+        
+        # Añadir fila al Excel, con descripción completa
         ws.append([
             vacante.codigo_vacante,
             vacante.cargo,
@@ -373,7 +450,8 @@ def descargar_excel(request):
             vacante.modalidad_trabajo,
             vacante.tipo_contrato,
             vacante.jornada_trabajo,
-            vacante.descripcion_vacante[:100] + "..." if len(vacante.descripcion_vacante) > 100 else vacante.descripcion_vacante,
+            # Mostrar la descripción completa sin truncar
+            vacante.descripcion_vacante,
             vacante.tiempo_experiencia,
             vacante.nivel_estudios,
             vacante.departamento.nombre if vacante.departamento else "No especificado",
@@ -381,20 +459,49 @@ def descargar_excel(request):
             vacante.rango_salarial if vacante.rango_salarial else "No especificado",
             vacante.empresa_usuaria,
             "Activa" if vacante.estado else "Inactiva",
-            vacante.fecha_publicacion.strftime("%d/%m/%Y")
+            vacante.fecha_publicacion.strftime("%d/%m/%Y"),
+            vacante.tipo_vacante,
+            vacante.citacion_convocatoria if vacante.citacion_convocatoria else "No aplica",
+            cantidad_candidatos,
+            vacante.usuario_publicador.username if vacante.usuario_publicador else "Sin registro",
+            vacante.fecha_creacion.strftime("%d/%m/%Y %H:%M"),
+            vacante.fecha_actualizacion.strftime("%d/%m/%Y %H:%M") if vacante.fecha_actualizacion else "Sin actualización"
         ])
-
-    # Configurar la respuesta HTTP
+    
+    # Ajustar el ancho de las columnas, pero permitiendo que la descripción sea ancha
+    for column_index, column in enumerate(ws.columns):
+        max_length = 0
+        column_letter = openpyxl.utils.get_column_letter(column[0].column)
+        
+        # Configuración especial para la columna de descripción (columna H, índice 7)
+        if column_index == 7:  # La columna de descripción
+            ws.column_dimensions[column_letter].width = 100  # Ancho fijo amplio para descripción
+        else:
+            for cell in column:
+                try:
+                    if len(str(cell.value)) > max_length:
+                        max_length = len(str(cell.value))
+                except:
+                    pass
+            adjusted_width = (max_length + 2) if max_length < 50 else 50
+            ws.column_dimensions[column_letter].width = adjusted_width
+    
+    # Configurar el estilo para permitir texto multilínea y ajuste de texto
+    from openpyxl.styles import Alignment
+    for row in ws.iter_rows(min_row=2):  # Comenzar desde la fila 2 (después de los encabezados)
+        # Aplicar alineación y ajuste de texto a la celda de descripción (columna H, índice 7)
+        row[7].alignment = Alignment(wrap_text=True, vertical='top')
+    
+    # Ajustar la altura de las filas para mostrar mejor el texto multilínea
+    for row_index in range(2, ws.max_row + 1):
+        ws.row_dimensions[row_index].height = 90  # Altura fija para todas las filas con datos
+    
     response = HttpResponse(
         content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
-    response["Content-Disposition"] = 'attachment; filename="vacantes.xlsx"'
-
-    # Guardar el libro en la respuesta
+    response["Content-Disposition"] = 'attachment; filename="vacantes_completo.xlsx"'
     wb.save(response)
     return response
-
-
 
 # def lista_candidatos(request, id):
 #     # Obtener la vacante específica
