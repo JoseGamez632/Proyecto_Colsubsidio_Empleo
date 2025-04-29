@@ -759,13 +759,15 @@ def exportar_candidatos_excel(request):
     ws = wb.active
     ws.title = "Candidatos"
 
+    # Orden actualizado según lo solicitado
     columnas = [
-        "Feria", "Fecha Feria", "Sexo", "Tipo Documento", "Número Documento", 
-        "Nombres", "Apellidos", "Número Celular", "Correo Electrónico", 
-        "Fecha Nacimiento", "Formación Académica", "Programa Académico", "En Proceso",
-        "Experiencia Laboral", "Interés Ocupacional", "Departamento", "Ciudad", 
-        "Discapacidad", "Tipo Discapacidad", "Horario Interesado", 
-        "Aspiración Salarial", "Registrado en SISE", "Técnico Selección", "Vacantes Aplicadas"
+        "Tipo Feria", "Feria", "Fecha Feria", "Sexo", "Tipo Documento", "Número Documento", 
+        "Nombres", "Apellidos", "Número Celular", "Correo Electrónico", "Fecha Nacimiento", 
+        "Formación Académica", "Semestre/Grado", "Interés Práctica", "Programa Académico",
+        "Experiencia Laboral", "Interés Ocupacional", "Departamento o Ciudad", "Localidad o Municipio", 
+        "Candidato Discapacidad", "Tipo Discapacidad", "Horario Interesado", 
+        "Aspiración Salarial", "Técnico Selección", "Vacantes Aplicadas", 
+        "Código SISE", "Empresa SISE", "Cargo SISE"
     ]
     
     ws.append(columnas)
@@ -773,33 +775,124 @@ def exportar_candidatos_excel(request):
     candidatos = RegistroCandidato.objects.all()
 
     for candidato in candidatos:
-        vacantes_aplicadas = ", ".join([f"[{vacante.codigo_vacante}] {vacante.cargo}" for vacante in candidato.vacantes_disponibles.all()]) if candidato.vacantes_disponibles.exists() else "No aplica"
+        # Preparamos los datos de vacantes disponibles
+        vacantes_disponibles = ""
         
+        if hasattr(candidato, 'vacantes_disponibles') and candidato.vacantes_disponibles.exists():
+            vacantes_list = [f"{vacante.cargo}" for vacante in candidato.vacantes_disponibles.all()]
+            vacantes_disponibles = ", ".join(vacantes_list) if vacantes_list else ""
+        
+        # Extraer valores seguros para todos los campos
+        tipo_feria = getattr(candidato, 'tipo_feria', "") or ""
+        feria = getattr(candidato, 'feria', "") or ""
+        fecha_feria = ""
+        if hasattr(candidato, 'fecha_feria') and candidato.fecha_feria:
+            try:
+                fecha_feria = candidato.fecha_feria.strftime("%Y-%m-%d")
+            except:
+                pass
+        
+        try:
+            sexo_display = candidato.get_sexo_display() or ""
+        except (AttributeError, ValueError):
+            sexo_display = getattr(candidato, 'sexo', "") or ""
+            
+        try:
+            tipo_documento_display = candidato.get_tipo_documento_display() or ""
+        except (AttributeError, ValueError):
+            tipo_documento_display = getattr(candidato, 'tipo_documento', "") or ""
+        
+        numero_documento = getattr(candidato, 'numero_documento', "") or ""
+        nombres = getattr(candidato, 'nombres', "") or ""
+        apellidos = getattr(candidato, 'apellidos', "") or ""
+        numero_celular = getattr(candidato, 'numero_celular', "") or ""
+        correo_electronico = getattr(candidato, 'correo_electronico', "") or ""
+        
+        fecha_nacimiento = ""
+        if hasattr(candidato, 'fecha_nacimiento') and candidato.fecha_nacimiento:
+            try:
+                fecha_nacimiento = candidato.fecha_nacimiento.strftime("%Y-%m-%d")
+            except:
+                pass
+        
+        try:
+            formacion_academica = candidato.get_formacion_academica_display() or ""
+        except (AttributeError, ValueError):
+            formacion_academica = getattr(candidato, 'formacion_academica', "") or ""
+        
+        semestre_grado = getattr(candidato, 'semestre_grado', "") or ""
+        
+        # Manejar el campo interes_practica según lo solicitado
+        interes_practica = ""
+        if hasattr(candidato, 'interes_practica') and candidato.interes_practica is True:
+            interes_practica = "SI"
+        
+        programa_academico = getattr(candidato, 'programa_academico', "") or ""
+        experiencia_laboral = getattr(candidato, 'experiencia_laboral', "") or ""
+        interes_ocupacional = getattr(candidato, 'interes_ocupacional', "") or ""
+        
+        departamento = ""
+        if hasattr(candidato, 'departamento') and candidato.departamento:
+            departamento = str(candidato.departamento)
+            
+        ciudad = ""
+        if hasattr(candidato, 'ciudad') and candidato.ciudad:
+            ciudad = str(candidato.ciudad)
+        
+        try:
+            candidato_discapacidad = candidato.get_candidato_discapacidad_display() or ""
+        except (AttributeError, ValueError):
+            candidato_discapacidad = getattr(candidato, 'candidato_discapacidad', "") or ""
+            
+        tipo_discapacidad = getattr(candidato, 'tipo_discapacidad', "") or ""
+        
+        try:
+            horario_interesado = candidato.get_horario_interesado_display() or ""
+        except (AttributeError, ValueError):
+            horario_interesado = getattr(candidato, 'horario_interesado', "") or ""
+            
+        aspiracion_salarial = getattr(candidato, 'aspiracion_salarial', "") or ""
+        
+        try:
+            tecnico_seleccion = candidato.get_tecnico_seleccion_display() or ""
+        except (AttributeError, ValueError):
+            tecnico_seleccion = getattr(candidato, 'tecnico_seleccion', "") or ""
+        
+        # Usar los campos codigo_sise, empresa_sise y cargo_sise directamente del modelo
+        codigo_sise = getattr(candidato, 'codigo_sise', "") or ""
+        empresa_sise = getattr(candidato, 'empresa_sise', "") or ""
+        cargo_sise = getattr(candidato, 'cargo_sise', "") or ""
+        
+        # Añadir todos los campos en el orden especificado
         ws.append([
-            candidato.feria,
-            candidato.fecha_feria.strftime("%Y-%m-%d") if candidato.fecha_feria else "",
-            candidato.get_sexo_display(),
-            candidato.get_tipo_documento_display(),
-            candidato.numero_documento,
-            candidato.nombres,
-            candidato.apellidos,
-            candidato.numero_celular,
-            candidato.correo_electronico,
-            candidato.fecha_nacimiento.strftime("%Y-%m-%d"),
-            candidato.get_formacion_academica_display(),
-            candidato.programa_academico,
-            candidato.semestre_grado,
-            candidato.experiencia_laboral,
-            candidato.interes_ocupacional,
-            str(candidato.departamento) if candidato.departamento else "",
-            str(candidato.ciudad) if candidato.ciudad else "",
-            candidato.get_candidato_discapacidad_display(),
-            candidato.tipo_discapacidad,
-            candidato.get_horario_interesado_display(),
-            candidato.aspiracion_salarial,
-            candidato.get_registrado_en_sise_display(),
-            candidato.get_tecnico_seleccion_display(),
-            vacantes_aplicadas
+            tipo_feria,
+            feria,
+            fecha_feria,
+            sexo_display,
+            tipo_documento_display,
+            numero_documento,
+            nombres,
+            apellidos,
+            numero_celular,
+            correo_electronico,
+            fecha_nacimiento,
+            formacion_academica,
+            semestre_grado,
+            interes_practica,
+            programa_academico,
+            experiencia_laboral,
+            interes_ocupacional,
+            departamento,
+            ciudad,
+            candidato_discapacidad,
+            tipo_discapacidad,
+            horario_interesado,
+            aspiracion_salarial,
+            tecnico_seleccion,
+            vacantes_disponibles,
+            codigo_sise,
+            empresa_sise,
+            cargo_sise
         ])
     
     response = HttpResponse(content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
@@ -807,6 +900,8 @@ def exportar_candidatos_excel(request):
     
     wb.save(response)
     return response
+
+
 @require_POST
 @require_POST
 def descargar_candidatos(request):
