@@ -8,6 +8,16 @@ Inicio
 {% block contenido %}
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
 <style>
+    .vacante-tradicional {
+        background-color: #4CAF50 !important; /* Verde para Tradicional */
+        color: white !important;
+    }
+
+    .vacante-convocatoria {
+        background-color: #FF5722 !important; /* Naranja para Convocatoria */
+        color: white !important;
+    }
+
     .custom-check {
         display: flex;
         align-items: center;
@@ -747,10 +757,11 @@ Inicio
                             {% if not user.is_authenticated %}disabled{% endif %}>
                             {% for vacante in form.fields.vacantes_disponibles.queryset %}
                             <option value="{{ vacante.id }}" 
-                                {% if vacante in selected_vacantes %}selected{% endif %}>
+                                {% if vacante in selected_vacantes %}selected{% endif %}
+                                class="{% if vacante.tipo_vacante == 'Tradicional' %}vacante-tradicional{% else %}vacante-convocatoria{% endif %}">
                                 {{ vacante }}
                             </option>
-                            {% endfor %}
+                        {% endfor %}
                         </select>
                     </div>
                 </div>
@@ -781,7 +792,40 @@ Inicio
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-
+<script>
+    $(document).ready(function() {
+        $('#vacantes').select2({
+            placeholder: "Seleccione vacantes",
+            allowClear: true,
+            templateResult: formatVacante,
+            templateSelection: formatVacante
+        });
+    
+        function formatVacante(vacante) {
+            if (!vacante.id) {
+                return vacante.text;
+            }
+    
+            var tipo = $(vacante.element).attr('class');
+            var $vacante = $('<span></span>').text(vacante.text);
+    
+            if (tipo === 'vacante-tradicional') {
+                $vacante.css('background-color', '#4CAF50');
+                $vacante.css('color', 'white');
+                $vacante.css('padding', '5px 10px');
+                $vacante.css('border-radius', '8px');
+            } else if (tipo === 'vacante-convocatoria') {
+                $vacante.css('background-color', '#FF5722');
+                $vacante.css('color', 'white');
+                $vacante.css('padding', '5px 10px');
+                $vacante.css('border-radius', '8px');
+            }
+    
+            return $vacante;
+        }
+    });
+</script>
+    
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const tipoFeriaSelect = document.getElementById('tipo_feria');
