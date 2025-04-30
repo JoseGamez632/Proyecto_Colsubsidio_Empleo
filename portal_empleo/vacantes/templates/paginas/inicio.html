@@ -7,294 +7,25 @@ TalentGO
 
 {% block contenido %}
 <style>
-    .section-title {
-        text-align: center;
-        margin-bottom: 3rem;
-        font-weight: 700;
-        color: var(--dark);
-        font-size: 2.5rem;   /* Ajusta el tamaño del texto */
-        line-height: 1.2;   /* Ajusta la altura de línea para controlar el espacio */
-        text-transform: none; /* Asegura que no se aplique mayúsculas automáticas */
-    }
-    
-    .proceso-section {
-        background: linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7)), 
-                    url("{% static 'app/imagenes/fondoPaso.jpg' %}") no-repeat center center/cover;
-        padding: 4rem 0;
-        margin: 4rem 0;
-        color: #000000;  /* Ajusta el color del texto si es necesario */
-        opacity:  90%;
-    }
-        
     :root {
         --primary: #f8d047;
-        --dark: #2a2a2a;
-        --transition: all 0.3s ease-in-out;
+        --primary-dark: #e9c235;
+        --secondary: #3e4095;
+        --dark: #212529;
+        --light: #f8f9fa;
+        --gray: #6c757d;
+        --transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+        --shadow-md: 0 5px 15px rgba(0,0,0,0.1);
+        --shadow-lg: 0 10px 30px rgba(0,0,0,0.15);
     }
 
     body {
         font-family: 'Poppins', sans-serif;
         overflow-x: hidden;
         background-color: #ffffff;
-    }
-
-    /* Animaciones generales */
-    .fade-in {
-        opacity: 0;
-        transform: translateY(20px);
-        animation: fadeIn 0.6s ease-out forwards;
-    }
-
-    @keyframes fadeIn {
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    /* Header */
-    header {
-        background: linear-gradient(rgba(41, 39, 39, 0.7), rgba(43, 43, 43, 0.7)), 
-                    url("{% static 'app/imagenes/feriaEmpleo.jpg' %}") no-repeat center center/cover;        color: var(--primary);
-        padding: 4rem 1rem;
-        position: relative;
-        overflow: hidden;
-        margin-bottom: 3rem;
-        opacity: 90%;
-    }
-
-    header::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: url('data:image/svg+xml,<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><rect width="1" height="1" fill="%23ffffff10"/></svg>');
-        opacity: 0.1;
-    }
-
-    .header-content {
-        position: relative;
-        z-index: 1;
-        max-width: 800px;
-        margin: 0 auto;
-    }
-
-    .header-content h1 {
-        font-size: 3.5rem;
-        font-weight: 700;
-        margin-bottom: 1.5rem;
-    }
-
-    .header-content .lead {
-        font-size: 1.5rem;
-        margin-bottom: 2rem;
-        color: #ffffff;
-    }
-
-    /* Botones */
-    .btn-vacantes {
-        background-color: var(--primary);
         color: var(--dark);
-        font-weight: 600;
-        padding: 1rem 2.5rem;
-        border: none;
-        border-radius: 50px;
-        transition: var(--transition);
-        display: inline-block;
-        text-decoration: none;
-        box-shadow: 0 4px 15px rgba(248, 208, 71, 0.2);
-        font-size: 1.1rem;
-    }
-
-    .btn-vacantes:hover {
-        background-color: #ffffff;
-        color: var(--dark);
-        transform: translateY(-3px);
-        box-shadow: 0 6px 20px rgba(248, 208, 71, 0.3);
-    }
-
-    /* Secciones */
-    .section-title {
-        text-align: center;
-        margin-bottom: 3rem;
-        font-weight: 700;
-        color: var(--dark);
-    }
-
-    /* Cards */
-    .card-servicio {
-        border: none;
-        border-radius: 15px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        transition: var(--transition);
-        overflow: hidden;
-        height: 100%;
-        background-color: #ffffff;
-    }
-
-    .card-servicio:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-    }
-
-    .card-servicio img {
-        transition: var(--transition);
-        width: 100%;
-        height: 200px;
-        object-fit: cover;
-    }
-
-    .card-servicio:hover img {
-        transform: scale(1.05);
-    }
-
-    .card-servicio .card-body {
-        padding: 2rem;
-    }
-
-    .card-servicio h4 {
-        color: var(--dark);
-        font-weight: 600;
-        margin-bottom: 1rem;
-    }
-
-    .card-servicio p {
-        color: #666;
         line-height: 1.6;
-    }
-
-    /* Proceso */
-    .proceso-section {
-        background-color: #f8f9fa;
-        padding: 4rem 0;
-        margin: 4rem 0;
-    }
-
-    .proceso-linea {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 2rem;
-        padding: 2rem;
-        max-width: 1200px;
-        margin: 0 auto;
-    }
-
-    .proceso-item {
-        background: white;
-        padding: 2rem;
-        border-radius: 15px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-        position: relative;
-        transition: var(--transition);
-        text-align: center;
-    }
-
-    .proceso-item:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-    }
-
-    .proceso-item h4 {
-        color: var(--dark);
-        font-weight: 600;
-        margin: 1rem 0;
-    }
-
-    .proceso-item p {
-        color: #666;
-        margin: 0;
-    }
-
-    .proceso-numero {
-        width: 40px;
-        height: 40px;
-        background: var(--primary);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-        color: var(--dark);
-        margin: 0 auto;
-        margin-bottom: 1rem;
-    }
-
-    /* Video section */
-    .video-section {
-        padding: 4rem 0;
-        background: #ffffff;
-    }
-
-    .video-container {
-        max-width: 800px;
-        margin: 0 auto;
-        overflow: hidden;
-        border-radius: 15px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    }
-
-    .video-container video {
-        width: 100%;
-        display: block;
-    }
-
-    /* Animaciones scroll */
-    .scroll-animation {
-        opacity: 0;
-        transform: translateY(20px);
-        transition: var(--transition);
-    }
-
-    .scroll-animation.visible {
-        opacity: 1;
-        transform: translateY(0);
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-        header {
-            padding: 2rem 1rem;
-        }
-
-        .header-content h1 {
-            font-size: 2.5rem;
-        }
-
-        .header-content .lead {
-            font-size: 1.2rem;
-        }
-
-        .btn-vacantes {
-            width: 100%;
-            text-align: center;
-            padding: 1rem;
-        }
-
-        .card-servicio {
-            margin-bottom: 1rem;
-        }
-
-        .proceso-linea {
-            grid-template-columns: 1fr;
-            padding: 1rem;
-        }
-
-        .section-title {
-            font-size: 2rem;
-        }
-    }
-    :root {
-        --primary: #f8d047;
-        --dark: #2a2a2a;
-        --transition: all 0.5s ease-in-out;
-    }
-
-    body {
-        font-family: 'Poppins', sans-serif;
-        overflow-x: hidden;
-        background-color: #ffffff;
     }
 
     /* Animaciones generales */
@@ -311,8 +42,186 @@ TalentGO
         }
     }
 
-    .bounce-in {
-        animation: bounceIn 1s ease forwards;
+    .scale-in {
+        animation: scaleIn 0.7s ease forwards;
+        transform-origin: center;
+    }
+
+    @keyframes scaleIn {
+        0% {
+            opacity: 0;
+            transform: scale(0.9);
+        }
+        100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    .slide-in-right {
+        animation: slideInRight 0.7s ease forwards;
+    }
+
+    @keyframes slideInRight {
+        0% {
+            opacity: 0;
+            transform: translateX(50px);
+        }
+        100% {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    .slide-in-left {
+        animation: slideInLeft 0.7s ease forwards;
+    }
+
+    @keyframes slideInLeft {
+        0% {
+            opacity: 0;
+            transform: translateX(-50px);
+        }
+        100% {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    /* Header */
+    header {
+        background: linear-gradient(135deg, rgba(41, 39, 39, 0.85), rgba(43, 43, 43, 0.9)), 
+                    url("{% static 'app/imagenes/feriaEmpleo.jpg' %}") no-repeat center center/cover;
+        color: #ffffff;
+        position: relative;
+        overflow: hidden;
+        padding: 6rem 1rem;
+        margin-bottom: 0;
+        text-align: center;
+    }
+
+    header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><rect width="1" height="1" fill="%23ffffff10"/></svg>');
+        opacity: 0.05;
+        animation: fadeIn 2s ease-out forwards;
+    }
+
+    header::after {
+        content: '';
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        right: 0;
+        height: 50px;
+        background: #fff;
+        clip-path: polygon(0 0, 100% 100%, 100% 100%, 0% 100%);
+    }
+
+    .header-content {
+        position: relative;
+        z-index: 2;
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 2rem;
+        border-radius: 8px;
+        background: rgba(33, 37, 41, 0.2);
+        backdrop-filter: blur(5px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .logo {
+        width: 320px;
+        height: auto;
+        margin: 0 auto 2rem;
+        animation: fadeSlideDown 1.2s ease forwards;
+        filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.2));
+    }
+
+    @keyframes fadeSlideDown {
+        0% {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-8px); }
+        100% { transform: translateY(0px); }
+    }
+
+    .header-content h1 {
+        font-size: 3.5rem;
+        font-weight: 800;
+        margin-bottom: 1.5rem;
+        background-image: linear-gradient(135deg, var(--primary), #ffffff);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        animation: fadeIn 1s ease-out forwards;
+    }
+
+    .header-content .lead {
+        font-size: 1.5rem;
+        font-weight: 300;
+        margin-bottom: 2.5rem;
+        color: #ffffff;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        animation: fadeIn 1.2s ease-out forwards;
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .btn-vacantes {
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: var(--dark);
+        font-weight: 600;
+        padding: 1.25rem 3rem;
+        border: none;
+        border-radius: 50px;
+        transition: var(--transition);
+        text-decoration: none;
+        box-shadow: 0 10px 20px rgba(248, 208, 71, 0.3);
+        font-size: 1.1rem;
+        display: inline-block;
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+        animation: bounceIn 1.5s ease-out forwards;
+    }
+
+    .btn-vacantes::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: var(--transition);
+    }
+
+    .btn-vacantes:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 25px rgba(248, 208, 71, 0.4);
+        background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+        color: var(--dark);
+    }
+
+    .btn-vacantes:hover::before {
+        left: 100%;
+        transition: 0.7s;
     }
 
     @keyframes bounceIn {
@@ -325,7 +234,7 @@ TalentGO
             transform: scale(1.1);
         }
         70% {
-            transform: scale(0.9);
+            transform: scale(0.95);
         }
         100% {
             opacity: 1;
@@ -333,202 +242,674 @@ TalentGO
         }
     }
 
-    .hover-grow:hover {
-        transform: scale(1.05);
-        box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
+    /* Secciones */
+    .section-title {
+        text-align: center;
+        margin-bottom: 3.5rem;
+        font-weight: 800;
+        font-size: 2.7rem;
+        color: var(--dark);
+        position: relative;
+        line-height: 1.3;
     }
 
-    /* Header */
-    header {
-        background: linear-gradient(rgba(41, 39, 39, 0.7), rgba(43, 43, 43, 0.7)),
-                    url("{% static 'app/imagenes/feriaEmpleo.jpg' %}") no-repeat center center/cover;
-        color: var(--primary);
-        padding: 4rem 1rem;
-        text-align: center;
+    .section-title::after {
+        content: '';
+        width: 80px;
+        height: 4px;
+        background: var(--primary);
+        position: absolute;
+        bottom: -15px;
+        left: 50%;
+        transform: translateX(-50%);
+        border-radius: 2px;
+    }
+
+    section {
+        padding: 6rem 0;
+        position: relative;
+    }
+
+    /* Proceso Section */
+    .proceso-section {
+        background: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), 
+                    url("{% static 'app/imagenes/fondoPaso.jpg' %}") no-repeat center center/cover;
+        padding: 6rem 0;
+        margin: 0;
         position: relative;
         overflow: hidden;
-        margin-bottom: 3rem;
-        opacity: 90%;
     }
 
-    .header-content h1 {
-        font-size: 3.5rem;
-        font-weight: 700;
-        margin-bottom: 1.5rem;
-        animation: fadeIn 1s ease-out forwards;
+    .proceso-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 50px;
+        background: #fff;
+        clip-path: polygon(0 100%, 100% 0, 100% 100%, 0% 100%);
     }
 
-    .header-content .lead {
-        font-size: 1.5rem;
-        margin-bottom: 2rem;
-        color: #ffffff;
-        animation: fadeIn 1.2s ease-out forwards;
+    .proceso-section::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 50px;
+        background: #fff;
+        clip-path: polygon(0 0, 100% 100%, 100% 0, 0 0);
     }
 
-    .btn-vacantes {
-        background-color: var(--primary);
-        color: var(--dark);
-        font-weight: 600;
-        padding: 1rem 2.5rem;
-        border: none;
-        border-radius: 50px;
-        transition: var(--transition);
-        text-decoration: none;
-        box-shadow: 0 4px 15px rgba(248, 208, 71, 0.2);
-        font-size: 1.1rem;
-        display: inline-block;
-        animation: bounceIn 1.5s ease-out forwards;
+    .proceso-linea {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 2.5rem;
+        max-width: 1200px;
+        margin: 0 auto;
+        position: relative;
     }
 
-    .btn-vacantes:hover {
-        background-color: #ffffff;
-        color: var(--dark);
-        transform: translateY(-3px);
-        box-shadow: 0 6px 20px rgba(248, 208, 71, 0.3);
+    .proceso-linea::after {
+        content: '';
+        position: absolute;
+        top: 20px;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: var(--primary);
+        z-index: 0;
+        opacity: 0.5;
+        display: none;
     }
+
+    @media (min-width: 992px) {
+        .proceso-linea::after {
+            display: block;
+        }
+    }
+
     .proceso-item {
         background: white;
-        padding: 2rem;
-        border-radius: 15px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        padding: 2.5rem 2rem;
+        border-radius: 16px;
+        box-shadow: var(--shadow-md);
         position: relative;
-        transition: transform 0.4s ease, box-shadow 0.4s ease;
+        z-index: 1;
+        transition: transform 0.5s ease, box-shadow 0.5s ease;
         text-align: center;
-        perspective: 1000px;
-        transform-style: preserve-3d;
+        overflow: hidden;
+        border: 1px solid rgba(0,0,0,0.05);
     }
-    
+
+    .proceso-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: var(--primary);
+        transition: var(--transition);
+    }
+
     .proceso-item:hover {
-        transform: rotateY(10deg) translateY(-10px);
-        box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
+        transform: translateY(-15px);
+        box-shadow: var(--shadow-lg);
     }
-    
+
+    .proceso-item:hover::before {
+        height: 10px;
+    }
+
     .proceso-numero {
-        width: 40px;
-        height: 40px;
+        width: 60px;
+        height: 60px;
         background: var(--primary);
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         font-weight: bold;
+        font-size: 1.5rem;
         color: var(--dark);
-        margin: 0 auto;
-        margin-bottom: 1rem;
+        margin: 0 auto 1.5rem;
+        box-shadow: 0 5px 15px rgba(248, 208, 71, 0.3);
+        position: relative;
+        z-index: 2;
         transition: transform 0.5s ease;
     }
-    
+
     .proceso-item:hover .proceso-numero {
-        transform: rotate(360deg);
+        transform: rotate(360deg) scale(1.1);
     }
-    header {
-        padding: 80px 40px;
-        background-color: #ffffff;
-        text-align: center;
+
+    .proceso-item h4 {
+        color: var(--dark);
+        font-weight: 700;
+        font-size: 1.5rem;
+        margin: 1rem 0;
+        transition: var(--transition);
+    }
+
+    .proceso-item:hover h4 {
+        color: var(--secondary);
+    }
+
+    .proceso-item p {
+        color: var(--gray);
+        margin-bottom: 1.5rem;
+        font-size: 1.05rem;
+        line-height: 1.6;
+    }
+
+    .btn-outline-warning {
+        color: var(--dark);
+        border-color: var(--primary);
+        padding: 0.75rem 1.5rem;
+        font-weight: 500;
+        transition: var(--transition);
+        border-radius: 50px;
+    }
+
+    .btn-outline-warning:hover {
+        background-color: var(--primary);
+        border-color: var(--primary);
+        color: var(--dark);
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(248, 208, 71, 0.3);
     }
     
-    .header-content {
+    /* Video Section */
+    .video-section {
+        background-color: #f8f9fa;
+        padding: 6rem 0;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .video-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 50px;
+        background: #fff;
+        clip-path: polygon(0 100%, 100% 0, 100% 100%, 0% 100%);
+    }
+
+    .video-container {
+        max-width: 850px;
+        margin: 0 auto;
+        overflow: hidden;
+        border-radius: 20px;
+        box-shadow: var(--shadow-lg);
+        position: relative;
+        padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+        height: 0;
+    }
+
+    .video-container iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: none;
+        transition: var(--transition);
+    }
+
+    /* Decorative Elements */
+    .decorative-circle {
+        position: absolute;
+        border-radius: 50%;
+        background: var(--primary);
+        opacity: 0.1;
+        z-index: 0;
+    }
+
+    .circle-1 {
+        width: 200px;
+        height: 200px;
+        top: -100px;
+        left: -100px;
+    }
+
+    .circle-2 {
+        width: 150px;
+        height: 150px;
+        bottom: 10%;
+        right: 5%;
+    }
+
+    .circle-3 {
+        width: 100px;
+        height: 100px;
+        top: 20%;
+        right: -50px;
+    }
+
+    /* Stats Counter Section - NEW */
+    .stats-section {
+        background: linear-gradient(135deg, var(--dark), #384047);
+        color: white;
+        padding: 5rem 0;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stat-item {
+        text-align: center;
+        padding: 2rem;
+        transition: var(--transition);
+        border-radius: 10px;
+        background: rgba(255,255,255,0.05);
+        backdrop-filter: blur(5px);
+    }
+
+    .stat-item:hover {
+        transform: translateY(-10px);
+        background: rgba(255,255,255,0.1);
+    }
+
+    .stat-number {
+        font-size: 3rem;
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+        background: linear-gradient(135deg, var(--primary), #fff);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+    .stat-label {
+        font-size: 1.2rem;
+        color: rgba(255,255,255,0.8);
+    }
+
+    /* Testimonials Section - NEW */
+    .testimonials-section {
+        padding: 6rem 0;
+        background: #fff;
+        position: relative;
+    }
+
+    .testimonial-item {
+        padding: 2rem;
+        border-radius: 12px;
+        background: #fff;
+        box-shadow: var(--shadow-md);
+        transition: var(--transition);
+        border: 1px solid rgba(0,0,0,0.05);
+        position: relative;
+        margin-top: 2rem;
+    }
+
+    .testimonial-item:hover {
+        transform: translateY(-10px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .testimonial-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: #f0f0f0;
         display: flex;
-        flex-direction: column;
         align-items: center;
         justify-content: center;
+        font-size: 2rem;
+        color: var(--dark);
+        margin: -40px auto 1rem;
+        border: 5px solid white;
+        box-shadow: var(--shadow-sm);
     }
-    
-    .logo {
-        width: 400px; /* Tamaño medio, ajusta según tus necesidades */
-        height: auto;  /* Mantener la proporción */
-        margin: 0 auto;  /* Centrado horizontal */
-        animation: fadeSlideIn 1s ease forwards;
+
+    .testimonial-quote {
+        font-style: italic;
+        color: var(--gray);
+        margin-bottom: 1.5rem;
+        font-size: 1.1rem;
     }
-    
-    @keyframes fadeSlideIn {
-        0% {
-            opacity: 0;
-            transform: translateY(-20px);
+
+    .testimonial-name {
+        font-weight: 600;
+        color: var(--dark);
+        margin-bottom: 0.2rem;
+    }
+
+    .testimonial-position {
+        color: var(--primary);
+        font-size: 0.9rem;
+    }
+
+    /* Partner Logos - NEW */
+    .partners-section {
+        background-color: #f8f9fa;
+        padding: 4rem 0;
+    }
+
+    .partner-logo {
+        height: 60px;
+        margin: 1rem;
+        filter: grayscale(100%);
+        opacity: 0.6;
+        transition: var(--transition);
+    }
+
+    .partner-logo:hover {
+        filter: grayscale(0%);
+        opacity: 1;
+    }
+
+    /* Call to Action - NEW */
+    .cta-section {
+        background: linear-gradient(135deg, rgba(62, 64, 149, 0.9), rgba(41, 39, 39, 0.9)), 
+                    url("{% static 'app/imagenes/feriaEmpleo.jpg' %}") no-repeat center center/cover;
+        padding: 5rem 0;
+        color: white;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .cta-content {
+        max-width: 800px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 1;
+    }
+
+    .cta-title {
+        font-size: 2.8rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+    }
+
+    .cta-text {
+        font-size: 1.2rem;
+        margin-bottom: 2.5rem;
+        opacity: 0.9;
+    }
+
+    /* Responsive */
+    @media (max-width: 991px) {
+        .section-title {
+            font-size: 2.2rem;
         }
-        100% {
-            opacity: 1;
-            transform: translateY(0);
+        
+        .proceso-linea {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .stat-item {
+            margin-bottom: 2rem;
+        }
+        
+        .testimonial-item {
+            margin-bottom: 3rem;
         }
     }
-    
-    .fade-in {
+
+    @media (max-width: 768px) {
+        header {
+            padding: 4rem 1rem;
+        }
+        
+        .header-content {
+            padding: 1.5rem;
+        }
+
+        .logo {
+            width: 250px;
+        }
+        
+        .header-content h1 {
+            font-size: 2.5rem;
+        }
+
+        .header-content .lead {
+            font-size: 1.2rem;
+        }
+
+        .btn-vacantes {
+            width: 100%;
+            text-align: center;
+            padding: 1rem 2rem;
+        }
+
+        .section-title {
+            font-size: 2rem;
+        }
+        
+        .proceso-linea {
+            grid-template-columns: 1fr;
+        }
+        
+        .process-item {
+            margin-bottom: 2rem;
+        }
+        
+        .video-container {
+            margin: 0 1rem;
+        }
+        
+        .partner-logo {
+            height: 40px;
+        }
+    }
+
+    /* Animation Classes */
+    .scroll-animation {
         opacity: 0;
-        animation: fadeIn 1s ease forwards;
+        transform: translateY(30px);
+        transition: opacity 0.6s ease-out, transform 0.6s ease-out;
     }
-    
-    @keyframes fadeIn {
-        to {
-            opacity: 1;
-        }
+
+    .scroll-animation.visible {
+        opacity: 1;
+        transform: translateY(0);
     }
-    
+
+    .scroll-animation-left {
+        opacity: 0;
+        transform: translateX(-30px);
+        transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+
+    .scroll-animation-left.visible {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    .scroll-animation-right {
+        opacity: 0;
+        transform: translateX(30px);
+        transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+
+    .scroll-animation-right.visible {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    .scroll-animation-scale {
+        opacity: 0;
+        transform: scale(0.8);
+        transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+
+    .scroll-animation-scale.visible {
+        opacity: 1;
+        transform: scale(1);
+    }
 </style>
 
+<!-- Header con Logo y Call-to-Action -->
 <header>
-    <div class="header-content">
-        <img src="{% static 'img/logo_color.png' %}" alt="Logo" class="logo">
-        <p class="lead fade-in" style="animation-delay: 0.5s">Conectando talento con oportunidades</p>
-        <a href="{% url 'lista_vacantes' %}" class="btn-vacantes fade-in" style="animation-delay: 0.4s">
-            Conoce las vacantes disponibles
+    <div class="decorative-circle circle-1"></div>
+    <div class="decorative-circle circle-2"></div>
+    <div class="header-content scale-in">
+        <img src="{% static 'img/logo_color3.png' %}" alt="TalentGO Logo" class="logo">
+        <p class="lead fade-in" style="animation-delay: 0.5s">Conectando profesionales con las mejores oportunidades laborales para impulsar el talento y el crecimiento empresarial</p>
+        <a href="{% url 'lista_vacantes' %}" class="btn-vacantes fade-in" style="animation-delay: 0.8s">
+            Descubre Nuestras Vacantes
         </a>
     </div>
 </header>
 
-
-
 <main>
-
-
-    <!-- Proceso -->
-    <section class="proceso-section">
+    <!-- Estadísticas - NUEVA SECCIÓN -->
+    <section class="stats-section">
         <div class="container">
-            <h2 class="section-title">Conoce El Paso a Paso <br> Para Aplicar a Las Vacantes</h2>
-            <div class="proceso-linea">
-                <div class="proceso-item scroll-animation">
-                    <div class="proceso-numero">1</div>
-                    <h4>Vacantes</h4>
-                    <p>Selecciona las vacantes a las que quieres aplicar</p><br>
-                    <a href="{% url 'lista_vacantes' %}" type="button" class="btn btn-outline-warning">Conoce las Vacantes</a>
+            <div class="row">
+                <div class="col-md-3 col-sm-6">
+                    <div class="stat-item scroll-animation">
+                        <div class="stat-number" data-count="500">500+</div>
+                        <div class="stat-label">Personas Colocadas</div>
+                    </div>
                 </div>
-                <div class="proceso-item scroll-animation" style="animation-delay: 0.2s">
-                    <div class="proceso-numero">2</div>
-                    <h4>Registro</h4>
-                    <p>Diligencia el formulario con la informacion de tu hoja de vida</p>
+                <div class="col-md-3 col-sm-6">
+                    <div class="stat-item scroll-animation" style="animation-delay: 0.2s">
+                        <div class="stat-number" data-count="150">150+</div>
+                        <div class="stat-label">Empresas Aliadas</div>
+                    </div>
                 </div>
-                <div class="proceso-item scroll-animation" style="animation-delay: 0.4s">
-                    <div class="proceso-numero">3</div>
-                    <h4>Asesoria</h4>
-                    <p>Acercate a uno de los profesionales para finalizar con la aplicacion a la vacante</p>
+                <div class="col-md-3 col-sm-6">
+                    <div class="stat-item scroll-animation" style="animation-delay: 0.4s">
+                        <div class="stat-number" data-count="50">50+</div>
+                        <div class="stat-label">Vacantes Activas</div>
+                    </div>
                 </div>
-                <div class="proceso-item scroll-animation" style="animation-delay: 0.6s">
-                    <div class="proceso-numero">4</div>
-                    <h4>Servicio de Empleo</h4>
-                    <p>Realiza el registro o actualiza tu hoja de vida en la plataforma del Servicio Publico de Empleo</p><br>
-                    <a href="{% url 'registration_guide' %}" type="button" class="btn btn-outline-warning">Guia de Registro SISE</a>
+                <div class="col-md-3 col-sm-6">
+                    <div class="stat-item scroll-animation" style="animation-delay: 0.6s">
+                        <div class="stat-number" data-count="95">95%</div>
+                        <div class="stat-label">Satisfacción</div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Módulo con Imagen y Texto -->
-    <!-- <section class="container my-5">
-        <div class="card card-servicio scroll-animation">
-            <div class="card-body">
-                <h3 class="mb-6">Guia de Registro Servicio Publico de Empleo</h3><br>
-                <p>Recuerda que la unica hoja de vida valida es la registrada en la plataforma del Servicio Publico de Empleo, <br>por esto te aconsejamos actualizarla o registrarte en la plataforma.</p>
-                <br>
-                <a href="{% url 'registration_guide' %}" class="btn btn-dark">Guia de Registro SISE</a>
+    <!-- Proceso con Mejoras Visuales -->
+    <section class="proceso-section">
+        <div class="decorative-circle circle-3"></div>
+        <div class="container">
+            <h2 class="section-title scroll-animation">El Camino al Éxito Profesional</h2>
+            <div class="proceso-linea">
+                <div class="proceso-item scroll-animation">
+                    <div class="proceso-numero">1</div>
+                    <h4>Explora Vacantes</h4>
+                    <p>Navega por nuestra selección de oportunidades laborales cuidadosamente seleccionadas que se ajustan a tus habilidades y aspiraciones</p>
+                    <a href="{% url 'lista_vacantes' %}" class="btn btn-outline-warning">Ver Vacantes Disponibles</a>
+                </div>
+                <div class="proceso-item scroll-animation" style="animation-delay: 0.2s">
+                    <div class="proceso-numero">2</div>
+                    <h4>Completa tu Perfil</h4>
+                    <p>Registra tus datos personales y profesionales para realizar tu postulación y aumentar tus oportunidades laborales.</p>
+                    <!-- <a href="#" class="btn btn-outline-warning">Iniciar Registro</a> -->
+                </div>
+                <div class="proceso-item scroll-animation" style="animation-delay: 0.4s">
+                    <div class="proceso-numero">3</div>
+                    <h4>Asesoría Personalizada</h4>
+                    <p>Recibe orientación profesional de nuestros expertos para optimizar tu postulación y prepararte para el proceso de selección</p>
+                    <!-- <a href="#" class="btn btn-outline-warning">Agendar Asesoría</a> -->
+                </div>
+                <div class="proceso-item scroll-animation" style="animation-delay: 0.6s">
+                    <div class="proceso-numero">4</div>
+                    <h4>Servicio Público de Empleo</h4>
+                    <p>Finaliza tu proceso registrando o actualizando tu hoja de vida en la plataforma oficial del Servicio Público de Empleo</p>
+                    <a href="{% url 'registration_guide' %}" class="btn btn-outline-warning">Guía de Registro SISE</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonios - NUEVA SECCIÓN -->
+    <!-- <section class="testimonials-section">
+        <div class="container">
+            <h2 class="section-title scroll-animation">Lo Que Dicen Nuestros Usuarios</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="testimonial-item scroll-animation">
+                        <div class="testimonial-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <p class="testimonial-quote">"Gracias a TalentGO encontré una oportunidad que realmente se alineaba con mis habilidades. El proceso fue sencillo y la asesoría que recibí fue invaluable."</p>
+                        <h5 class="testimonial-name">Carlos Rodríguez</h5>
+                        <p class="testimonial-position">Ingeniero de Sistemas</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="testimonial-item scroll-animation" style="animation-delay: 0.3s">
+                        <div class="testimonial-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <p class="testimonial-quote">"El acompañamiento que ofrece TalentGO hace toda la diferencia. Me ayudaron a mejorar mi perfil profesional y ahora tengo un trabajo que realmente disfruto."</p>
+                        <h5 class="testimonial-name">Laura Martínez</h5>
+                        <p class="testimonial-position">Administradora de Empresas</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="testimonial-item scroll-animation" style="animation-delay: 0.6s">
+                        <div class="testimonial-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <p class="testimonial-quote">"Como empresa, TalentGO nos ha ayudado a encontrar candidatos perfectamente alineados con nuestras necesidades. Su proceso de selección es eficiente y profesional."</p>
+                        <h5 class="testimonial-name">Andrés Gómez</h5>
+                        <p class="testimonial-position">Director de RR.HH.</p>
+                    </div>
+                </div>
             </div>
         </div>
     </section> -->
 
-    <!-- Video -->
+    <!-- Video con Mejoras Visuales -->
     <section class="video-section">
         <div class="container">
-            <h2 class="section-title">Conoce más sobre nosotros</h2>
-            <div class="video-container scroll-animation">
-                <iframe width="800" height="500" src="https://www.youtube.com/embed/2_2ap_Qe9dM?si=sVrPwQjEze5KjNgh" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            <h2 class="section-title scroll-animation">Conoce como actualizar tu perfil en el<br>Servicio Publico de Empleo</h2>
+            <div class="video-container scroll-animation-scale">
+                <iframe src="https://www.youtube.com/embed/2_2ap_Qe9dM?si=sVrPwQjEze5KjNgh" title="TalentGO - Conectando Talento con Oportunidades" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            </div>
+        </div>
+    </section>
+
+    <!-- Empresas Aliadas - NUEVA SECCIÓN -->
+    <!-- <section class="partners-section">
+        <div class="container">
+            <h2 class="section-title scroll-animation">Empresas que Confían en Nosotros</h2>
+            <div class="row align-items-center justify-content-center">
+                <div class="col-md-2 col-sm-3 col-6 text-center">
+                    <img src="/api/placeholder/150/80" alt="Empresa 1" class="partner-logo scroll-animation">
+                </div>
+                <div class="col-md-2 col-sm-3 col-6 text-center">
+                    <img src="/api/placeholder/150/80" alt="Empresa 2" class="partner-logo scroll-animation">
+                </div>
+                <div class="col-md-2 col-sm-3 col-6 text-center">
+                    <img src="/api/placeholder/150/80" alt="Empresa 3" class="partner-logo scroll-animation">
+                </div>
+                <div class="col-md-2 col-sm-3 col-6 text-center">
+                    <img src="/api/placeholder/150/80" alt="Empresa 4" class="partner-logo scroll-animation">
+                </div>
+                <div class="col-md-2 col-sm-3 col-6 text-center">
+                    <img src="/api/placeholder/150/80" alt="Empresa 5" class="partner-logo scroll-animation">
+                </div>
+                <div class="col-md-2 col-sm-3 col-6 text-center">
+                    <img src="/api/placeholder/150/80" alt="Empresa 6" class="partner-logo scroll-animation">
+                </div>
+            </div>
+        </div>
+    </section> -->
+
+    <!-- Call to Action - NUEVA SECCIÓN -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-content scroll-animation">
+                <h2 class="cta-title">¿Listo para dar el siguiente paso en tu vida laboral?</h2>
+                <p class="cta-text">Únete a miles de personas que han encontrado su oportunidad ideal con TalentGO</p>
+                <a href="{% url 'lista_vacantes' %}" class="btn-vacantes">Comienza Ahora</a>
             </div>
         </div>
     </section>
@@ -540,8 +921,10 @@ TalentGO
 
 <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Animaciones al hacer scroll
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -549,12 +932,55 @@ TalentGO
                 }
             });
         }, {
-            threshold: 0.1,
-            rootMargin: '50px'
+            threshold: 0.15,
+            rootMargin: '10px'
         });
 
-        document.querySelectorAll('.scroll-animation').forEach((el) => {
+        document.querySelectorAll('.scroll-animation, .scroll-animation-left, .scroll-animation-right, .scroll-animation-scale').forEach((el) => {
             observer.observe(el);
+        });
+
+        // Contador de estadísticas
+        function startCounters() {
+            document.querySelectorAll('.stat-number').forEach(counter => {
+                const target = +counter.getAttribute('data-count');
+                const count = +counter.innerText.replace(/\D/g, '');
+                const speed = 2000; // Velocidad en milisegundos
+                
+                if (count < target) {
+                    const inc = Math.ceil(target / (speed / 16));
+                    if (count + inc <= target) {
+                        counter.innerText = (count + inc) + '+';
+                        setTimeout(() => startCounters(), 16);
+                    } else {
+                        counter.innerText = target + '+';
+                    }
+                }
+            });
+        }
+
+        // Iniciar contador cuando esté en viewport
+        const statsObserver = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting) {
+                startCounters();
+                statsObserver.disconnect();
+            }
+        });
+
+        const statsSection = document.querySelector('.stats-section');
+        if (statsSection) {
+            statsObserver.observe(statsSection);
+        }
+
+        // Efecto hover en los items del proceso
+        document.querySelectorAll('.proceso-item').forEach(item => {
+            item.addEventListener('mouseenter', () => {
+                item.classList.add('hover-active');
+            });
+            
+            item.addEventListener('mouseleave', () => {
+                item.classList.remove('hover-active');
+            });
         });
     });
 </script>
