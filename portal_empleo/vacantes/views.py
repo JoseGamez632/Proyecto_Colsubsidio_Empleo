@@ -668,38 +668,41 @@ def lista_candidatos(request, id):
 
 
 def lista_registros(request):
-    query = request.GET.get('q', '')  # Captura el término de búsqueda
-    order_by = request.GET.get('order_by', 'fecha_feria')  # Ordenación por defecto
-    order_dir = request.GET.get('order_dir', 'asc')  # Dirección por defecto
-    
+    query = request.GET.get('q', '')
+    order_by = request.GET.get('order_by', 'fecha_feria')
+    order_dir = request.GET.get('order_dir', 'asc')
+
     registros = RegistroCandidato.objects.all()
 
-    # Ignorar tildes y hacer búsquedas insensibles a mayúsculas
-    registros = registros.annotate(
-        nombres_lower=Lower('nombres'),
-        apellidos_lower=Lower('apellidos'),
-        documento_lower=Lower('numero_documento')
-    )
-    
-    if query:
-        registros = registros.filter(
-            Q(nombres_lower__icontains=query) |
-            Q(apellidos_lower__icontains=query) |
-            Q(documento_lower__icontains=query)
-        )
-    
-    # Mapeo de campos para ordenación
-    order_fields = {
+    # Definir campos válidos para ordenación
+    valid_order_fields = {
         'nombres': 'nombres_lower',
         'apellidos': 'apellidos_lower',
         'numero_documento': 'documento_lower',
         'feria': 'feria',
         'fecha_feria': 'fecha_feria'
     }
-    
-    # Aplicar la ordenación usando el campo anotado si existe en el mapeo
-    sort_field = order_fields.get(order_by, 'fecha_feria')
-    
+
+    # Si la ordenación requiere anotaciones, añadirlas
+    if order_by in ['nombres', 'apellidos', 'numero_documento'] or query:
+        registros = registros.annotate(
+            nombres_lower=Lower('nombres'),
+            apellidos_lower=Lower('apellidos'),
+            documento_lower=Lower('numero_documento')
+        )
+
+    # Si hay búsqueda, filtrar
+    if query:
+        registros = registros.filter(
+            Q(nombres_lower__icontains=query) |
+            Q(apellidos_lower__icontains=query) |
+            Q(documento_lower__icontains=query)
+        )
+
+    # Determinar campo de orden válido
+    sort_field = valid_order_fields.get(order_by, 'fecha_feria')
+
+    # Aplicar la ordenación
     if order_dir == 'desc':
         registros = registros.order_by(f'-{sort_field}')
     else:
@@ -712,6 +715,7 @@ def lista_registros(request):
         'order_dir': order_dir
     }
     return render(request, 'lista_registros.html', context)
+
 def editar_registro(request, pk):
     registro = get_object_or_404(RegistroCandidato, pk=pk)
     

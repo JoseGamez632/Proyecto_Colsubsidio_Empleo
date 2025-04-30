@@ -43,7 +43,7 @@
         position: absolute;
         top: -10px;
         right: -10px;
-        background-color: #28a745;
+        background-color:#FFC107;
         color: white;
         border-radius: 50%;
         width: 50px;
@@ -63,7 +63,7 @@
     }
     
     .pending-update {
-        border: 2px solid #ffc107;
+        border: 2px solid #007bff;
     }
     
     .view-toggle-btn {
@@ -245,6 +245,36 @@
             </tbody>
         </table>
     </div>
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?{% if query %}q={{ query }}&{% endif %}order_by={{ order_by }}&order_dir={{ order_dir }}&page={{ page_obj.previous_page_number }}">Anterior</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled"><span class="page-link">Anterior</span></li>
+            {% endif %}
+    
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <li class="page-item">
+                        <a class="page-link" href="?{% if query %}q={{ query }}&{% endif %}order_by={{ order_by }}&order_dir={{ order_dir }}&page={{ num }}">{{ num }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+    
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?{% if query %}q={{ query }}&{% endif %}order_by={{ order_by }}&order_dir={{ order_dir }}&page={{ page_obj.next_page_number }}">Siguiente</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled"><span class="page-link">Siguiente</span></li>
+            {% endif %}
+        </ul>
+    </nav>
+    
 </div>
 
 
@@ -252,98 +282,45 @@
 <!-- Scripts para la funcionalidad -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Botones de vista
         const viewCards = document.getElementById('view-cards');
         const viewTable = document.getElementById('view-table');
         const cardsView = document.getElementById('cards-view');
         const tableView = document.getElementById('table-view');
-        
+    
         viewCards.addEventListener('click', function() {
             cardsView.style.display = 'block';
             tableView.style.display = 'none';
             viewCards.classList.add('active');
             viewTable.classList.remove('active');
         });
-        
+    
         viewTable.addEventListener('click', function() {
             cardsView.style.display = 'none';
             tableView.style.display = 'block';
             viewTable.classList.add('active');
             viewCards.classList.remove('active');
         });
-        
-        // Botón de pendientes
-        const btnPending = document.getElementById('btn-pending');
-        btnPending.addEventListener('click', function() {
-            const showingPending = btnPending.classList.contains('active');
-            
-            if (showingPending) {
-                // Mostrar todos
-                document.querySelectorAll('.candidate-item').forEach(item => {
-                    item.style.display = 'block';
-                });
-                btnPending.classList.remove('active', 'btn-success');
-                btnPending.classList.add('btn-warning');
-                btnPending.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Ver pendientes de actualizar';
-            } else {
-                // Mostrar solo pendientes
-                document.querySelectorAll('.candidate-item').forEach(item => {
-                    if (item.dataset.feria && item.dataset.feria.trim() !== '') {
-                        item.style.display = 'none';
-                    } else {
-                        item.style.display = 'block';
-                    }
-                });
-                btnPending.classList.add('active', 'btn-success');
-                btnPending.classList.remove('btn-warning');
-                btnPending.innerHTML = '<i class="fas fa-check"></i> Ver todos los registros';
-            }
-        });
-        
-        // Ordenamiento
-        document.querySelectorAll('.sort-option').forEach(option => {
-            option.addEventListener('click', function() {
-                const orderBy = this.dataset.order;
-                const currentActive = document.querySelector('.sort-option.active');
-                let orderDir = 'asc';
-                
-                if (currentActive === this) {
-                    // Cambiar dirección si es el mismo
-                    const currentText = this.textContent;
-                    orderDir = currentText.includes('▲') ? 'desc' : 'asc';
+    
+        // Ordenar por nombre y fecha
+        document.querySelectorAll('.sort-option').forEach(button => {
+            button.addEventListener('click', function() {
+                const orderBy = this.getAttribute('data-order');
+                const currentUrl = new URL(window.location.href);
+                const currentOrderDir = currentUrl.searchParams.get('order_dir') || 'desc';
+                const currentOrderBy = currentUrl.searchParams.get('order_by') || '';
+    
+                let newOrderDir = 'asc';
+                if (currentOrderBy === orderBy && currentOrderDir === 'asc') {
+                    newOrderDir = 'desc';
                 }
-                
-                const searchParams = new URLSearchParams(window.location.search);
-                searchParams.set('order_by', orderBy);
-                searchParams.set('order_dir', orderDir);
-                
-                window.location.href = window.location.pathname + '?' + searchParams.toString();
+    
+                currentUrl.searchParams.set('order_by', orderBy);
+                currentUrl.searchParams.set('order_dir', newOrderDir);
+                currentUrl.searchParams.set('page', 1); // reinicia la paginación
+    
+                window.location.href = currentUrl.toString();
             });
         });
-        
-
-        
-        // Simulación de actualizaciones en tiempo real
-        function setupRealtimeUpdates() {
-            // En una implementación real, esto sería con WebSockets
-            setInterval(() => {
-                checkForNewRegistros();
-            }, 10000); // Verifica cada 10 segundos
-        }
-        
-        function checkForNewRegistros() {
-            // Esta sería una petición AJAX para verificar nuevos registros
-            // Simulación para demostración
-            const randomCheck = Math.random();
-            if (randomCheck > 0.8) { // 20% de probabilidad de simular un nuevo registro
-                // Esto es solo para demostración, en la implementación real
-                // realizarías una petición AJAX y actualizarías la interfaz
-                console.log("Simulando actualización en tiempo real");
-            }
-        }
-        
-        // Iniciar simulación de actualizaciones en tiempo real
-        setupRealtimeUpdates();
     });
-</script>
+    </script>
 {% endblock %}
