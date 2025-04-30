@@ -4,136 +4,346 @@
 {% block contenido %}
 <style>
     h1.text-center {
-        font-size: 3rem !important; /* Ajusta el tamaño */
+        font-size: 3rem !important;
         font-weight: bold !important;
-        color: #4d4017 !important; /* Color dorado */
+        color: #4d4017 !important;
         text-transform: uppercase !important;
         line-height: 1.2;
         margin-bottom: 1.5rem;
         text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
     }
     
-    .sort-icon {
-        display: inline-block;
-        margin-left: 5px;
+    .sort-option {
         cursor: pointer;
+        margin-right: 10px;
+        padding: 5px 10px;
+        border-radius: 5px;
+        background-color: #343a40;
+        color: #fff;
+        display: inline-block;
     }
     
-    th {
+    .sort-option.active {
+        background-color: #007bff;
+    }
+    
+    .candidate-card {
+        border-radius: 8px;
+        margin-bottom: 20px;
+        transition: transform 0.3s ease;
         position: relative;
     }
     
-    th a {
-        color: inherit;
-        text-decoration: none;
+    .candidate-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+    
+    .new-badge {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        background-color: #28a745;
+        color: white;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
         display: flex;
         align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        animation: pulse 2s infinite;
+        z-index: 10;
     }
     
-    th a:hover {
-        text-decoration: underline;
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
     }
     
-    .current-sort {
-        color: #007bff;
+    .pending-update {
+        border: 2px solid #ffc107;
+    }
+    
+    .view-toggle-btn {
+        margin-right: 10px;
+    }
+    
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: white;
+    }
+    
+    .card-body i {
+        margin-right: 8px;
+        width: 20px;
+        text-align: center;
+    }
+    
+    .filters-container {
+        background-color: #2c3034;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+    
+    #realtime-indicator {
+        color: #28a745;
+        font-size: 12px;
+        margin-left: 10px;
+        animation: blink 1.5s infinite;
+    }
+    
+    @keyframes blink {
+        0% { opacity: 1; }
+        50% { opacity: 0.3; }
+        100% { opacity: 1; }
     }
 </style>
-<div class="container mt-5">
-    <!-- <h1 class="text-center">Lista de Registros</h1> -->
 
-    <!-- Buscador -->
-    <form method="get" class="mb-4">
-        <div class="input-group">
-            <input class="text-white bg-dark" type="text" name="q" value="{{ query }}" class="form-control" placeholder="Busca cedula o nombre">
-            <div class="input-group-append">
-                <button class="btn btn-primary" type="submit">🔍</button>
-                <a href="{% url 'exportar_candidatos' %}" class="btn btn-success">Descargar Listado de Candidatos</a>
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">Hojas de Vida</h2>
+        <div>
+            <span id="realtime-indicator">● Actualización en tiempo real</span>
+        </div>
+    </div>
+    
+    <div class="filters-container">
+        <!-- Buscador y filtros -->
+        <div class="row">
+            <div class="col-md-6">
+                <form method="get" id="search-form" class="mb-3">
+                    <div class="input-group">
+                        <input type="text" name="q" value="{{ query }}" class="form-control bg-dark text-white" placeholder="Busca por cédula o nombre">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="submit">🔍</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+             <div class="col-md-6 d-flex justify-content-end align-items-center">
+                <!--<button id="btn-pending" class="btn btn-warning mr-2">
+                    <i class="fas fa-exclamation-triangle"></i> Ver pendientes de actualizar
+                </button>-->
+                <a href="{% url 'exportar_candidatos' %}" class="btn btn-success">
+                    <i class="fas fa-download"></i> Descargar listado
+                </a>
+            </div> 
+        </div>
+        
+        <!-- Opciones de visualización -->
+        <div class="row mt-3">
+            <div class="col-md-6">
+                <div class="btn-group" role="group">
+                    <button id="view-cards" class="btn btn-secondary view-toggle-btn active">
+                        <i class="fas fa-id-card"></i> Ver tarjetas
+                    </button>
+                    <button id="view-table" class="btn btn-secondary view-toggle-btn">
+                        <i class="fas fa-table"></i> Ver tabla
+                    </button>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="d-flex justify-content-end">
+                    <div class="sort-option {% if order_by == 'nombres' %}active{% endif %}" data-order="nombres">
+                        Ordenar por nombre
+                        {% if order_by == 'nombres' %}
+                            {% if order_dir == 'asc' %}▲{% else %}▼{% endif %}
+                        {% endif %}
+                    </div>
+                    <div class="sort-option {% if order_by == 'fecha_feria' %}active{% endif %}" data-order="fecha_feria">
+                        Ordenar por fecha
+                        {% if order_by == 'fecha_feria' %}
+                            {% if order_dir == 'asc' %}▲{% else %}▼{% endif %}
+                        {% endif %}
+                    </div>
+                </div>
             </div>
         </div>
-    </form>
-
-    <!-- Tabla de registros -->
-    <table class="table table-dark table-striped">
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>
-                    <a href="?{% if order_by == 'nombres' and order_dir == 'asc' %}order_by=nombres&order_dir=desc{% else %}order_by=nombres&order_dir=asc{% endif %}{% if query %}&q={{ query }}{% endif %}">
-                        Nombre Completo
-                        {% if order_by == 'nombres' %}
-                            {% if order_dir == 'asc' %}
-                                <span class="sort-icon current-sort">▲</span>
-                            {% else %}
-                                <span class="sort-icon current-sort">▼</span>
-                            {% endif %}
-                        {% else %}
-                            <span class="sort-icon">⇅</span>
-                        {% endif %}
-                    </a>
-                </th>
-                <th>
-                    <a href="?{% if order_by == 'numero_documento' and order_dir == 'asc' %}order_by=numero_documento&order_dir=desc{% else %}order_by=numero_documento&order_dir=asc{% endif %}{% if query %}&q={{ query }}{% endif %}">
-                        Cédula
-                        {% if order_by == 'numero_documento' %}
-                            {% if order_dir == 'asc' %}
-                                <span class="sort-icon current-sort">▲</span>
-                            {% else %}
-                                <span class="sort-icon current-sort">▼</span>
-                            {% endif %}
-                        {% else %}
-                            <span class="sort-icon">⇅</span>
-                        {% endif %}
-                    </a>
-                </th>
-                <th>
-                    <a href="?{% if order_by == 'feria' and order_dir == 'asc' %}order_by=feria&order_dir=desc{% else %}order_by=feria&order_dir=asc{% endif %}{% if query %}&q={{ query }}{% endif %}">
-                        Feria
-                        {% if order_by == 'feria' %}
-                            {% if order_dir == 'asc' %}
-                                <span class="sort-icon current-sort">▲</span>
-                            {% else %}
-                                <span class="sort-icon current-sort">▼</span>
-                            {% endif %}
-                        {% else %}
-                            <span class="sort-icon">⇅</span>
-                        {% endif %}
-                    </a>
-                </th>
-                <th>
-                    <a href="?{% if order_by == 'fecha_feria' and order_dir == 'asc' %}order_by=fecha_feria&order_dir=desc{% else %}order_by=fecha_feria&order_dir=asc{% endif %}{% if query %}&q={{ query }}{% endif %}">
-                        Fecha Registro
-                        {% if order_by == 'fecha_feria' %}
-                            {% if order_dir == 'asc' %}
-                                <span class="sort-icon current-sort">▲</span>
-                            {% else %}
-                                <span class="sort-icon current-sort">▼</span>
-                            {% endif %}
-                        {% else %}
-                            <span class="sort-icon">⇅</span>
-                        {% endif %}
-                    </a>
-                </th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
+    </div>
+    
+    <!-- Vista de tarjetas -->
+    <div id="cards-view">
+        <div class="row" id="candidates-container">
             {% for registro in registros %}
-                <tr>
-                    <td>{{ forloop.counter }}</td>
-                    <td>{{ registro.nombres }} {{ registro.apellidos }}</td>
-                    <td>{{ registro.numero_documento }}</td>
-                    <td>{{ registro.feria }}</td>
-                    <td>{{ registro.fecha_feria|date:"d/m/Y" }}</td>
-                    <td>
-                        <a href="{% url 'editar_registro' registro.pk %}" class="btn btn-warning btn-sm">Editar</a>
-                    </td>
-                </tr>
+                <div class="col-md-4 candidate-item" data-id="{{ registro.pk }}" data-feria="{{ registro.feria }}">
+                    <div class="card bg-dark candidate-card {% if not registro.feria %}pending-update{% endif %}">
+                        {% if registro.is_new %}
+                        <div class="new-badge bg-warning text-white">NUEVO</div>
+                        {% endif %}
+                        <div class="card-header">
+                            <h5 class="card-title mb-0 text-white">{{ registro.nombres }} {{ registro.apellidos }}</h5>
+                        </div>
+                        <div class="card-body text-light">
+                            <p class="card-text"><i class="fas fa-id-card text-warning"></i> <strong class="text-warning">Cédula:</strong> {{ registro.numero_documento }}</p>
+                            <p class="card-text"><i class="fas fa-building text-warning"></i> <strong class="text-warning">Feria:</strong> 
+                                {% if registro.feria %}
+                                    {{ registro.feria }}
+                                {% else %}
+                                    <span class="badge bg-warning text-dark">Pendiente</span>
+                                {% endif %}
+                            </p>
+                            <p class="card-text"><i class="fas fa-calendar-alt text-warning"></i> <strong class="text-warning">Fecha:</strong> {{ registro.fecha_feria|date:"d/m/Y" }}</p>
+                            <div class="text-center mt-3">
+                                <a href="{% url 'editar_registro' registro.pk %}" class="btn btn-warning btn-sm">
+                                    <i class="fas fa-edit"></i> Editar
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             {% empty %}
-                <tr>
-                    <td colspan="6" class="text-center">No se encontraron registros.</td>
-                </tr>
+                <div class="col-12 text-center">
+                    <div class="alert alert-warning" role="alert">
+                        No se encontraron registros.
+                    </div>
+                </div>
             {% endfor %}
-        </tbody>
-    </table>
+        </div>
+    </div>    <!-- Vista de tabla (inicialmente oculta) -->
+    <div id="table-view" style="display: none;">
+        <table class="table table-dark table-striped">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Nombre Completo</th>
+                    <th>Cédula</th>
+                    <th>Feria</th>
+                    <th>Fecha Registro</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for registro in registros %}
+                    <tr class="{% if not registro.feria %}table-warning text-dark{% endif %} {% if registro.is_new %}table-success{% endif %}">
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ registro.nombres }} {{ registro.apellidos }}</td>
+                        <td>{{ registro.numero_documento }}</td>
+                        <td>
+                            {% if registro.feria %}
+                                {{ registro.feria }}
+                            {% else %}
+                                <span class="badge bg-warning text-dark">Pendiente</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ registro.fecha_feria|date:"d/m/Y" }}</td>
+                        <td>
+                            <a href="{% url 'editar_registro' registro.pk %}" class="btn btn-warning btn-sm">
+                                <i class="fas fa-edit"></i> Editar
+                            </a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center">No se encontraron registros.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
+
+
+
+<!-- Scripts para la funcionalidad -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Botones de vista
+        const viewCards = document.getElementById('view-cards');
+        const viewTable = document.getElementById('view-table');
+        const cardsView = document.getElementById('cards-view');
+        const tableView = document.getElementById('table-view');
+        
+        viewCards.addEventListener('click', function() {
+            cardsView.style.display = 'block';
+            tableView.style.display = 'none';
+            viewCards.classList.add('active');
+            viewTable.classList.remove('active');
+        });
+        
+        viewTable.addEventListener('click', function() {
+            cardsView.style.display = 'none';
+            tableView.style.display = 'block';
+            viewTable.classList.add('active');
+            viewCards.classList.remove('active');
+        });
+        
+        // Botón de pendientes
+        const btnPending = document.getElementById('btn-pending');
+        btnPending.addEventListener('click', function() {
+            const showingPending = btnPending.classList.contains('active');
+            
+            if (showingPending) {
+                // Mostrar todos
+                document.querySelectorAll('.candidate-item').forEach(item => {
+                    item.style.display = 'block';
+                });
+                btnPending.classList.remove('active', 'btn-success');
+                btnPending.classList.add('btn-warning');
+                btnPending.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Ver pendientes de actualizar';
+            } else {
+                // Mostrar solo pendientes
+                document.querySelectorAll('.candidate-item').forEach(item => {
+                    if (item.dataset.feria && item.dataset.feria.trim() !== '') {
+                        item.style.display = 'none';
+                    } else {
+                        item.style.display = 'block';
+                    }
+                });
+                btnPending.classList.add('active', 'btn-success');
+                btnPending.classList.remove('btn-warning');
+                btnPending.innerHTML = '<i class="fas fa-check"></i> Ver todos los registros';
+            }
+        });
+        
+        // Ordenamiento
+        document.querySelectorAll('.sort-option').forEach(option => {
+            option.addEventListener('click', function() {
+                const orderBy = this.dataset.order;
+                const currentActive = document.querySelector('.sort-option.active');
+                let orderDir = 'asc';
+                
+                if (currentActive === this) {
+                    // Cambiar dirección si es el mismo
+                    const currentText = this.textContent;
+                    orderDir = currentText.includes('▲') ? 'desc' : 'asc';
+                }
+                
+                const searchParams = new URLSearchParams(window.location.search);
+                searchParams.set('order_by', orderBy);
+                searchParams.set('order_dir', orderDir);
+                
+                window.location.href = window.location.pathname + '?' + searchParams.toString();
+            });
+        });
+        
+
+        
+        // Simulación de actualizaciones en tiempo real
+        function setupRealtimeUpdates() {
+            // En una implementación real, esto sería con WebSockets
+            setInterval(() => {
+                checkForNewRegistros();
+            }, 10000); // Verifica cada 10 segundos
+        }
+        
+        function checkForNewRegistros() {
+            // Esta sería una petición AJAX para verificar nuevos registros
+            // Simulación para demostración
+            const randomCheck = Math.random();
+            if (randomCheck > 0.8) { // 20% de probabilidad de simular un nuevo registro
+                // Esto es solo para demostración, en la implementación real
+                // realizarías una petición AJAX y actualizarías la interfaz
+                console.log("Simulando actualización en tiempo real");
+            }
+        }
+        
+        // Iniciar simulación de actualizaciones en tiempo real
+        setupRealtimeUpdates();
+    });
+</script>
 {% endblock %}
