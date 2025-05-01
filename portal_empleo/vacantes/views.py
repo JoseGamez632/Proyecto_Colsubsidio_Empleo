@@ -611,13 +611,26 @@ def lista_registros(request):
     else:
         registros = registros.order_by(sort_field)
 
+    # --- Inicio Paginación ---
+    items_por_pagina = request.GET.get('por_pagina', 10) # Default 10
+    try:
+        items_por_pagina = int(items_por_pagina)
+    except ValueError:
+        items_por_pagina = 10 # Valor por defecto si no es un número válido
+    paginator = Paginator(registros, items_por_pagina)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    # --- Fin Paginación ---
+
     context = {
-        'registros': registros,
+        # 'registros': registros, # Ya no se pasa la lista completa
+        'page_obj': page_obj, # Pasar el objeto de la página actual
+        'items_por_pagina': items_por_pagina, # Pasar la cantidad actual por página
         'query': query,
         'order_by': order_by,
         'order_dir': order_dir
     }
-    return render(request, 'lista_registros.html', context)
+    return render(request, 'lista_registros.html', context) # Asegúrate que el nombre del template es correcto
 def editar_registro(request, pk):
     registro = get_object_or_404(RegistroCandidato, pk=pk)
     
