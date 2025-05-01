@@ -10,6 +10,7 @@ from django.db.models.functions import Lower
 from django.db.models import Count, Q
 import unicodedata
 from django.db import migrations
+from django.core.paginator import Paginator # Importar Paginator
 from django.views.generic import TemplateView
 import datetime
 import json
@@ -42,7 +43,7 @@ def normalizar_texto(texto):
     ).lower()
     
 
-def lista_vacantes(request):
+def lista_vacantes(request): # Asegúrate de que esta es la vista correcta
     
     # Procesar los parámetros de filtro multiselect
     filtros = {
@@ -169,6 +170,16 @@ def lista_vacantes(request):
     # Mantener el orden alfabético por cargo
     vacantes = sorted(vacantes, key=lambda v: v.cargo.lower())
 
+    # --- Inicio Paginación ---
+    items_por_pagina = request.GET.get('por_pagina', 10) # Default 10, o el valor que elijas
+    try:
+        items_por_pagina = int(items_por_pagina)
+    except ValueError:
+        items_por_pagina = 10 # Valor por defecto si no es un número válido
+    paginator = Paginator(vacantes, items_por_pagina)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    # --- Fin Paginación ---
     # Obtener opciones de los campos con choices
     form = VacanteForm()
     choices_context = {
@@ -206,11 +217,13 @@ def lista_vacantes(request):
 
     # Renderizar la plantilla con las vacantes filtradas y ordenadas
     return render(request, "vacantes/lista.html", {
-        "vacantes": vacantes,
+        # "vacantes": vacantes, # Ya no se pasa la lista completa, sino el page_obj
+        "page_obj": page_obj, # Pasar el objeto de la página actual
         "filtros": filtros,
         "ciudades_cundinamarca": ciudades_cundinamarca,
         "usuarios_publicadores": usuarios_publicadores, # <--- Asegúrate de que esta línea exista
-        **choices_context  # Pasar los choices al template
+        **choices_context,  # Pasar los choices al template
+        "items_por_pagina": items_por_pagina # Pasar la cantidad actual por página
     })# API para obtener ciudades por departamentos (añadir a urls.py)
 def ciudades_por_departamentos(request):
     departamentos = request.GET.get('departamentos', '').split(',')
