@@ -154,6 +154,49 @@ Inicio
 </style>
     
 <style>
+    /* Estilos para el contenedor de paginación */
+    .pagination {
+        margin-bottom: 2rem; /* Mueve el paginador un poco hacia arriba */
+        margin-top: 2rem; /* Ajusta el espacio superior si es necesario */
+    }
+
+    /* Estilos para los botones/enlaces de paginación */
+    .pagination .btn-outline-secondary {
+        background-color: #ffc107 !important; /* Fondo amarillo (Bootstrap warning) */
+        color: #212529 !important; /* Texto oscuro para mejor contraste con amarillo */
+        border-color: #e0a800 !important; /* Borde un poco más oscuro */
+        font-weight: bold;
+    }
+
+    /* Estilo para los botones al pasar el mouse */
+    .pagination .btn-outline-secondary:hover {
+        background-color: #e0a800 !important; /* Amarillo más oscuro al pasar el mouse */
+        color: #000 !important; /* Texto negro al pasar el mouse */
+        border-color: #c69500 !important;
+    }
+
+    /* Estilo para el texto "Página X de Y" */
+    .pagination .current {
+        color: #ffc107; /* Color amarillo para el texto central */
+        font-weight: bold;
+        vertical-align: middle; /* Alinea verticalmente con los botones */
+        padding-top: .375rem; /* Ajuste vertical similar al padding de los botones sm */
+        padding-bottom: .375rem;
+    }
+
+        /* Estilos para el contenedor del selector "Vacantes por página" */
+        #items-por-pagina-selector {
+            margin-top: 0.5rem; /* Ajusta el espacio sobre el selector (más pequeño que mt-2) */
+            margin-bottom: 2rem; /* Espacio debajo del selector antes del final */
+        }
+        #items-por-pagina-selector label {
+            color: #adb5bd; /* Color gris claro para la etiqueta, similar a Bootstrap */
+            margin-right: 0.5rem; /* Espacio entre etiqueta y select */
+        }
+</style>
+
+
+<style>
     .vacante-card.selected {
     box-shadow: 0 0 10px 3px rgba(40, 167, 69, 0.8);
     border: 2px solid #28a745;
@@ -766,7 +809,7 @@ input:checked + .slider:before {
         
         <!-- Job Listings -->
         <div class="grid-container">
-            {% for vacante in vacantes %}
+            {% for vacante in page_obj %}
             <div class="vacante-card">
                 <div class="vacante-header">
                     <div class="checkbox-container">
@@ -954,6 +997,43 @@ input:checked + .slider:before {
         </div>
     </div>
 </div>
+
+<div class="pagination justify-content-center mt-4">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="btn btn-outline-secondary btn-sm">&laquo; Primera</a>
+            <a href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="btn btn-outline-secondary btn-sm">Anterior</a>
+        {% endif %}
+
+        <span class="current mx-2">
+            Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="btn btn-outline-secondary btn-sm">Siguiente</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="btn btn-outline-secondary btn-sm">Última &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+
+<!-- Opcional: Selector para cantidad por página -->
+<div class="text-center" id="items-por-pagina-selector"> <!-- ID añadido, mt-2 eliminado para control CSS -->
+    <form method="get" action="" class="d-inline-block">
+        {% for key, value in request.GET.items %}
+            {% if key != 'por_pagina' and key != 'page' %}
+                <input type="hidden" name="{{ key }}" value="{{ value }}">
+            {% endif %}
+        {% endfor %}
+        <label for="por_pagina">Vacantes por página:</label> <!-- Estilo aplicado vía CSS -->
+        <select name="por_pagina" id="por_pagina" onchange="this.form.submit()" class="form-select form-select-sm d-inline-block" style="width: auto;">
+            <option value="10" {% if items_por_pagina == 10 %}selected{% endif %}>10</option>
+            <option value="20" {% if items_por_pagina == 20 %}selected{% endif %}>20</option>
+            <option value="50" {% if items_por_pagina == 50 %}selected{% endif %}>50</option>
+        </select>
+    </form>
+</div>
+
+
 
 <!-- Floating Action Button -->
 <a href="{% url 'registro_candidato' %}" class="btn btn-warning floating-button d-none" id="registroButton" onclick="redirectToRegistro(event)">

@@ -1224,6 +1224,16 @@ document.addEventListener('DOMContentLoaded', function() {
     // Mostrar el tutorial o el modal de autorización
     showTutorial();
 });
+
+    // --- Establecer Fecha Actual para Fecha de Feria ---
+    document.addEventListener('DOMContentLoaded', function() {
+        const fechaFeriaInput = document.getElementById('fecha_feria');
+        // Solo establece la fecha si el campo está vacío (para no sobrescribir en edición)
+        if (fechaFeriaInput && !fechaFeriaInput.value) {
+            const today = new Date().toISOString().split('T')[0]; // Formato YYYY-MM-DD
+            fechaFeriaInput.value = today;
+        }
+    });
     </script>
 
     <script>
