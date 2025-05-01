@@ -10,7 +10,6 @@ from django.db.models.functions import Lower
 from django.db.models import Count, Q
 import unicodedata
 from django.db import migrations
-from django.core.paginator import Paginator # Importar Paginator
 from django.views.generic import TemplateView
 import datetime
 import json
@@ -24,6 +23,8 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User 
+from django.utils.timezone import localtime
+
 
 
 
@@ -43,7 +44,7 @@ def normalizar_texto(texto):
     ).lower()
     
 
-def lista_vacantes(request): # Asegúrate de que esta es la vista correcta
+def lista_vacantes(request):
     
     # Procesar los parámetros de filtro multiselect
     filtros = {
@@ -170,16 +171,6 @@ def lista_vacantes(request): # Asegúrate de que esta es la vista correcta
     # Mantener el orden alfabético por cargo
     vacantes = sorted(vacantes, key=lambda v: v.cargo.lower())
 
-    # --- Inicio Paginación ---
-    items_por_pagina = request.GET.get('por_pagina', 10) # Default 10, o el valor que elijas
-    try:
-        items_por_pagina = int(items_por_pagina)
-    except ValueError:
-        items_por_pagina = 10 # Valor por defecto si no es un número válido
-    paginator = Paginator(vacantes, items_por_pagina)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    # --- Fin Paginación ---
     # Obtener opciones de los campos con choices
     form = VacanteForm()
     choices_context = {
@@ -217,13 +208,11 @@ def lista_vacantes(request): # Asegúrate de que esta es la vista correcta
 
     # Renderizar la plantilla con las vacantes filtradas y ordenadas
     return render(request, "vacantes/lista.html", {
-        # "vacantes": vacantes, # Ya no se pasa la lista completa, sino el page_obj
-        "page_obj": page_obj, # Pasar el objeto de la página actual
+        "vacantes": vacantes,
         "filtros": filtros,
         "ciudades_cundinamarca": ciudades_cundinamarca,
         "usuarios_publicadores": usuarios_publicadores, # <--- Asegúrate de que esta línea exista
-        **choices_context,  # Pasar los choices al template
-        "items_por_pagina": items_por_pagina # Pasar la cantidad actual por página
+        **choices_context  # Pasar los choices al template
     })# API para obtener ciudades por departamentos (añadir a urls.py)
 def ciudades_por_departamentos(request):
     departamentos = request.GET.get('departamentos', '').split(',')
@@ -356,28 +345,103 @@ def registro_candidato_view(request):
 #Descargar Excel
 
 def descargar_excel(request):
-    """Genera y descarga un archivo Excel con los datos de las vacantes."""
+    """Genera y descarga un archivo Excel con todos los datos de las vacantes, incluyendo descripción completa."""
+    import openpyxl
+    from django.http import HttpResponse
+    from django.utils.timezone import now
+    from django.db import connection
+    import logging
 
-    # Crear un nuevo libro de trabajo y hoja
+    # Configurar logging
+    logger = logging.getLogger('django')
+    logger.info("Iniciando descarga de Excel con descripción completa...")
+
+    # Crear el libro Excel
     wb = openpyxl.Workbook()
     ws = wb.active
     ws.title = "Vacantes"
-
-    # Encabezados de la tabla
+    
+    # Encabezados estándar
     headers = [
         "Código Vacante", "Cargo", "Área", "Número de Puestos", 
         "Modalidad Trabajo", "Tipo Contrato", "Jornada Trabajo",
         "Descripción", "Experiencia", "Nivel Estudios",
         "Departamento", "Ciudad", "Rango Salarial",
-        "Empresa", "Estado", "Fecha Publicación"
+        "Empresa", "Estado", "Fecha Publicación",
+        "Tipo Vacante", "Citacion Convocatoria", "Cantidad Candidatos Registrados",
+        "Usuario Publicador", "Fecha Creación", "Fecha Actualización"
     ]
     ws.append(headers)
-
-    # Obtener todas las vacantes activas
+    
+    # Consulta de vacantes
     vacantes = Vacante.objects.all()
-
-    # Agregar los datos de cada vacante
+    
     for vacante in vacantes:
+        # Usar la función que ya sabemos que funciona para contar candidatos
+        cantidad_candidatos = 0
+        
+        try:
+            # Este bloque debe contener lo que encontraste que funciona para contar candidatos
+            # Por ejemplo, si una de estas técnicas funcionó, úsala:
+            relevant_tables = []
+            with connection.cursor() as cursor:
+                # Obtener tablas relevantes (esto es una simplificación del código anterior)
+                if connection.vendor == 'postgresql':
+                    cursor.execute("""
+                        SELECT table_name FROM information_schema.tables 
+                        WHERE table_schema = 'public'
+                    """)
+                elif connection.vendor == 'mysql':
+                    cursor.execute("SHOW TABLES")
+                else:
+                    cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
+                
+                tables = [table[0] for table in cursor.fetchall()]
+                
+                # Examinar cada tabla
+                for table in tables:
+                    try:
+                        if connection.vendor == 'postgresql':
+                            cursor.execute(f"""
+                                SELECT column_name FROM information_schema.columns 
+                                WHERE table_name = '{table}'
+                            """)
+                        elif connection.vendor == 'mysql':
+                            cursor.execute(f"DESCRIBE {table}")
+                        else:
+                            cursor.execute(f"PRAGMA table_info({table})")
+                            
+                        columns_data = cursor.fetchall()
+                        columns = []
+                        
+                        # Obtener nombres de columnas según el tipo de BD
+                        if connection.vendor == 'postgresql':
+                            columns = [col[0] for col in columns_data]
+                        elif connection.vendor == 'mysql':
+                            columns = [col[0] for col in columns_data]
+                        else:
+                            columns = [col[1] for col in columns_data]
+                        
+                        if 'vacante_id' in columns:
+                            relevant_tables.append((table, columns))
+                    except:
+                        continue
+            
+            # Probar cada tabla relevante para contar candidatos
+            for table, columns in relevant_tables:
+                if 'vacante_id' in columns:
+                    with connection.cursor() as cursor:
+                        query = f"SELECT COUNT(*) FROM {table} WHERE vacante_id = %s"
+                        cursor.execute(query, [vacante.id])
+                        count = cursor.fetchone()[0]
+                        if count > 0:
+                            cantidad_candidatos = count
+                            break
+                            
+        except Exception as e:
+            logger.error(f"Error al contar candidatos para vacante {vacante.codigo_vacante}: {e}")
+        
+        # Añadir fila al Excel, con descripción completa
         ws.append([
             vacante.codigo_vacante,
             vacante.cargo,
@@ -386,7 +450,8 @@ def descargar_excel(request):
             vacante.modalidad_trabajo,
             vacante.tipo_contrato,
             vacante.jornada_trabajo,
-            vacante.descripcion_vacante[:100] + "..." if len(vacante.descripcion_vacante) > 100 else vacante.descripcion_vacante,
+            # Mostrar la descripción completa sin truncar
+            vacante.descripcion_vacante,
             vacante.tiempo_experiencia,
             vacante.nivel_estudios,
             vacante.departamento.nombre if vacante.departamento else "No especificado",
@@ -394,20 +459,49 @@ def descargar_excel(request):
             vacante.rango_salarial if vacante.rango_salarial else "No especificado",
             vacante.empresa_usuaria,
             "Activa" if vacante.estado else "Inactiva",
-            vacante.fecha_publicacion.strftime("%d/%m/%Y")
+            vacante.fecha_publicacion.strftime("%d/%m/%Y"),
+            vacante.tipo_vacante,
+            vacante.citacion_convocatoria if vacante.citacion_convocatoria else "No aplica",
+            cantidad_candidatos,
+            vacante.usuario_publicador.username if vacante.usuario_publicador else "Sin registro",
+            vacante.fecha_creacion.strftime("%d/%m/%Y %H:%M"),
+            vacante.fecha_actualizacion.strftime("%d/%m/%Y %H:%M") if vacante.fecha_actualizacion else "Sin actualización"
         ])
-
-    # Configurar la respuesta HTTP
+    
+    # Ajustar el ancho de las columnas, pero permitiendo que la descripción sea ancha
+    for column_index, column in enumerate(ws.columns):
+        max_length = 0
+        column_letter = openpyxl.utils.get_column_letter(column[0].column)
+        
+        # Configuración especial para la columna de descripción (columna H, índice 7)
+        if column_index == 7:  # La columna de descripción
+            ws.column_dimensions[column_letter].width = 100  # Ancho fijo amplio para descripción
+        else:
+            for cell in column:
+                try:
+                    if len(str(cell.value)) > max_length:
+                        max_length = len(str(cell.value))
+                except:
+                    pass
+            adjusted_width = (max_length + 2) if max_length < 50 else 50
+            ws.column_dimensions[column_letter].width = adjusted_width
+    
+    # Configurar el estilo para permitir texto multilínea y ajuste de texto
+    from openpyxl.styles import Alignment
+    for row in ws.iter_rows(min_row=2):  # Comenzar desde la fila 2 (después de los encabezados)
+        # Aplicar alineación y ajuste de texto a la celda de descripción (columna H, índice 7)
+        row[7].alignment = Alignment(wrap_text=True, vertical='top')
+    
+    # Ajustar la altura de las filas para mostrar mejor el texto multilínea
+    for row_index in range(2, ws.max_row + 1):
+        ws.row_dimensions[row_index].height = 90  # Altura fija para todas las filas con datos
+    
     response = HttpResponse(
         content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
-    response["Content-Disposition"] = 'attachment; filename="vacantes.xlsx"'
-
-    # Guardar el libro en la respuesta
+    response["Content-Disposition"] = 'attachment; filename="vacantes_completo.xlsx"'
     wb.save(response)
     return response
-
-
 
 # def lista_candidatos(request, id):
 #     # Obtener la vacante específica
@@ -574,63 +668,54 @@ def lista_candidatos(request, id):
 
 
 def lista_registros(request):
-    query = request.GET.get('q', '')  # Captura el término de búsqueda
-    order_by = request.GET.get('order_by', 'fecha_feria')  # Ordenación por defecto
-    order_dir = request.GET.get('order_dir', 'asc')  # Dirección por defecto
-    
+    query = request.GET.get('q', '')
+    order_by = request.GET.get('order_by', 'fecha_feria')
+    order_dir = request.GET.get('order_dir', 'asc')
+
     registros = RegistroCandidato.objects.all()
 
-    # Ignorar tildes y hacer búsquedas insensibles a mayúsculas
-    registros = registros.annotate(
-        nombres_lower=Lower('nombres'),
-        apellidos_lower=Lower('apellidos'),
-        documento_lower=Lower('numero_documento')
-    )
-    
-    if query:
-        registros = registros.filter(
-            Q(nombres_lower__icontains=query) |
-            Q(apellidos_lower__icontains=query) |
-            Q(documento_lower__icontains=query)
-        )
-    
-    # Mapeo de campos para ordenación
-    order_fields = {
+    # Definir campos válidos para ordenación
+    valid_order_fields = {
         'nombres': 'nombres_lower',
         'apellidos': 'apellidos_lower',
         'numero_documento': 'documento_lower',
         'feria': 'feria',
         'fecha_feria': 'fecha_feria'
     }
-    
-    # Aplicar la ordenación usando el campo anotado si existe en el mapeo
-    sort_field = order_fields.get(order_by, 'fecha_feria')
-    
+
+    # Si la ordenación requiere anotaciones, añadirlas
+    if order_by in ['nombres', 'apellidos', 'numero_documento'] or query:
+        registros = registros.annotate(
+            nombres_lower=Lower('nombres'),
+            apellidos_lower=Lower('apellidos'),
+            documento_lower=Lower('numero_documento')
+        )
+
+    # Si hay búsqueda, filtrar
+    if query:
+        registros = registros.filter(
+            Q(nombres_lower__icontains=query) |
+            Q(apellidos_lower__icontains=query) |
+            Q(documento_lower__icontains=query)
+        )
+
+    # Determinar campo de orden válido
+    sort_field = valid_order_fields.get(order_by, 'fecha_feria')
+
+    # Aplicar la ordenación
     if order_dir == 'desc':
         registros = registros.order_by(f'-{sort_field}')
     else:
         registros = registros.order_by(sort_field)
 
-    # --- Inicio Paginación ---
-    items_por_pagina = request.GET.get('por_pagina', 10) # Default 10
-    try:
-        items_por_pagina = int(items_por_pagina)
-    except ValueError:
-        items_por_pagina = 10 # Valor por defecto si no es un número válido
-    paginator = Paginator(registros, items_por_pagina)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    # --- Fin Paginación ---
-
     context = {
-        # 'registros': registros, # Ya no se pasa la lista completa
-        'page_obj': page_obj, # Pasar el objeto de la página actual
-        'items_por_pagina': items_por_pagina, # Pasar la cantidad actual por página
+        'registros': registros,
         'query': query,
         'order_by': order_by,
         'order_dir': order_dir
     }
-    return render(request, 'lista_registros.html', context) # Asegúrate que el nombre del template es correcto
+    return render(request, 'lista_registros.html', context)
+
 def editar_registro(request, pk):
     registro = get_object_or_404(RegistroCandidato, pk=pk)
     
@@ -678,13 +763,15 @@ def exportar_candidatos_excel(request):
     ws = wb.active
     ws.title = "Candidatos"
 
+    # Orden actualizado según lo solicitado
     columnas = [
-        "Feria", "Fecha Feria", "Sexo", "Tipo Documento", "Número Documento", 
-        "Nombres", "Apellidos", "Número Celular", "Correo Electrónico", 
-        "Fecha Nacimiento", "Formación Académica", "Programa Académico", "En Proceso",
-        "Experiencia Laboral", "Interés Ocupacional", "Departamento", "Ciudad", 
-        "Discapacidad", "Tipo Discapacidad", "Horario Interesado", 
-        "Aspiración Salarial", "Registrado en SISE", "Técnico Selección", "Vacantes Aplicadas"
+        "Tipo Feria", "Feria", "Fecha Feria", "Sexo", "Tipo Documento", "Número Documento", 
+        "Nombres", "Apellidos", "Número Celular", "Correo Electrónico", "Fecha Nacimiento", 
+        "Formación Académica", "Semestre/Grado", "Interés Práctica", "Programa Académico",
+        "Experiencia Laboral", "Interés Ocupacional", "Departamento o Ciudad", "Localidad o Municipio", 
+        "Candidato Discapacidad", "Tipo Discapacidad", "Horario Interesado", 
+        "Aspiración Salarial", "Técnico Selección", "Vacantes Aplicadas", 
+        "Código SISE", "Empresa SISE", "Cargo SISE"
     ]
     
     ws.append(columnas)
@@ -692,33 +779,124 @@ def exportar_candidatos_excel(request):
     candidatos = RegistroCandidato.objects.all()
 
     for candidato in candidatos:
-        vacantes_aplicadas = ", ".join([f"[{vacante.codigo_vacante}] {vacante.cargo}" for vacante in candidato.vacantes_disponibles.all()]) if candidato.vacantes_disponibles.exists() else "No aplica"
+        # Preparamos los datos de vacantes disponibles
+        vacantes_disponibles = ""
         
+        if hasattr(candidato, 'vacantes_disponibles') and candidato.vacantes_disponibles.exists():
+            vacantes_list = [f"{vacante.cargo}" for vacante in candidato.vacantes_disponibles.all()]
+            vacantes_disponibles = ", ".join(vacantes_list) if vacantes_list else ""
+        
+        # Extraer valores seguros para todos los campos
+        tipo_feria = getattr(candidato, 'tipo_feria', "") or ""
+        feria = getattr(candidato, 'feria', "") or ""
+        fecha_feria = ""
+        if hasattr(candidato, 'fecha_feria') and candidato.fecha_feria:
+            try:
+                fecha_feria = candidato.fecha_feria.strftime("%Y-%m-%d")
+            except:
+                pass
+        
+        try:
+            sexo_display = candidato.get_sexo_display() or ""
+        except (AttributeError, ValueError):
+            sexo_display = getattr(candidato, 'sexo', "") or ""
+            
+        try:
+            tipo_documento_display = candidato.get_tipo_documento_display() or ""
+        except (AttributeError, ValueError):
+            tipo_documento_display = getattr(candidato, 'tipo_documento', "") or ""
+        
+        numero_documento = getattr(candidato, 'numero_documento', "") or ""
+        nombres = getattr(candidato, 'nombres', "") or ""
+        apellidos = getattr(candidato, 'apellidos', "") or ""
+        numero_celular = getattr(candidato, 'numero_celular', "") or ""
+        correo_electronico = getattr(candidato, 'correo_electronico', "") or ""
+        
+        fecha_nacimiento = ""
+        if hasattr(candidato, 'fecha_nacimiento') and candidato.fecha_nacimiento:
+            try:
+                fecha_nacimiento = candidato.fecha_nacimiento.strftime("%Y-%m-%d")
+            except:
+                pass
+        
+        try:
+            formacion_academica = candidato.get_formacion_academica_display() or ""
+        except (AttributeError, ValueError):
+            formacion_academica = getattr(candidato, 'formacion_academica', "") or ""
+        
+        semestre_grado = getattr(candidato, 'semestre_grado', "") or ""
+        
+        # Manejar el campo interes_practica según lo solicitado
+        interes_practica = ""
+        if hasattr(candidato, 'interes_practica') and candidato.interes_practica is True:
+            interes_practica = "SI"
+        
+        programa_academico = getattr(candidato, 'programa_academico', "") or ""
+        experiencia_laboral = getattr(candidato, 'experiencia_laboral', "") or ""
+        interes_ocupacional = getattr(candidato, 'interes_ocupacional', "") or ""
+        
+        departamento = ""
+        if hasattr(candidato, 'departamento') and candidato.departamento:
+            departamento = str(candidato.departamento)
+            
+        ciudad = ""
+        if hasattr(candidato, 'ciudad') and candidato.ciudad:
+            ciudad = str(candidato.ciudad)
+        
+        try:
+            candidato_discapacidad = candidato.get_candidato_discapacidad_display() or ""
+        except (AttributeError, ValueError):
+            candidato_discapacidad = getattr(candidato, 'candidato_discapacidad', "") or ""
+            
+        tipo_discapacidad = getattr(candidato, 'tipo_discapacidad', "") or ""
+        
+        try:
+            horario_interesado = candidato.get_horario_interesado_display() or ""
+        except (AttributeError, ValueError):
+            horario_interesado = getattr(candidato, 'horario_interesado', "") or ""
+            
+        aspiracion_salarial = getattr(candidato, 'aspiracion_salarial', "") or ""
+        
+        try:
+            tecnico_seleccion = candidato.get_tecnico_seleccion_display() or ""
+        except (AttributeError, ValueError):
+            tecnico_seleccion = getattr(candidato, 'tecnico_seleccion', "") or ""
+        
+        # Usar los campos codigo_sise, empresa_sise y cargo_sise directamente del modelo
+        codigo_sise = getattr(candidato, 'codigo_sise', "") or ""
+        empresa_sise = getattr(candidato, 'empresa_sise', "") or ""
+        cargo_sise = getattr(candidato, 'cargo_sise', "") or ""
+        
+        # Añadir todos los campos en el orden especificado
         ws.append([
-            candidato.feria,
-            candidato.fecha_feria.strftime("%Y-%m-%d") if candidato.fecha_feria else "",
-            candidato.get_sexo_display(),
-            candidato.get_tipo_documento_display(),
-            candidato.numero_documento,
-            candidato.nombres,
-            candidato.apellidos,
-            candidato.numero_celular,
-            candidato.correo_electronico,
-            candidato.fecha_nacimiento.strftime("%Y-%m-%d"),
-            candidato.get_formacion_academica_display(),
-            candidato.programa_academico,
-            candidato.semestre_grado,
-            candidato.experiencia_laboral,
-            candidato.interes_ocupacional,
-            str(candidato.departamento) if candidato.departamento else "",
-            str(candidato.ciudad) if candidato.ciudad else "",
-            candidato.get_candidato_discapacidad_display(),
-            candidato.tipo_discapacidad,
-            candidato.get_horario_interesado_display(),
-            candidato.aspiracion_salarial,
-            candidato.get_registrado_en_sise_display(),
-            candidato.get_tecnico_seleccion_display(),
-            vacantes_aplicadas
+            tipo_feria,
+            feria,
+            fecha_feria,
+            sexo_display,
+            tipo_documento_display,
+            numero_documento,
+            nombres,
+            apellidos,
+            numero_celular,
+            correo_electronico,
+            fecha_nacimiento,
+            formacion_academica,
+            semestre_grado,
+            interes_practica,
+            programa_academico,
+            experiencia_laboral,
+            interes_ocupacional,
+            departamento,
+            ciudad,
+            candidato_discapacidad,
+            tipo_discapacidad,
+            horario_interesado,
+            aspiracion_salarial,
+            tecnico_seleccion,
+            vacantes_disponibles,
+            codigo_sise,
+            empresa_sise,
+            cargo_sise
         ])
     
     response = HttpResponse(content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
@@ -726,6 +904,8 @@ def exportar_candidatos_excel(request):
     
     wb.save(response)
     return response
+
+
 @require_POST
 @require_POST
 def descargar_candidatos(request):

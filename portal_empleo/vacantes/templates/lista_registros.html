@@ -4,212 +4,323 @@
 {% block contenido %}
 <style>
     h1.text-center {
-        font-size: 3rem !important; /* Ajusta el tamaño */
+        font-size: 3rem !important;
         font-weight: bold !important;
-        color: #4d4017 !important; /* Color dorado */
+        color: #4d4017 !important;
         text-transform: uppercase !important;
         line-height: 1.2;
         margin-bottom: 1.5rem;
         text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
     }
     
-    .sort-icon {
-        display: inline-block;
-        margin-left: 5px;
+    .sort-option {
         cursor: pointer;
+        margin-right: 10px;
+        padding: 5px 10px;
+        border-radius: 5px;
+        background-color: #343a40;
+        color: #fff;
+        display: inline-block;
     }
     
-    th {
+    .sort-option.active {
+        background-color: #007bff;
+    }
+    
+    .candidate-card {
+        border-radius: 8px;
+        margin-bottom: 20px;
+        transition: transform 0.3s ease;
         position: relative;
     }
     
-    th a {
-        color: inherit;
-        text-decoration: none;
+    .candidate-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+    
+    .new-badge {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        background-color:#FFC107;
+        color: white;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
         display: flex;
         align-items: center;
-    }
-    
-    th a:hover {
-        text-decoration: underline;
-    }
-    
-    .current-sort {
-        color: #007bff;
-    }
-    
-    /* Estilos para el contenedor de paginación (copiados de lista.html) */
-    .pagination {
-        margin-bottom: 1rem; /* Reducido para acercar el selector de abajo */
-        margin-top: 2rem; /* Ajusta el espacio superior si es necesario */
-    }
-
-    /* Estilos para los botones/enlaces de paginación */
-    .pagination .btn-outline-secondary {
-        background-color: #ffc107 !important; /* Fondo amarillo (Bootstrap warning) */
-        color: #212529 !important; /* Texto oscuro para mejor contraste con amarillo */
-        border-color: #e0a800 !important; /* Borde un poco más oscuro */
+        justify-content: center;
         font-weight: bold;
+        animation: pulse 2s infinite;
+        z-index: 10;
     }
-
-    /* Estilo para los botones al pasar el mouse */
-    .pagination .btn-outline-secondary:hover {
-        background-color: #e0a800 !important; /* Amarillo más oscuro al pasar el mouse */
-        color: #000 !important; /* Texto negro al pasar el mouse */
-        border-color: #c69500 !important;
+    
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
     }
-
-    /* Estilo para el texto "Página X de Y" */
-    .pagination .current {
-        color: #ffc107; /* Color amarillo para el texto central */
-        font-weight: bold;
-        vertical-align: middle; /* Alinea verticalmente con los botones */
-        padding-top: .375rem; /* Ajuste vertical similar al padding de los botones sm */
-        padding-bottom: .375rem;
+    
+    .pending-update {
+        border: 2px solid #007bff;
     }
-
-    /* Estilos para el contenedor del selector "Vacantes por página" */
-    #items-por-pagina-selector {
-        margin-top: 0.5rem; /* Ajusta el espacio sobre el selector (más pequeño que mt-2) */
-        margin-bottom: 2rem; /* Espacio debajo del selector antes del final */
+    
+    .view-toggle-btn {
+        margin-right: 10px;
     }
-    #items-por-pagina-selector label {
-        color: #adb5bd; /* Color gris claro para la etiqueta, similar a Bootstrap */
-        margin-right: 0.5rem; /* Espacio entre etiqueta y select */
+    
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: white;
+    }
+    
+    .card-body i {
+        margin-right: 8px;
+        width: 20px;
+        text-align: center;
+    }
+    
+    .filters-container {
+        background-color: #2c3034;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+    
+    #realtime-indicator {
+        color: #28a745;
+        font-size: 12px;
+        margin-left: 10px;
+        animation: blink 1.5s infinite;
+    }
+    
+    @keyframes blink {
+        0% { opacity: 1; }
+        50% { opacity: 0.3; }
+        100% { opacity: 1; }
     }
 </style>
-<div class="container mt-5">
-    <h1 class="text-center">Lista de Registros</h1>
 
-    <!-- Buscador -->
-    <form method="get" class="mb-4">
-        <div class="input-group">
-            <input type="text" name="q" value="{{ query }}" class="form-control text-white bg-dark" placeholder="Busca cedula o nombre">
-            <div class="input-group-append">
-                <button class="btn btn-primary" type="submit">🔍</button>
-                <a href="{% url 'exportar_candidatos' %}" class="btn btn-success">Descargar Listado de Candidatos</a>
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">Hojas de Vida</h2>
+        <div>
+            <span id="realtime-indicator">● Actualización en tiempo real</span>
+        </div>
+    </div>
+    
+    <div class="filters-container">
+        <!-- Buscador y filtros -->
+        <div class="row">
+            <div class="col-md-6">
+                <form method="get" id="search-form" class="mb-3">
+                    <div class="input-group">
+                        <input type="text" name="q" value="{{ query }}" class="form-control bg-dark text-white" placeholder="Busca por cédula o nombre">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="submit">🔍</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+             <div class="col-md-6 d-flex justify-content-end align-items-center">
+                <!--<button id="btn-pending" class="btn btn-warning mr-2">
+                    <i class="fas fa-exclamation-triangle"></i> Ver pendientes de actualizar
+                </button>-->
+                <a href="{% url 'exportar_candidatos' %}" class="btn btn-success">
+                    <i class="fas fa-download"></i> Descargar listado
+                </a>
+            </div> 
+        </div>
+        
+        <!-- Opciones de visualización -->
+        <div class="row mt-3">
+            <div class="col-md-6">
+                <div class="btn-group" role="group">
+                    <button id="view-cards" class="btn btn-secondary view-toggle-btn active">
+                        <i class="fas fa-id-card"></i> Ver tarjetas
+                    </button>
+                    <button id="view-table" class="btn btn-secondary view-toggle-btn">
+                        <i class="fas fa-table"></i> Ver tabla
+                    </button>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="d-flex justify-content-end">
+                    <div class="sort-option {% if order_by == 'nombres' %}active{% endif %}" data-order="nombres">
+                        Ordenar por nombre
+                        {% if order_by == 'nombres' %}
+                            {% if order_dir == 'asc' %}▲{% else %}▼{% endif %}
+                        {% endif %}
+                    </div>
+                    <div class="sort-option {% if order_by == 'fecha_feria' %}active{% endif %}" data-order="fecha_feria">
+                        Ordenar por fecha
+                        {% if order_by == 'fecha_feria' %}
+                            {% if order_dir == 'asc' %}▲{% else %}▼{% endif %}
+                        {% endif %}
+                    </div>
+                </div>
             </div>
         </div>
-    </form>
-
-    <!-- Tabla de registros -->
-    <table class="table table-dark table-striped">
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>
-                    <a href="?{% if order_by == 'nombres' and order_dir == 'asc' %}order_by=nombres&order_dir=desc{% else %}order_by=nombres&order_dir=asc{% endif %}{% if query %}&q={{ query }}{% endif %}">
-                        Nombre Completo
-                        {% if order_by == 'nombres' %}
-                            {% if order_dir == 'asc' %}
-                                <span class="sort-icon current-sort">▲</span>
-                            {% else %}
-                                <span class="sort-icon current-sort">▼</span>
-                            {% endif %}
-                        {% else %}
-                            <span class="sort-icon">⇅</span>
-                        {% endif %}
-                    </a>
-                </th>
-                <th>
-                    <a href="?{% if order_by == 'numero_documento' and order_dir == 'asc' %}order_by=numero_documento&order_dir=desc{% else %}order_by=numero_documento&order_dir=asc{% endif %}{% if query %}&q={{ query }}{% endif %}">
-                        Cédula
-                        {% if order_by == 'numero_documento' %}
-                            {% if order_dir == 'asc' %}
-                                <span class="sort-icon current-sort">▲</span>
-                            {% else %}
-                                <span class="sort-icon current-sort">▼</span>
-                            {% endif %}
-                        {% else %}
-                            <span class="sort-icon">⇅</span>
-                        {% endif %}
-                    </a>
-                </th>
-                <th>
-                    <a href="?{% if order_by == 'feria' and order_dir == 'asc' %}order_by=feria&order_dir=desc{% else %}order_by=feria&order_dir=asc{% endif %}{% if query %}&q={{ query }}{% endif %}">
-                        Feria
-                        {% if order_by == 'feria' %}
-                            {% if order_dir == 'asc' %}
-                                <span class="sort-icon current-sort">▲</span>
-                            {% else %}
-                                <span class="sort-icon current-sort">▼</span>
-                            {% endif %}
-                        {% else %}
-                            <span class="sort-icon">⇅</span>
-                        {% endif %}
-                    </a>
-                </th>
-                <th>
-                    <a href="?{% if order_by == 'fecha_feria' and order_dir == 'asc' %}order_by=fecha_feria&order_dir=desc{% else %}order_by=fecha_feria&order_dir=asc{% endif %}{% if query %}&q={{ query }}{% endif %}">
-                        Fecha Registro
-                        {% if order_by == 'fecha_feria' %}
-                            {% if order_dir == 'asc' %}
-                                <span class="sort-icon current-sort">▲</span>
-                            {% else %}
-                                <span class="sort-icon current-sort">▼</span>
-                            {% endif %}
-                        {% else %}
-                            <span class="sort-icon">⇅</span>
-                        {% endif %}
-                    </a>
-                </th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for registro in page_obj %} {# Cambiado de 'registros' a 'page_obj' #}
-                <tr>
-                    <td>{{ forloop.counter }}</td>
-                    <td>{{ registro.nombres }} {{ registro.apellidos }}</td>
-                    <td>{{ registro.numero_documento }}</td>
-                    <td>{{ registro.feria }}</td>
-                    <td>{{ registro.fecha_feria|date:"d/m/Y" }}</td>
-                    <td>
-                        <a href="{% url 'editar_registro' registro.pk %}" class="btn btn-warning btn-sm">Editar</a>
-                    </td>
-                </tr>
-            {% empty %}
-                <tr>
-                    <td colspan="6" class="text-center">No se encontraron registros.</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
-
-    <!-- Controles de Paginación -->
-    <div class="pagination justify-content-center mt-4">
-        <span class="step-links">
-            {% if page_obj.has_previous %}
-                <a href="?page=1{% for key, value in request.GET.items %}{% if key != 'page' and key != 'por_pagina' %}&{{ key }}={{ value }}{% endif %}{% endfor %}{% if items_por_pagina != 10 %}&por_pagina={{ items_por_pagina }}{% endif %}" class="btn btn-outline-secondary btn-sm">&laquo; Primera</a>
-                <a href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' and key != 'por_pagina' %}&{{ key }}={{ value }}{% endif %}{% endfor %}{% if items_por_pagina != 10 %}&por_pagina={{ items_por_pagina }}{% endif %}" class="btn btn-outline-secondary btn-sm">Anterior</a>
-            {% endif %}
-
-            <span class="current mx-2">
-                Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
-            </span>
-
-            {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' and key != 'por_pagina' %}&{{ key }}={{ value }}{% endif %}{% endfor %}{% if items_por_pagina != 10 %}&por_pagina={{ items_por_pagina }}{% endif %}" class="btn btn-outline-secondary btn-sm">Siguiente</a>
-                <a href="?page={{ page_obj.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != 'page' and key != 'por_pagina' %}&{{ key }}={{ value }}{% endif %}{% endfor %}{% if items_por_pagina != 10 %}&por_pagina={{ items_por_pagina }}{% endif %}" class="btn btn-outline-secondary btn-sm">Última &raquo;</a>
-            {% endif %}
-        </span>
     </div>
-
-    <!-- Selector para cantidad por página -->
-    <div class="text-center" id="items-por-pagina-selector">
-        <form method="get" action="" class="d-inline-block">
-            {% for key, value in request.GET.items %}
-                {% if key != 'por_pagina' and key != 'page' %}
-                    <input type="hidden" name="{{ key }}" value="{{ value }}">
+    
+    <!-- Vista de tarjetas -->
+    <div id="cards-view">
+        <div class="row" id="candidates-container">
+            {% for registro in registros %}
+                <div class="col-md-4 candidate-item" data-id="{{ registro.pk }}" data-feria="{{ registro.feria }}">
+                    <div class="card bg-dark candidate-card {% if not registro.feria %}pending-update{% endif %}">
+                        {% if registro.is_new %}
+                        <div class="new-badge bg-warning text-white">NUEVO</div>
+                        {% endif %}
+                        <div class="card-header">
+                            <h5 class="card-title mb-0 text-white">{{ registro.nombres }} {{ registro.apellidos }}</h5>
+                        </div>
+                        <div class="card-body text-light">
+                            <p class="card-text"><i class="fas fa-id-card text-warning"></i> <strong class="text-warning">Cédula:</strong> {{ registro.numero_documento }}</p>
+                            <p class="card-text"><i class="fas fa-building text-warning"></i> <strong class="text-warning">Feria:</strong> 
+                                {% if registro.feria %}
+                                    {{ registro.feria }}
+                                {% else %}
+                                    <span class="badge bg-warning text-dark">Pendiente</span>
+                                {% endif %}
+                            </p>
+                            <p class="card-text"><i class="fas fa-calendar-alt text-warning"></i> <strong class="text-warning">Fecha:</strong> {{ registro.fecha_feria|date:"d/m/Y" }}</p>
+                            <div class="text-center mt-3">
+                                <a href="{% url 'editar_registro' registro.pk %}" class="btn btn-warning btn-sm">
+                                    <i class="fas fa-edit"></i> Editar
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12 text-center">
+                    <div class="alert alert-warning" role="alert">
+                        No se encontraron registros.
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>    <!-- Vista de tabla (inicialmente oculta) -->
+    <div id="table-view" style="display: none;">
+        <table class="table table-dark table-striped">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Nombre Completo</th>
+                    <th>Cédula</th>
+                    <th>Feria</th>
+                    <th>Fecha Registro</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for registro in registros %}
+                    <tr class="{% if not registro.feria %}table-warning text-dark{% endif %} {% if registro.is_new %}table-success{% endif %}">
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ registro.nombres }} {{ registro.apellidos }}</td>
+                        <td>{{ registro.numero_documento }}</td>
+                        <td>
+                            {% if registro.feria %}
+                                {{ registro.feria }}
+                            {% else %}
+                                <span class="badge bg-warning text-dark">Pendiente</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ registro.fecha_feria|date:"d/m/Y" }}</td>
+                        <td>
+                            <a href="{% url 'editar_registro' registro.pk %}" class="btn btn-warning btn-sm">
+                                <i class="fas fa-edit"></i> Editar
+                            </a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center">No se encontraron registros.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?{% if query %}q={{ query }}&{% endif %}order_by={{ order_by }}&order_dir={{ order_dir }}&page={{ page_obj.previous_page_number }}">Anterior</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled"><span class="page-link">Anterior</span></li>
+            {% endif %}
+    
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <li class="page-item">
+                        <a class="page-link" href="?{% if query %}q={{ query }}&{% endif %}order_by={{ order_by }}&order_dir={{ order_dir }}&page={{ num }}">{{ num }}</a>
+                    </li>
                 {% endif %}
             {% endfor %}
-            <label for="por_pagina">Registros por página:</label>
-            <select name="por_pagina" id="por_pagina" onchange="this.form.submit()" class="form-select form-select-sm d-inline-block" style="width: auto;">
-                <option value="10" {% if items_por_pagina == 10 %}selected{% endif %}>10</option>
-                <option value="20" {% if items_por_pagina == 20 %}selected{% endif %}>20</option>
-                <option value="50" {% if items_por_pagina == 50 %}selected{% endif %}>50</option>
-            </select>
-        </form>
-    </div>
+    
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?{% if query %}q={{ query }}&{% endif %}order_by={{ order_by }}&order_dir={{ order_dir }}&page={{ page_obj.next_page_number }}">Siguiente</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled"><span class="page-link">Siguiente</span></li>
+            {% endif %}
+        </ul>
+    </nav>
+    
+</div>
+
+
+
+<!-- Scripts para la funcionalidad -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const viewCards = document.getElementById('view-cards');
+        const viewTable = document.getElementById('view-table');
+        const cardsView = document.getElementById('cards-view');
+        const tableView = document.getElementById('table-view');
+    
+        viewCards.addEventListener('click', function() {
+            cardsView.style.display = 'block';
+            tableView.style.display = 'none';
+            viewCards.classList.add('active');
+            viewTable.classList.remove('active');
+        });
+    
+        viewTable.addEventListener('click', function() {
+            cardsView.style.display = 'none';
+            tableView.style.display = 'block';
+            viewTable.classList.add('active');
+            viewCards.classList.remove('active');
+        });
+    
+        // Ordenar por nombre y fecha
+        document.querySelectorAll('.sort-option').forEach(button => {
+            button.addEventListener('click', function() {
+                const orderBy = this.getAttribute('data-order');
+                const currentUrl = new URL(window.location.href);
+                const currentOrderDir = currentUrl.searchParams.get('order_dir') || 'desc';
+                const currentOrderBy = currentUrl.searchParams.get('order_by') || '';
+    
+                let newOrderDir = 'asc';
+                if (currentOrderBy === orderBy && currentOrderDir === 'asc') {
+                    newOrderDir = 'desc';
+                }
+    
+                currentUrl.searchParams.set('order_by', orderBy);
+                currentUrl.searchParams.set('order_dir', newOrderDir);
+                currentUrl.searchParams.set('page', 1); // reinicia la paginación
+    
+                window.location.href = currentUrl.toString();
+            });
+        });
+    });
+    </script>
 {% endblock %}
