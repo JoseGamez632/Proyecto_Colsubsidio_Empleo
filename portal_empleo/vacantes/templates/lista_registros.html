@@ -3,6 +3,47 @@
 
 {% block contenido %}
 <style>
+    /* Estilos para el contenedor de paginación (copiados de lista.html) */
+    .pagination {
+        margin-bottom: 2rem; /* Mueve el paginador un poco hacia arriba */
+        margin-top: 2rem; /* Ajusta el espacio superior si es necesario */
+    }
+
+    /* Estilos para los botones/enlaces de paginación */
+    .pagination .btn-outline-secondary {
+        background-color: #ffc107 !important; /* Fondo amarillo (Bootstrap warning) */
+        color: #212529 !important; /* Texto oscuro para mejor contraste con amarillo */
+        border-color: #e0a800 !important; /* Borde un poco más oscuro */
+        font-weight: bold;
+    }
+
+    /* Estilo para los botones al pasar el mouse */
+    .pagination .btn-outline-secondary:hover {
+        background-color: #e0a800 !important; /* Amarillo más oscuro al pasar el mouse */
+        color: #000 !important; /* Texto negro al pasar el mouse */
+        border-color: #c69500 !important;
+    }
+
+    /* Estilo para el texto "Página X de Y" */
+    .pagination .current {
+        color: #ffc107; /* Color amarillo para el texto central */
+        font-weight: bold;
+        vertical-align: middle; /* Alinea verticalmente con los botones */
+        padding-top: .375rem; /* Ajuste vertical similar al padding de los botones sm */
+        padding-bottom: .375rem;
+    }
+
+    /* Estilos para el contenedor del selector "Registros por página" */
+    #items-por-pagina-selector {
+        margin-top: 0.5rem; /* Ajusta el espacio sobre el selector */
+        margin-bottom: 2rem; /* Espacio debajo del selector antes del final */
+    }
+    #items-por-pagina-selector label {
+        color: #adb5bd; /* Color gris claro para la etiqueta */
+        margin-right: 0.5rem; /* Espacio entre etiqueta y select */
+    }
+</style>
+<style>
     h1.text-center {
         font-size: 3rem !important;
         font-weight: bold !important;
@@ -169,7 +210,7 @@
     <!-- Vista de tarjetas -->
     <div id="cards-view">
         <div class="row" id="candidates-container">
-            {% for registro in registros %}
+            {% for registro in page_obj %} {# <--- Cambio aquí #}
                 <div class="col-md-4 candidate-item" data-id="{{ registro.pk }}" data-feria="{{ registro.feria }}">
                     <div class="card bg-dark candidate-card {% if not registro.feria %}pending-update{% endif %}">
                         {% if registro.is_new %}
@@ -218,7 +259,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for registro in registros %}
+                {% for registro in page_obj %} {# <--- Cambio aquí #}
                     <tr class="{% if not registro.feria %}table-warning text-dark{% endif %} {% if registro.is_new %}table-success{% endif %}">
                         <td>{{ forloop.counter }}</td>
                         <td>{{ registro.nombres }} {{ registro.apellidos }}</td>
@@ -245,35 +286,40 @@
             </tbody>
         </table>
     </div>
-    <nav aria-label="Page navigation" class="mt-4">
-        <ul class="pagination justify-content-center">
+    <div class="pagination justify-content-center mt-4">
+        <span class="step-links">
             {% if page_obj.has_previous %}
-                <li class="page-item">
-                    <a class="page-link" href="?{% if query %}q={{ query }}&{% endif %}order_by={{ order_by }}&order_dir={{ order_dir }}&page={{ page_obj.previous_page_number }}">Anterior</a>
-                </li>
-            {% else %}
-                <li class="page-item disabled"><span class="page-link">Anterior</span></li>
+                <a href="?page=1{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="btn btn-outline-secondary btn-sm">&laquo; Primera</a>
+                <a href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="btn btn-outline-secondary btn-sm">Anterior</a>
             {% endif %}
     
-            {% for num in page_obj.paginator.page_range %}
-                {% if page_obj.number == num %}
-                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
-                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-                    <li class="page-item">
-                        <a class="page-link" href="?{% if query %}q={{ query }}&{% endif %}order_by={{ order_by }}&order_dir={{ order_dir }}&page={{ num }}">{{ num }}</a>
-                    </li>
-                {% endif %}
-            {% endfor %}
+            <span class="current mx-2">
+                Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
+            </span>
     
             {% if page_obj.has_next %}
-                <li class="page-item">
-                    <a class="page-link" href="?{% if query %}q={{ query }}&{% endif %}order_by={{ order_by }}&order_dir={{ order_dir }}&page={{ page_obj.next_page_number }}">Siguiente</a>
-                </li>
-            {% else %}
-                <li class="page-item disabled"><span class="page-link">Siguiente</span></li>
+                <a href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="btn btn-outline-secondary btn-sm">Siguiente</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="btn btn-outline-secondary btn-sm">Última &raquo;</a>
             {% endif %}
-        </ul>
-    </nav>
+        </span>
+    </div>
+    
+    <!-- Opcional: Selector para cantidad por página -->
+    <div class="text-center" id="items-por-pagina-selector"> <!-- ID añadido, mt-2 eliminado para control CSS -->
+        <form method="get" action="" class="d-inline-block">
+            {% for key, value in request.GET.items %}
+                {% if key != 'por_pagina' and key != 'page' %}
+                    <input type="hidden" name="{{ key }}" value="{{ value }}">
+                {% endif %}
+            {% endfor %}
+            <label for="por_pagina">Registros por página:</label> <!-- Cambiado "Vacantes" por "Registros" -->
+            <select name="por_pagina" id="por_pagina" onchange="this.form.submit()" class="form-select form-select-sm d-inline-block" style="width: auto;">
+                <option value="10" {% if items_por_pagina == 10 %}selected{% endif %}>10</option>
+                <option value="20" {% if items_por_pagina == 20 %}selected{% endif %}>20</option>
+                <option value="50" {% if items_por_pagina == 50 %}selected{% endif %}>50</option>
+            </select>
+        </form>
+    </div>
     
 </div>
 

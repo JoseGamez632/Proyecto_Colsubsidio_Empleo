@@ -736,9 +736,31 @@ def lista_registros(request):
         registros = registros.order_by(f'-{sort_field}')
     else:
         registros = registros.order_by(sort_field)
+        
+    # --- INICIO: Lógica de Paginación ---
+    try:
+        # Leer 'por_pagina' de GET, default a 10 si no está o es inválido (igual que en lista_vacantes)
+        items_por_pagina = int(request.GET.get('por_pagina', 10)) 
+    except ValueError:
+        items_por_pagina = 10 # Default si el valor no es un número válido (igual que en lista_vacantes)
+
+    paginator = Paginator(registros, items_por_pagina)
+    page_number = request.GET.get('page')
+
+    try:
+        page_obj = paginator.page(page_number)
+    except PageNotAnInteger:
+        # Si page no es un entero, entrega la primera página.
+        page_obj = paginator.page(1)
+    except EmptyPage:
+        # Si page está fuera de rango, entrega la última página de resultados.
+        page_obj = paginator.page(paginator.num_pages)
+    # --- FIN: Lógica de Paginación ---
+
 
     context = {
-        'registros': registros,
+        'page_obj': page_obj, # <--- Pasar el objeto de página en lugar de la lista completa
+        'items_por_pagina': items_por_pagina, # Para el selector <select>
         'query': query,
         'order_by': order_by,
         'order_dir': order_dir
