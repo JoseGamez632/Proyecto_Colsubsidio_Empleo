@@ -24,6 +24,8 @@ from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User 
 from django.utils.timezone import localtime
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger # Asegúrate que esta línea exista
+
 
 
 
@@ -171,6 +173,32 @@ def lista_vacantes(request):
     # Mantener el orden alfabético por cargo
     vacantes = sorted(vacantes, key=lambda v: v.cargo.lower())
 
+    # --- INICIO: Lógica de Paginación ---
+
+    # Obtener ítems por página (con un valor por defecto)
+    try:
+        items_por_pagina = int(request.GET.get('por_pagina', 10)) # Usa el valor del form, default 10
+    except ValueError:
+        items_por_pagina = 10 # Default si el valor no es un número válido
+
+    # Instanciar el Paginator con la lista ya filtrada y ordenada
+    paginator = Paginator(vacantes, items_por_pagina)
+
+    # Obtener el número de página solicitado
+    page_number = request.GET.get('page')
+
+    # Obtener el objeto Page (page_obj) y manejar errores
+    try:
+        page_obj = paginator.page(page_number)
+    except PageNotAnInteger:
+        # Si page no es un entero, entrega la primera página.
+        page_obj = paginator.page(1)
+    except EmptyPage:
+        # Si page está fuera de rango (p.ej. 9999), entrega la última página de resultados.
+        page_obj = paginator.page(paginator.num_pages)
+
+    # --- FIN: Lógica de Paginación ---
+
     # Obtener opciones de los campos con choices
     form = VacanteForm()
     choices_context = {
@@ -206,12 +234,13 @@ def lista_vacantes(request):
                 'nombre': ciudad.nombre
             })
 
-    # Renderizar la plantilla con las vacantes filtradas y ordenadas
+    # Renderizar la plantilla con el objeto de página y otros datos de contexto
     return render(request, "vacantes/lista.html", {
-        "vacantes": vacantes,
+        "page_obj": page_obj, # <--- ¡Clave! Pasar el objeto de página
+        "items_por_pagina": items_por_pagina, # Para el selector <select>
         "filtros": filtros,
         "ciudades_cundinamarca": ciudades_cundinamarca,
-        "usuarios_publicadores": usuarios_publicadores, # <--- Asegúrate de que esta línea exista
+        "usuarios_publicadores": usuarios_publicadores,
         **choices_context  # Pasar los choices al template
     })# API para obtener ciudades por departamentos (añadir a urls.py)
 def ciudades_por_departamentos(request):
