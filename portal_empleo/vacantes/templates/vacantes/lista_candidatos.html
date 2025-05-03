@@ -596,7 +596,9 @@ Candidatos para la Vacante
                 horario_interesado: "{{ candidato.horario_interesado|escapejs }}",
                 aspiracion_salarial: "{{ candidato.aspiracion_salarial|escapejs }}",
                 registrado_en_sise: "{{ candidato.registrado_en_sise|escapejs }}",
-                tecnico_seleccion: "{{ candidato.tecnico_seleccion|escapejs }}"
+                tecnico_seleccion: "{{ candidato.tecnico_seleccion|escapejs }}",
+                tipo_feria: "{{ candidato.tipo_feria|escapejs }}",
+                interes_practica: "{{ candidato.interes_practica|escapejs }}"
             },
             {% endfor %}
         ];
@@ -730,6 +732,7 @@ Candidatos para la Vacante
                     <p><strong>Documento:</strong> ${sanitizeHTML(candidato.tipo_documento)} ${sanitizeHTML(candidato.numero_documento)}</p>
                     <p><strong>Fecha de nacimiento:</strong> ${sanitizeHTML(candidato.fecha_nacimiento)}</p>
                     <p><strong>Sexo:</strong> ${sanitizeHTML(candidato.sexo)}</p>
+                    <p><strong>Ubicación:</strong> ${sanitizeHTML(candidato.departamento)}, ${sanitizeHTML(candidato.ciudad)}</p> <!-- <-- Línea añadida -->
                 </div>
                 <div class="cv-section">
                     <h4>Contacto</h4>
@@ -748,6 +751,9 @@ Candidatos para la Vacante
                     <p><strong>Programa académico:</strong> ${sanitizeHTML(candidato.programa_academico)}</p>
                     <p><strong>Semestre o grado en curso:</strong> ${sanitizeHTML(candidato.semestre_grado)}</p>
                     <p><strong>Experiencia laboral:</strong> ${sanitizeHTML(candidato.experiencia_laboral)}</p>
+                    ${candidato.interes_practica === 'True' ? `
+                        <p><strong>Interés en Práctica:</strong> Sí</p>
+                    ` : ''}
                 </div>
                 <div class="cv-section">
                     <h4>Información Adicional</h4>
@@ -755,11 +761,14 @@ Candidatos para la Vacante
                     <p><strong>Horario interesado:</strong> ${sanitizeHTML(candidato.horario_interesado)}</p>
                     <p><strong>Aspiración salarial:</strong> ${sanitizeHTML(candidato.aspiracion_salarial)}</p>
                     <p><strong>Candidato con discapacidad:</strong> ${sanitizeHTML(candidato.candidato_discapacidad)}</p>
-                    <p><strong>Tipo de discapacidad:</strong> ${sanitizeHTML(candidato.tipo_discapacidad)}</p>
+                    ${candidato.candidato_discapacidad === 'SI' ? `
+                        <p><strong>Tipo de discapacidad:</strong> ${sanitizeHTML(candidato.tipo_discapacidad)}</p>
+                    ` : ''}
                 </div>
                 <div class="cv-section">
                     <h4>Datos de la Feria</h4>
                     <p><strong>Feria:</strong> ${sanitizeHTML(candidato.feria)}</p>
+                    <p><strong>Tipo de Feria:</strong> ${sanitizeHTML(candidato.tipo_feria)}</p> <!-- <-- Añade esta línea -->
                     <p><strong>Fecha de la Feria:</strong> ${sanitizeHTML(candidato.fecha_feria)}</p>
                     <p><strong>Técnico de Selección:</strong> ${sanitizeHTML(candidato.tecnico_seleccion)}</p>
                     <p><strong>Registrado en SISE:</strong> ${sanitizeHTML(candidato.registrado_en_sise)}</p>
