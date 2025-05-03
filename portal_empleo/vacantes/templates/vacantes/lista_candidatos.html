@@ -598,7 +598,10 @@ Candidatos para la Vacante
                 registrado_en_sise: "{{ candidato.registrado_en_sise|escapejs }}",
                 tecnico_seleccion: "{{ candidato.tecnico_seleccion|escapejs }}",
                 tipo_feria: "{{ candidato.tipo_feria|escapejs }}",
-                interes_practica: "{{ candidato.interes_practica|escapejs }}"
+                interes_practica: "{{ candidato.interes_practica|escapejs }}",
+                codigo_sise: "{{ candidato.codigo_sise|escapejs }}", // <-- Añadir
+                empresa_sise: "{{ candidato.empresa_sise|escapejs }}", // <-- Añadir
+                cargo_sise: "{{ candidato.cargo_sise|escapejs }}" // <-- Añadir
             },
             {% endfor %}
         ];
@@ -622,8 +625,11 @@ Candidatos para la Vacante
         };
 
         // --- Utility Functions ---
-        function sanitizeHTML(text, defaultText = 'No especificado') {
-            if (!text) return defaultText;
+        function sanitizeHTML(text, defaultText = 'No especificado(a)') { // <-- Texto por defecto actualizado
+            // Verifica si el texto es falsy (null, undefined, '', 0, false) o si es la cadena 'None' o 'null'
+            if (!text || text === 'None' || text === 'null') {
+                return defaultText;
+            }
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
@@ -770,6 +776,11 @@ Candidatos para la Vacante
                     <p><strong>Feria:</strong> ${sanitizeHTML(candidato.feria)}</p>
                     <p><strong>Tipo de Feria:</strong> ${sanitizeHTML(candidato.tipo_feria)}</p> <!-- <-- Añade esta línea -->
                     <p><strong>Fecha de la Feria:</strong> ${sanitizeHTML(candidato.fecha_feria)}</p>
+                    ${candidato.tipo_feria === 'FERIA MOVIL' ? `
+                        <p><strong>Código SISE:</strong> ${sanitizeHTML(candidato.codigo_sise)}</p>
+                        <p><strong>Empresa SISE:</strong> ${sanitizeHTML(candidato.empresa_sise)}</p>
+                        <p><strong>Cargo SISE:</strong> ${sanitizeHTML(candidato.cargo_sise)}</p>
+                    ` : ''}
                     <p><strong>Técnico de Selección:</strong> ${sanitizeHTML(candidato.tecnico_seleccion)}</p>
                     <p><strong>Registrado en SISE:</strong> ${sanitizeHTML(candidato.registrado_en_sise)}</p>
                 </div>
