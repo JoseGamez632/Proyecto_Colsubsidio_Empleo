@@ -1369,18 +1369,31 @@ document.addEventListener('DOMContentLoaded', function() {
         $(document).ready(function () {
             $("#departamento-select").change(function () {
                 var departamentoId = $(this).val();
+                // Guardamos el texto del departamento seleccionado ANTES de limpiar las ciudades
+                // Usamos .trim() para quitar espacios en blanco al inicio o final si los hubiera
+                var selectedDepartamentoText = $("#departamento-select option:selected").text().trim();
                 var ciudadSelect = $("#ciudad-select");
-    
-                ciudadSelect.empty().append('<option value="">Seleccione una ciudad</option>');
-    
+
+                // Limpiamos las opciones actuales y ponemos un placeholder más genérico
+                ciudadSelect.empty().append('<option value="">Seleccione municipio/localidad</option>');
+
                 if (departamentoId) {
                     $.ajax({
                         url: "{% url 'cargar_ciudades' %}",
                         data: { departamento_id: departamentoId },
                         success: function (data) {
+                            // Agregamos las nuevas opciones de ciudad/localidad recibidas del servidor
                             $.each(data, function (key, value) {
                                 ciudadSelect.append('<option value="' + value.id + '">' + value.nombre + '</option>');
                             });
+                            // --- NUEVA LÓGICA ---
+                            // Si el departamento seleccionado es 'Bogotá', ocultamos la opción 'Bogotá' en las ciudades/localidades
+                            if (selectedDepartamentoText === 'Bogotá') { // Verifica que 'Bogotá' sea el texto EXACTO en el selector de Departamento
+                                $("#ciudad-select option").filter(function() {
+                                    // Buscamos la opción cuyo texto sea exactamente 'Bogotá'
+                                    return $(this).text().trim() === 'Bogotá'; // Verifica que 'Bogotá' sea el texto EXACTO de la opción en Ciudad/Localidad
+                                }).hide(); // Ocultamos la opción encontrada
+                            }
                         }
                     });
                 }
