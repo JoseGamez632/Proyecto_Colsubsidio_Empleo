@@ -442,22 +442,12 @@ Agregar Vacante
         });
     });
 
+    // Mostrar siempre el contenedor de ciudad, ya no depende de Cundinamarca
     document.addEventListener('DOMContentLoaded', function () {
         const departamentoSelect = document.getElementById('{{ form.departamento.id_for_label }}');
         const ciudadContainer = document.getElementById('ciudad-container');
-
-        departamentoSelect.addEventListener('change', function () {
-            if (departamentoSelect.options[departamentoSelect.selectedIndex].text === "Cundinamarca") {
-                ciudadContainer.style.display = 'block';
-            } else {
-                ciudadContainer.style.display = 'none';
-            }
-        });
-
-        // Verificar al cargar la página si el departamento ya es "Cundinamarca"
-        if (departamentoSelect.options[departamentoSelect.selectedIndex].text === "Cundinamarca") {
-            ciudadContainer.style.display = 'block';
-        }
+        // Asegurarse de que el contenedor sea visible por defecto (o quitar el style="display: none;" del HTML)
+        ciudadContainer.style.display = 'block'; // O simplemente elimina este bloque JS y el style del HTML
     });
 </script>
 
