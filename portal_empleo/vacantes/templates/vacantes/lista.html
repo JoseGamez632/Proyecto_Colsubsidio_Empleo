@@ -1156,12 +1156,15 @@ input:checked + .slider:before {
                 <div class="mb-3">
                     <label for="ciudad" class="form-label text-light">📍 Ciudad</label>
                     <select class="form-control multiselect-improved" id="ciudad" name="ciudad" multiple="multiple">
-                        <!-- Agregar Bogotá a la lista de opciones -->
-                        <option value="bogota" {% if 'bogota' in filtros.ciudad_list %}selected{% endif %}>Bogotá</option>
+                        {# --- Opción Manual para Bogotá D.C. --- #}
+                        {# ¡IMPORTANTE! Reemplaza '1217' con el ID numérico REAL de Bogotá D.C. #}
+                        {% with bogota_id_str='1217' %} {# <-- Usamos el ID como string directamente #}
+                        <option value="{{ bogota_id_str }}" {% if bogota_id_str in filtros.ciudad_list %}selected{% endif %}>Bogotá D.C.</option>
+                        {% endwith %}
                     
                         <!-- Recorrer las ciudades de Cundinamarca -->
                         {% for ciudad in ciudades_cundinamarca %}
-                            <option value="{{ ciudad.id }}" {% if ciudad.id in filtros.ciudad_list %}selected{% endif %}>{{ ciudad.nombre }}</option>
+                            <option value="{{ ciudad.id }}" {% if ciudad.id|stringformat:"s" in filtros.ciudad_list %}selected{% endif %}>{{ ciudad.nombre }}</option>
                         {% endfor %}
                     </select>
                     </div>
@@ -1360,28 +1363,6 @@ function updateActiveFilters() {
         }
     });
     
-    // Manejo especial para ciudades
-    const citySelect = $('#ciudad');
-    const selectedCities = citySelect.val();
-    if (selectedCities && selectedCities.length > 0) {
-        hasActiveFilters = true;
-        
-        selectedCities.forEach(function(value) {
-            let optionText;
-            // Manejo especial para Bogotá
-            if (value === 'bogota') {
-                optionText = 'Bogotá';
-            } else {
-                optionText = citySelect.find(`option[value="${value}"]`).text();
-                // Si no encuentra el texto, usar el valor como respaldo
-                if (!optionText || optionText.trim() === '') {
-                    optionText = `Ciudad ID: ${value}`;
-                }
-            }
-            
-            addFilterBadge(filterContainer, `ciudad-${value}`, `📍 Ciudad: ${optionText}`);
-        });
-    }
     
     // Mostrar mensaje si no hay filtros activos
     if (!hasActiveFilters) {

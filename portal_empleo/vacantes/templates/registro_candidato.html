@@ -1106,7 +1106,7 @@ Inicio
             });
         }
     
-        // Formateo de Millares para Aspiración Salarial
+        // Formateo de Millares para Aspiración Salarial (no se está usando)
         const salarioInput = document.getElementById('aspiracion_salarial');
         if (salarioInput) {
             salarioInput.addEventListener('input', function(e) {
@@ -1127,30 +1127,6 @@ Inicio
             });
         }
     });
-    
-    document.addEventListener('DOMContentLoaded', function() {
-        // Formateo de Millares para Aspiración Salarial
-        const salarioInput = document.getElementById('aspiracion_salarial');
-        if (salarioInput) {
-            salarioInput.addEventListener('input', function(e) {
-                // Remover comas existentes para no duplicarlas
-                let valorSinComas = this.value.replace(/,/g, '');
-                
-                // Remover espacios en blanco
-                valorSinComas = valorSinComas.replace(/\s+/g, '');
-    
-                // Verificar si es un número válido
-                if (!isNaN(valorSinComas) && valorSinComas !== '') {
-                    // Formatear el número con separadores de miles
-                    this.value = parseInt(valorSinComas).toLocaleString('en-US');
-                } else {
-                    // Si no es número, limpiar el campo
-                    this.value = '';
-                }
-            });
-        }
-    });
-    
     {% comment %} document.addEventListener('DOMContentLoaded', function() {
         // Validación y formateo de Fecha de Nacimiento (desactivada por problemas con Iphones)
         const fechaNacimientoInput = document.getElementById('fecha_nacimiento');
@@ -1173,28 +1149,6 @@ Inicio
                 }
             });
         } {% endcomment %}
-    
-        // Formateo de Millares para Aspiración Salarial
-        const salarioInput = document.getElementById('aspiracion_salarial');
-        if (salarioInput) {
-            salarioInput.addEventListener('input', function(e) {
-                // Remover comas existentes para no duplicarlas
-                let valorSinComas = this.value.replace(/,/g, '');
-                
-                // Remover espacios en blanco
-                valorSinComas = valorSinComas.replace(/\s+/g, '');
-    
-                // Verificar si es un número válido
-                if (!isNaN(valorSinComas) && valorSinComas !== '') {
-                    // Formatear el número con separadores de miles
-                    this.value = parseInt(valorSinComas).toLocaleString('en-US');
-                } else {
-                    // Si no es número, limpiar el campo
-                    this.value = '';
-                }
-            });
-        }
-    });
     
     document.addEventListener('DOMContentLoaded', function() {
         const fechaNacimientoInput = document.getElementById('fecha_nacimiento');
@@ -1311,27 +1265,6 @@ Inicio
             documentoInput.addEventListener('input', function(e) {
                 // Remover caracteres no numéricos y espacios
                 this.value = this.value.replace(/\D/g, '');
-            });
-        }
-    
-        // Formateo de Millares para Aspiración Salarial
-        const salarioInput = document.getElementById('aspiracion_salarial');
-        if (salarioInput) {
-            salarioInput.addEventListener('input', function(e) {
-                // Remover comas existentes para no duplicarlas
-                let valorSinComas = this.value.replace(/,/g, '');
-                
-                // Remover espacios en blanco
-                valorSinComas = valorSinComas.replace(/\s+/g, '');
-    
-                // Verificar si es un número válido
-                if (!isNaN(valorSinComas) && valorSinComas !== '') {
-                    // Formatear el número con separadores de miles
-                    this.value = parseInt(valorSinComas).toLocaleString('en-US');
-                } else {
-                    // Si no es número, limpiar el campo
-                    this.value = '';
-                }
             });
         }
     });
