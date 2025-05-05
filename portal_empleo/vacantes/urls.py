@@ -38,7 +38,6 @@ urlpatterns = [
     path('vacantes/<int:vacante_id>/candidatos/<int:candidato_id>/cambiar_a_visto/', 
         views.cambiar_a_visto, 
         name='cambiar_a_visto'),
-    path('cargar-ciudades/', cargar_ciudades, name="cargar_ciudades"),
     path('vacantes/<int:vacante_id>/candidatos/<int:candidato_id>/comentarios/', views.obtener_comentarios, name='obtener_comentarios'),
     path('vacantes/<int:vacante_id>/candidatos/<int:candidato_id>/guardar_comentario/', views.guardar_comentario, name='guardar_comentario'),
     path('api/ciudades-por-departamentos/', views.ciudades_por_departamentos, name='ciudades_por_departamentos'),

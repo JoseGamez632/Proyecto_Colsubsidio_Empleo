@@ -1114,13 +1114,6 @@ def cambiar_a_visto(request, vacante_id, candidato_id):
     return JsonResponse({'error': 'Método no permitido'}, status=405)
 
 
-def cargar_ciudades(request):
-    departamento_id = request.GET.get("departamento_id")
-    ciudades = Ciudad.objects.filter(departamento_id=departamento_id).values("id", "nombre")
-    return JsonResponse(list(ciudades), safe=False)
-
-
-
 
 
 
