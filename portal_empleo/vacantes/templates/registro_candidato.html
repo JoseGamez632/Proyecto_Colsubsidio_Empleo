@@ -1367,12 +1367,12 @@ document.addEventListener('DOMContentLoaded', function() {
     <script>
         //filtrar ciudades por departamento
         $(document).ready(function () {
-            $("#departamento-select").change(function () {
+            $("#id_departamento").change(function () {
                 var departamentoId = $(this).val();
                 // Guardamos el texto del departamento seleccionado ANTES de limpiar las ciudades
                 // Usamos .trim() para quitar espacios en blanco al inicio o final si los hubiera
-                var selectedDepartamentoText = $("#departamento-select option:selected").text().trim();
-                var ciudadSelect = $("#ciudad-select");
+                var selectedDepartamentoText = $("#id_departamento option:selected").text().trim();
+                var ciudadSelect = $("#id_ciudad");
 
                 // Limpiamos las opciones actuales y ponemos un placeholder más genérico
                 ciudadSelect.empty().append('<option value="">Seleccione municipio/localidad</option>');
@@ -1389,7 +1389,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             // --- NUEVA LÓGICA ---
                             // Si el departamento seleccionado es 'Bogotá', ocultamos la opción 'Bogotá' en las ciudades/localidades
                             if (selectedDepartamentoText === 'Bogotá') { // Verifica que 'Bogotá' sea el texto EXACTO en el selector de Departamento
-                                $("#ciudad-select option").filter(function() {
+                                $("#id_ciudad option").filter(function() {
                                     // Buscamos la opción cuyo texto sea exactamente 'Bogotá'
                                     return $(this).text().trim() === 'Bogotá'; // Verifica que 'Bogotá' sea el texto EXACTO de la opción en Ciudad/Localidad
                                 }).hide(); // Ocultamos la opción encontrada
