@@ -982,7 +982,9 @@ input:checked + .slider:before {
                         </div>
                         <div class="modal-footer">
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="checkbox" id="modal-check{{ vacante.id }}" 
+                                <input class="form-check-input" type="checkbox" id="modal-check{{ vacante.id }}" name="aplicar"
+                                       value="{{ vacante.id }}" onchange="handleModalSelection('{{ vacante.id }}')"
+                                       {% if vacante.id in selected_vacantes %}checked{% endif %}>
                                        value="{{ vacante.id }}" onchange="handleModalSelection('{{ vacante.id }}')" 
                                        {% if vacante.id in selected_vacantes %}checked{% endif %}>
                                 <label class="form-check-label" for="modal-check{{ vacante.id }}">Seleccionar vacante</label>
