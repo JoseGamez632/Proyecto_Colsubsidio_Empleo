@@ -625,7 +625,7 @@ Registro Candidato
               <input type="date" name="fecha_feria" id="fecha_feria" class="form-control" value="{{ form.fecha_feria.value|date:'Y-m-d' }}" {% if form.fecha_feria.field.required %}required{% endif %}>
             </div>
             <div class="form-group col-md-6">
-              <label for="feria">Feria</label>
+              <label for="id_feria">Feria</label>
               {{ form.feria }}
             </div>
             <div class="form-group col-md-6">
@@ -653,7 +653,7 @@ Registro Candidato
               {{ form.cargo_sise }}
             </div>
             <div class="form-group col-md-6">
-              <label for="tecnico_seleccion">Técnico de Selección</label>
+              <label for="id_tecnico_seleccion">Técnico de Selección</label>
               {{ form.tecnico_seleccion }}
             </div>
           </div>
@@ -664,7 +664,7 @@ Registro Candidato
           <h3 class="section-title">Datos Personales y Contacto</h3>
           <div class="row">
             <div class="form-group col-md-6">
-              <label for="tipo_documento">Tipo de Documento</label>
+              <label for="id_tipo_documento">Tipo de Documento</label>
               <span class="info-icon" onclick="mostrarInstruccion('tip-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
               <small id="tip-info" style="display: none;">Selecciona el tipo de doumento con el que te identificas en Colombia</small>
               {{ form.tipo_documento }}
@@ -676,19 +676,19 @@ Registro Candidato
               {{ form.numero_documento }}
             </div>
             <div class="form-group col-md-6">
-              <label for="nombres">Nombres</label>
+              <label for="id_nombres">Nombres</label>
               <span class="info-icon" onclick="mostrarInstruccion('nom-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
               <small id="nom-info" style="display: none;">Digita tus nombre Ejemplo: Jose Manuel</small>
               {{ form.nombres }}
             </div>
             <div class="form-group col-md-6">
-              <label for="apellidos">Apellidos</label>
+              <label for="id_apellidos">Apellidos</label>
               <span class="info-icon" onclick="mostrarInstruccion('apell-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
               <small id="apell-info" style="display: none;">Digita tus apellidos Ejemplo: Perez Martinez</small>
               {{ form.apellidos }}
             </div>
             <div class="form-group col-md-6">
-              <label for="sexo">Sexo</label>
+              <label for="id_sexo">Sexo</label>
               <span class="info-icon" onclick="mostrarInstruccion('sex-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
               <small id="sex-info" style="display: none;">Seleciona el sexo de nacimiento</small>
               {{ form.sexo }}
@@ -706,7 +706,7 @@ Registro Candidato
               {{ form.numero_celular }}
             </div>
             <div class="form-group col-md-6">
-              <label for="correo_electronico">Correo Electrónico</label>
+              <label for="id_correo_electronico">Correo Electrónico</label>
               <span class="info-icon" onclick="mostrarInstruccion('email-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
               <small id="email-info" style="display: none;">Ingrese un correo válido, como usuario@email.com</small>
               {{ form.correo_electronico }}
@@ -718,13 +718,13 @@ Registro Candidato
           <h3 class="section-title">Formación Académica y Experiencia</h3>
           <div class="row">
             <div class="form-group col-md-6">
-              <label for="formacion_academica">Formación Académica</label>
+              <label for="id_formacion_academica">Formación Académica</label>
               <span class="info-icon" onclick="mostrarInstruccion('form-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
               <small id="form-info" style="display: none;">Seleciona el mayor nivel academico o mas relevante para el cargo</small>
               {{ form.formacion_academica }}
             </div>
             <div class="form-group col-md-6" id="semestre-grado-field" style="display: none;">
-                <label for="semestre_grado">Semestre o grado en curso</label>
+                <label for="id_semestre_grado">Semestre o grado en curso</label>
                 <span class="info-icon" onclick="mostrarInstruccion('sem-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
                 <small id="sem-info" style="display: none;">Ya que seleccionaste que estas estudiando, digita el semestre o tiempo cursado a la fecha Ejemplo: 5 Semestre</small>
                 {{ form.semestre_grado }}
@@ -734,13 +734,13 @@ Registro Candidato
               {{ form.interes_practica }}
             </div>
             <div class="form-group col-md-6">
-              <label for="programa_academico">Programa Académico o grado cursado</label>
+              <label for="id_programa_academico">Programa Académico o grado cursado</label>
               <span class="info-icon" onclick="mostrarInstruccion('prog-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
               <small id="prog-info" style="display: none;">Digita el programa academico culminado o en curso mas relevante Ejemplo: Bachiller, Ingeniero Civil, Medicina, etc</small>
               {{ form.programa_academico }}
             </div>
             <div class="form-group col-md-6">
-              <label for="experiencia_laboral">Experiencia Laboral</label>
+              <label for="id_experiencia_laboral">Experiencia Laboral</label>
                                   {% comment %} <span class="info-icon" onclick="mostrarInstruccion('exper-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span> {% endcomment %}
                                   <small id="exper-info" style="display: none;">Ingresa las ultimas 3 experiencia laborales iniciando por la mas reciente con el siguiente formato:<br>
                                     Ultimo cargo - Fecha de inicio a Fecha de retiro<br> Penultimo cargo - Feha de inicio a Fecha de retiro <br> Tercer cargo - Fecha de inicio a Fecha de retiro <br>
@@ -756,7 +756,7 @@ Registro Candidato
               {{ form.experiencia_laboral }}
             </div>
             <div class="form-group col-md-6">
-              <label for="interes_ocupacional">Cargos de Interés</label>
+              <label for="id_interes_ocupacional">Cargos de Interés</label>
               <span class="info-icon" onclick="mostrarInstruccion('carg-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
               <small id="carg-info" style="display: none;">Digita varios tipos de cargos que te interesarian Ejemplo: Auxiliar de Bodega, Call Center, Ayudante de Obra, Servicios Generales</small>
               <h2 style="font-size: 14px; font-weight: 300; margin-bottom: 1rem;">
@@ -771,25 +771,25 @@ Registro Candidato
           <h3 class="section-title">Disponibilidad y Ubicación</h3>
           <div class="row">
             <div class="form-group col-md-6">
-              <label for="departamento">Departamento o Ciudad</label>
+              <label for="id_departamento">Departamento o Ciudad</label>
               <span class="info-icon" onclick="mostrarInstruccion('depa-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
               <small id="depa-info" style="display: none;">Selecciona si vives en Cundinamarca o Bogotá Ejemplo: Cundinamarca</small>
               {{ form.departamento }}
             </div>
             <div class="form-group col-md-6">
-              <label for="ciudad">Municipio o Localidad</label>
+              <label for="id_ciudad">Municipio o Localidad</label>
               <span class="info-icon" onclick="mostrarInstruccion('ciud-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
               <small id="ciud-info" style="display: none;">Selecciona el Municipio o Localidad en la que vives Ejemplo: Cajica</small>
               {{ form.ciudad }}
             </div>
             <div class="form-group col-md-6">
-              <label for="horario_interesado">Horario de Interés</label>
+              <label for="id_horario_interesado">Horario de Interés</label>
               <span class="info-icon" onclick="mostrarInstruccion('hor-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
               <small id="hor-info" style="display: none;">Selecciona la disponibilidad de tiempo que tienes para trabajar</small>
               {{ form.horario_interesado }}
             </div>
             <div class="form-group col-md-6">
-              <label for="aspiracion_salarial">Aspiración Salarial</label>
+              <label for="id_aspiracion_salarial">Aspiración Salarial</label>
               <span class="info-icon" onclick="mostrarInstruccion('asps-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
               <small id="asps-info" style="display: none;">Selecciona el rango de salario que aspiras ganar en un empleo</small>
               {{ form.aspiracion_salarial }}
@@ -801,18 +801,18 @@ Registro Candidato
           <h3 class="section-title">Datos Adicionales y Vacantes Aplicadas</h3>
           <div class="row">
             <div class="form-group col-md-6">
-              <label for="registrado_en_sise">¿Está registrado en la plataforma del Servicio Puiblico de empleo?</label>
+              <label for="id_registrado_en_sise">¿Está registrado en la plataforma del Servicio Puiblico de empleo?</label>
               {{ form.registrado_en_sise }}
             </div>
             <div class="form-group col-md-6">
-              <label for="candidato_discapacidad">¿Es candidato con discapacidad?</label>
+              <label for="id_candidato_discapacidad">¿Es candidato con discapacidad?</label>
               <span class="info-icon" onclick="mostrarInstruccion('disc-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
               <small id="disc-info" style="display: none;">Si cuentas con algun tipo de discapacidad selecciona "Si", de lo contrario selecciona "No"</small>
 
               {{ form.candidato_discapacidad }}
             </div>
             <div class="form-group col-md-6" id="tipo_discapacidad_container" style="display:none;">
-              <label for="tipo_discapacidad">Tipo de Discapacidad</label>
+              <label for="id_tipo_discapacidad">Tipo de Discapacidad</label>
               <span class="info-icon" onclick="mostrarInstruccion('tipdis-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
               <small id="tipdis-info" style="display: none;">Digita el tipo de discapacidad y de que porcentaje es</small>
               {{ form.tipo_discapacidad }}
@@ -1367,12 +1367,12 @@ document.addEventListener('DOMContentLoaded', function() {
     <script>
         //filtrar ciudades por departamento
         $(document).ready(function () {
-            $("#departamento-select").change(function () {
+            $("#id_departamento").change(function () {
                 var departamentoId = $(this).val();
                 // Guardamos el texto del departamento seleccionado ANTES de limpiar las ciudades
                 // Usamos .trim() para quitar espacios en blanco al inicio o final si los hubiera
-                var selectedDepartamentoText = $("#departamento-select option:selected").text().trim();
-                var ciudadSelect = $("#ciudad-select");
+                var selectedDepartamentoText = $("#id_departamento option:selected").text().trim();
+                var ciudadSelect = $("#id_ciudad");
 
                 // Limpiamos las opciones actuales y ponemos un placeholder más genérico
                 ciudadSelect.empty().append('<option value="">Seleccione municipio/localidad</option>');
@@ -1389,7 +1389,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             // --- NUEVA LÓGICA ---
                             // Si el departamento seleccionado es 'Bogotá', ocultamos la opción 'Bogotá' en las ciudades/localidades
                             if (selectedDepartamentoText === 'Bogotá') { // Verifica que 'Bogotá' sea el texto EXACTO en el selector de Departamento
-                                $("#ciudad-select option").filter(function() {
+                                $("#id_ciudad option").filter(function() {
                                     // Buscamos la opción cuyo texto sea exactamente 'Bogotá'
                                     return $(this).text().trim() === 'Bogotá'; // Verifica que 'Bogotá' sea el texto EXACTO de la opción en Ciudad/Localidad
                                 }).hide(); // Ocultamos la opción encontrada
