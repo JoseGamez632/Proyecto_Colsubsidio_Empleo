@@ -982,9 +982,7 @@ input:checked + .slider:before {
                         </div>
                         <div class="modal-footer">
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="checkbox" id="modal-check{{ vacante.id }}" name="aplicar"
-                                       value="{{ vacante.id }}" onchange="handleModalSelection('{{ vacante.id }}')"
-                                       {% if vacante.id in selected_vacantes %}checked{% endif %}>
+                                <input class="form-check-input" type="checkbox" id="modal-check{{ vacante.id }}" 
                                        value="{{ vacante.id }}" onchange="handleModalSelection('{{ vacante.id }}')" 
                                        {% if vacante.id in selected_vacantes %}checked{% endif %}>
                                 <label class="form-check-label" for="modal-check{{ vacante.id }}">Seleccionar vacante</label>
@@ -1172,7 +1170,7 @@ input:checked + .slider:before {
                     </div>
                 
                 <div class="mb-3">
-                    <label class="form-label text-light" for="rango_salarial_min">💰 Rango Salarial</label>
+                    <label class="form-label text-light">💰 Rango Salarial</label>
                     <div class="d-flex gap-2">
                         <input type="text" class="form-control" placeholder="Desde" id="rango_salarial_min" name="rango_salarial_min" value="{{ filtros.rango_salarial_min }}">
                         <input type="text" class="form-control" placeholder="Hasta" id="rango_salarial_max" name="rango_salarial_max" value="{{ filtros.rango_salarial_max }}">
