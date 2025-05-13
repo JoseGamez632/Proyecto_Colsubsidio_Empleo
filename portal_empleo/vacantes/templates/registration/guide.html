@@ -2,6 +2,22 @@
 {% load static %}
 
 {% block contenido %}
+
+{# En tu archivo registration_guide.html (o en tu plantilla base) #}
+
+{% if messages %}
+  <div class="container mt-4 mb-4"> {# Ajusta el margen según necesites #}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
+{# Resto del contenido de registration_guide.html #}
+
 <div class="min-h-screen bg-gradient-to-b from-blue-50 to-white py-12 px-4 sm:px-6 lg:px-8">
     <div class="max-w-4xl mx-auto">
         <!-- Header Section -->

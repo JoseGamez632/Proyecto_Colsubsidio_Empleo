@@ -317,6 +317,7 @@ def registro_candidato_view(request):
     if request.method == "POST":
         form = RegistroCandidatoForm(request.POST)
         if form.is_valid():
+            messages.success(request, '¡Tu registro ha sido completado exitosamente! Por favor, sigue las instrucciones en esta guía para finalizar tu proceso.')
             form.save()
             return redirect(reverse('registration_guide'))  # Redirigir a la Guía de Registro SISE
     else:

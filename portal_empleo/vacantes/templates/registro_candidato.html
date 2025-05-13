@@ -823,15 +823,16 @@ Registro Candidato
                     <i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i>
                 </span>
                 <small id="vacd-info" style="display: none;">En esta parte podras ver las vacantes a las que vas a aplicar</small>
-                <select id="vacantes" name="vacantes_disponibles" class="form-control" multiple="multiple"
-                    {% if not user.is_authenticated %}disabled{% endif %}>
-                    {% for vacante in form.fields.vacantes_disponibles.queryset %}
-                    <option value="{{ vacante.id }}" 
-                        {% if vacante in selected_vacantes %}selected{% endif %}
-                        class="{% if vacante.tipo_vacante == 'Tradicional' %}vacante-tradicional{% else %}vacante-convocatoria{% endif %}">
-                        {{ vacante }}
-                    </option>
-                {% endfor %}
+                <select id="vacantes" name="vacantes_disponibles" class="form-control" multiple="multiple">
+                    {% for vacante_obj in form.fields.vacantes_disponibles.queryset %}
+                        {% if user.is_authenticated or vacante_obj.estado %}  {# Condición corregida: usa vacante_obj.estado #}
+                            <option value="{{ vacante_obj.id }}"
+                                {% if vacante_obj in selected_vacantes %}selected{% endif %}
+                                class="{% if vacante_obj.tipo_vacante == 'Tradicional' %}vacante-tradicional{% else %}vacante-convocatoria{% endif %}">
+                                {{ vacante_obj }}
+                            </option>
+                        {% endif %}
+                    {% endfor %}
                 </select>
             </div>
   </div>
@@ -922,26 +923,7 @@ Registro Candidato
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const formulario = document.querySelector('form');
-    
-        if (formulario) {
-            // Eliminar listeners previos con un clon
-            const newForm = formulario.cloneNode(true);
-            formulario.parentNode.replaceChild(newForm, formulario);
-    
-            // Forzar listener
-            newForm.addEventListener('submit', function (e) {
-                e.preventDefault();
-                $('#registroExitosoModal').modal('show');
-            });
-    
-            // Redirigir al aceptar
-            document.getElementById('aceptarRegistroModal').addEventListener('click', function () {
-                window.location.href = "{% url 'registration_guide' %}";
-            });
-        }
-    });
+
     
     $(document).ready(function() {
         $('#vacantes').select2({
