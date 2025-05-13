@@ -817,24 +817,23 @@ Registro Candidato
               <small id="tipdis-info" style="display: none;">Digita el tipo de discapacidad y de que porcentaje es</small>
               {{ form.tipo_discapacidad }}
             </div>
-            <div class="form-group col-md-6">
-                <label for="vacantes">Vacantes aplicadas</label>
-                <span class="info-icon" onclick="mostrarInstruccion('vacd-info')">
-                    <i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i>
-                </span>
-                <small id="vacd-info" style="display: none;">En esta parte podras ver las vacantes a las que vas a aplicar</small>
-                <select id="vacantes" name="vacantes_disponibles" class="form-control" multiple="multiple"
-                    {% if not user.is_authenticated %}disabled{% endif %}>
-                    {% for vacante in form.fields.vacantes_disponibles.queryset %}
-                    <option value="{{ vacante.id }}"
-                        {% if vacante in selected_vacantes %}selected{% endif %}
-                        class="{% if vacante.tipo_vacante == 'Tradicional' %}vacante-tradicional{% else %}vacante-convocatoria{% endif %}">
-                        {{ vacante }}
-                    </option>
-                {% endfor %}
-                </select>
+                <div class="form-group col-md-6">
+                    <label for="vacantes">Vacantes aplicadas</label>
+                    <span class="info-icon" onclick="mostrarInstruccion('vacd-info')">
+                        <i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i>
+                    </span>
+                    <small id="vacd-info" style="display: none;">En esta parte podras ver las vacantes a las que vas a aplicar</small>
+                    <select id="vacantes" name="vacantes_disponibles" class="form-control" multiple="multiple" {% if not user.is_authenticated %}readonly{% endif %}>
+                        {% for vacante in form.fields.vacantes_disponibles.queryset %}
+                        <option value="{{ vacante.id }}" 
+                            {% if vacante in selected_vacantes %}selected{% endif %}
+                            class="{% if vacante.tipo_vacante == 'Tradicional' %}vacante-tradicional{% else %}vacante-convocatoria{% endif %}">
+                            {{ vacante }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>  
             </div>
-  </div>
         </div>
 
         <button type="submit" class="btn btn-primary btn-block mt-3">
@@ -922,6 +921,21 @@ Registro Candidato
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 <script>
+    $(document).ready(function() {
+        // Si el usuario no está autenticado
+        {% if not user.is_authenticated %}
+        $('#vacantes').on('select2:unselecting', function(e) {
+            // Prevenir que se quiten selecciones
+            e.preventDefault();
+        });
+        
+        $('#vacantes').on('select2:selecting', function(e) {
+            // Permitir nuevas selecciones
+        });
+        {% endif %}
+    });
+</script>
+<!-- <script>
     document.addEventListener('DOMContentLoaded', function () {
         const formulario = document.querySelector('form');
 
@@ -992,7 +1006,7 @@ Registro Candidato
             return $vacante;
         }
     });
-</script>
+</script> -->
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
