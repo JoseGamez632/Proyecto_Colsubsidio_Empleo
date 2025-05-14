@@ -846,6 +846,12 @@ input:checked + .slider:before {
                                 </a>
                                 <form action="{% url 'cambiar_estado_vacante' vacante.id %}" method="POST" style="display: inline;">
                                     {% csrf_token %}
+                                    {# Incluir los parámetros GET actuales como campos ocultos para preservar filtros #}
+                                    {% for key, value_list in request.GET.lists %}
+                                        {% for value in value_list %}
+                                            <input type="hidden" name="{{ key }}" value="{{ value }}">
+                                        {% endfor %}
+                                    {% endfor %}
                                     <label class="switch">
                                         <input type="checkbox" onchange="this.form.submit()" {% if vacante.estado %}checked{% endif %}>
                                         <span class="slider round">
