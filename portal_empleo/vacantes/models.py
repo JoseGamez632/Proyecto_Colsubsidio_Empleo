@@ -245,6 +245,9 @@ class RegistroCandidato(models.Model):
         ('Steven Alejandro Arevalo Benitez', 'Steven Alejandro Arevalo Benitez'),
         ('Victor De Jesus Fagua Cogollo', 'Victor De Jesus Fagua Cogollo'),
         ('Yennifer Alexandra Ruiz', 'Yennifer Alexandra Ruiz'),
+        ('Erika Julieth Cristancho Pérez', 'Erika Julieth Cristancho Pérez'),
+        ('Gabriela Alejandra Milanes Sierra', 'Gabriela Alejandra Milanes Sierra'),
+        ('Rosa Milena Pinilla Aldana', 'Rosa Milena Pinilla Aldana'),
         ('Yesica Natalia Lemos Lemos', 'Yesica Natalia Lemos Lemos'),
     ]
 
