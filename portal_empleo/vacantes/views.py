@@ -19,7 +19,7 @@ from datetime import datetime
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, QueryDict 
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User 
@@ -224,10 +224,31 @@ def ciudades_por_departamentos(request):
     ciudades = Ciudad.objects.filter(departamento__in=departamentos).values('id', 'nombre')
     return JsonResponse(list(ciudades), safe=False)# para cambiar el estado de la vacante
 def cambiar_estado_vacante(request, vacante_id):
-    vacante = get_object_or_404(Vacante, id=vacante_id)
-    vacante.estado = not vacante.estado
-    vacante.save()
-    return redirect('lista_vacantes')
+    if request.method == 'POST':
+        vacante = get_object_or_404(Vacante, id=vacante_id)
+        vacante.estado = not vacante.estado
+        # Aquí podrías querer guardar quién actualizó, si tienes esa lógica
+        # vacante.usuario_actualizador = request.user 
+        vacante.save()
+
+        # Reconstruir los parámetros de la query string a partir del POST
+        query_params = QueryDict(mutable=True)
+        for key, value_list in request.POST.lists():
+            # Excluir el token CSRF y cualquier otro campo específico del POST
+            # que no sea un filtro.
+            if key not in ['csrfmiddlewaretoken']: # Añade aquí otros campos a excluir si es necesario
+                for value in value_list:
+                    query_params.appendlist(key, value)
+        
+        # Construir la URL de redirección con los filtros
+        redirect_url = reverse('lista_vacantes') # Asegúrate que 'lista_vacantes' es el name de tu URL
+        if query_params:
+            redirect_url += '?' + query_params.urlencode()
+            
+        return redirect(redirect_url)
+    
+    # Si no es POST, simplemente redirigir a la lista (o manejar como un error)
+    return redirect(reverse('lista_vacantes'))
 
 
 # Create your views here.
