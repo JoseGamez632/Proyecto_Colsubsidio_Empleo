@@ -1,1 +1,5 @@
 .qodo
+# Ignorar directorios __pycache__ y archivos compilados de Python
+__pycache__/
+*.py[cod]
+db.sqlite3
