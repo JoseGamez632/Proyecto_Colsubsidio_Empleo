@@ -825,7 +825,7 @@ Registro Candidato
                 <small id="vacd-info" style="display: none;">En esta parte podras ver las vacantes a las que vas a aplicar</small>
                 <select id="vacantes" name="vacantes_disponibles" class="form-control" multiple="multiple">
                     {% for vacante_obj in form.fields.vacantes_disponibles.queryset %}
-                        {% if user.is_authenticated or vacante_obj.estado %}  {# Condición corregida: usa vacante_obj.estado #}
+                        {% if vacante_obj.estado %}  {# Ahora solo se muestran vacantes activas para todos los usuarios #}
                             <option value="{{ vacante_obj.id }}"
                                 {% if vacante_obj in selected_vacantes %}selected{% endif %}
                                 class="{% if vacante_obj.tipo_vacante == 'Tradicional' %}vacante-tradicional{% else %}vacante-convocatoria{% endif %}">

@@ -272,7 +272,7 @@ class RegistroCandidato(models.Model):
 
     # Campos
     feria = models.CharField(max_length=100, blank=True, null=True)
-    fecha_feria = models.DateField(default=date(2025, 1, 1), blank=True, null=True)
+    fecha_feria = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     # Nuevo campo tipo_feria
     tipo_feria = models.CharField(max_length=20, choices=TIPO_FERIA_CHOICES, blank=True, null=True)
     # Nuevos campos para FERIA MOVIL
