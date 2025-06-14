@@ -326,18 +326,30 @@
         const cardsView = document.getElementById('cards-view');
         const tableView = document.getElementById('table-view');
     
+        // Función para aplicar la vista guardada
+        function aplicarVistaGuardada() {
+            const vistaGuardada = localStorage.getItem('vistaRegistrosPreferida');
+            if (vistaGuardada === 'tabla') {
+                cardsView.style.display = 'none';
+                tableView.style.display = 'block';
+                viewTable.classList.add('active');
+                viewCards.classList.remove('active');
+            } else { // Por defecto o si es 'tarjetas'
+                cardsView.style.display = 'block';
+                tableView.style.display = 'none';
+                viewCards.classList.add('active');
+                viewTable.classList.remove('active');
+            }
+        }
+
         viewCards.addEventListener('click', function() {
-            cardsView.style.display = 'block';
-            tableView.style.display = 'none';
-            viewCards.classList.add('active');
-            viewTable.classList.remove('active');
+            localStorage.setItem('vistaRegistrosPreferida', 'tarjetas');
+            aplicarVistaGuardada();
         });
     
         viewTable.addEventListener('click', function() {
-            cardsView.style.display = 'none';
-            tableView.style.display = 'block';
-            viewTable.classList.add('active');
-            viewCards.classList.remove('active');
+            localStorage.setItem('vistaRegistrosPreferida', 'tabla');
+            aplicarVistaGuardada();
         });
     
         // Ordenar por nombre y fecha
@@ -360,6 +372,9 @@
                 window.location.href = currentUrl.toString();
             });
         });
+
+        // Aplicar la vista guardada al cargar la página
+        aplicarVistaGuardada();
     });
     </script>
 {% endblock %}

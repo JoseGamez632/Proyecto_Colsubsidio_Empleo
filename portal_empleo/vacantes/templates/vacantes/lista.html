@@ -906,12 +906,14 @@ input:checked + .slider:before {
                         Descripción Vacante <i class="fas fa-chevron-down toggle-icon ms-2"></i>
                     </button>
                     <br>
+                    {% if vacante.estado %}
                     <div class="checkbox-container">
                         <input class="selection-checkbox" type="checkbox" id="check{{ vacante.id }}" onchange="handleVacanteSelection('{{ vacante.id }}')">
                         
                         <label for="check{{ vacante.id }}"></label>
                     </div>
-    
+                    {% endif %}
+
                 </div>
             </div>
 
@@ -987,12 +989,14 @@ input:checked + .slider:before {
                             </div>
                         </div>
                         <div class="modal-footer">
+                            {% if vacante.estado %}
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="checkbox" id="modal-check{{ vacante.id }}" 
                                        value="{{ vacante.id }}" onchange="handleModalSelection('{{ vacante.id }}')" 
                                        {% if vacante.id in selected_vacantes %}checked{% endif %}>
                                 <label class="form-check-label" for="modal-check{{ vacante.id }}">Seleccionar vacante</label>
                             </div>
+                            {% endif %}
                             <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cerrar</button>
                             <br><br><br>
                         </div>
