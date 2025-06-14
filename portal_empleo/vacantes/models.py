@@ -272,7 +272,7 @@ class RegistroCandidato(models.Model):
 
     # Campos
     feria = models.CharField(max_length=100, blank=True, null=True)
-    fecha_feria = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    fecha_feria = models.DateField(default=date.today, blank=True, null=True)
     # Nuevo campo tipo_feria
     tipo_feria = models.CharField(max_length=20, choices=TIPO_FERIA_CHOICES, blank=True, null=True)
     # Nuevos campos para FERIA MOVIL
@@ -359,4 +359,3 @@ class ComentarioCandidato(models.Model):
 
     def __str__(self):
         return f"Comentario de {self.usuario.username if self.usuario else 'Desconocido'} - {self.fecha_creacion.strftime('%Y-%m-%d %H:%M:%S')}"
-
