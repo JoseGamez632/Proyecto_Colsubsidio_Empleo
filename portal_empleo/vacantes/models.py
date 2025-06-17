@@ -245,6 +245,9 @@ class RegistroCandidato(models.Model):
         ('Steven Alejandro Arevalo Benitez', 'Steven Alejandro Arevalo Benitez'),
         ('Victor De Jesus Fagua Cogollo', 'Victor De Jesus Fagua Cogollo'),
         ('Yennifer Alexandra Ruiz', 'Yennifer Alexandra Ruiz'),
+        ('Erika Julieth Cristancho Pérez', 'Erika Julieth Cristancho Pérez'),
+        ('Gabriela Alejandra Milanes Sierra', 'Gabriela Alejandra Milanes Sierra'),
+        ('Rosa Milena Pinilla Aldana', 'Rosa Milena Pinilla Aldana'),
         ('Yesica Natalia Lemos Lemos', 'Yesica Natalia Lemos Lemos'),
     ]
 
@@ -269,7 +272,7 @@ class RegistroCandidato(models.Model):
 
     # Campos
     feria = models.CharField(max_length=100, blank=True, null=True)
-    fecha_feria = models.DateField(default=date(2025, 1, 1), blank=True, null=True)
+    fecha_feria = models.DateField(default=date.today, blank=True, null=True)
     # Nuevo campo tipo_feria
     tipo_feria = models.CharField(max_length=20, choices=TIPO_FERIA_CHOICES, blank=True, null=True)
     # Nuevos campos para FERIA MOVIL
@@ -356,4 +359,3 @@ class ComentarioCandidato(models.Model):
 
     def __str__(self):
         return f"Comentario de {self.usuario.username if self.usuario else 'Desconocido'} - {self.fecha_creacion.strftime('%Y-%m-%d %H:%M:%S')}"
-

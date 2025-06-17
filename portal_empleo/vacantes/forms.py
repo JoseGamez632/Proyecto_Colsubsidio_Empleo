@@ -329,13 +329,13 @@ class RegistroCandidatoForm(forms.ModelForm):
     
     departamento = forms.ModelChoiceField(
         queryset=Departamento.objects.all(),
-        widget=forms.Select(attrs={'class': 'form-control', 'id': 'departamento-select'}),
+        widget=forms.Select(attrs={'class': 'form-control', 'id': 'id_departamento'}),
         required=False
     )
 
     ciudad = forms.ModelChoiceField(
         queryset=Ciudad.objects.none(),  # Inicialmente vacío
-        widget=forms.Select(attrs={'class': 'form-control', 'id': 'ciudad-select'}),
+        widget=forms.Select(attrs={'class': 'form-control', 'id': 'id_ciudad'}),
         required=False
     )
 

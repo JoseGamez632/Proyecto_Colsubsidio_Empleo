@@ -19,7 +19,7 @@ from datetime import datetime
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, QueryDict 
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User 
@@ -123,31 +123,11 @@ def lista_vacantes(request):
     if filtros['departamento_list']:
         vacantes = vacantes.filter(departamento__in=filtros['departamento_list'])
     
-    # Manejo especial para Bogotá en el filtro de ciudad
-    ciudad_bogota = False
-    otras_ciudades = []
-    
+    # Filtro de Ciudad (simplificado, solo IDs numéricos)
     if filtros['ciudad_list']:
-        # Separar "bogota" del resto de las ciudades
         from django.db.models import Q
-        filtro_ciudades = Q()
-        
-        for ciudad_id in filtros['ciudad_list']:
-            if ciudad_id == 'bogota':
-                ciudad_bogota = True
-            else:
-                otras_ciudades.append(ciudad_id)
-        
-        # Agregar filtro para Bogotá como departamento si fue seleccionada
-        if ciudad_bogota:
-            # Obtén el departamento "Bogotá D.C." o crea una referencia
-            bogota_departamento = Departamento.objects.filter(nombre__icontains="Bogotá").first()
-            if bogota_departamento:
-                filtro_ciudades |= Q(departamento=bogota_departamento)
-        
-        # Agregar filtro para el resto de ciudades si existen
-        if otras_ciudades:
-            filtro_ciudades |= Q(ciudad__in=otras_ciudades)
+        # Directamente filtrar por los IDs numéricos recibidos
+        filtro_ciudades = Q(ciudad__in=filtros['ciudad_list'])
         
         # Aplicar el filtro combinado si hay alguna condición
         if filtro_ciudades:
@@ -213,23 +193,19 @@ def lista_vacantes(request):
     
     # Obtener el departamento "Cundinamarca" y sus ciudades
     cundinamarca = Departamento.objects.filter(nombre="Cundinamarca").first()
-    ciudades_cundinamarca = Ciudad.objects.filter(departamento=cundinamarca) if cundinamarca else []
+    ciudades_cundinamarca = []
+    if cundinamarca:
+        # Excluimos Bogotá de la lista de Cundinamarca para evitar duplicados en el select
+        ciudades_cundinamarca = Ciudad.objects.filter(departamento=cundinamarca).exclude(id=12117)
 
     # Preparar la información de ciudades seleccionadas para mostrar en filtros activos
+    # (simplificado, basado directamente en filtros['ciudad_list'])
     filtros['ciudad_info'] = []
-    
-    # Agregar Bogotá si está seleccionada
-    if ciudad_bogota:
-        filtros['ciudad_info'].append({
-            'id': 'bogota',
-            'nombre': 'Bogotá'
-        })
-    
-    # Agregar el resto de ciudades seleccionadas
-    if otras_ciudades:
-        ciudades_seleccionadas = Ciudad.objects.filter(id__in=otras_ciudades)
+    if filtros['ciudad_list']:
+        # Obtener los objetos Ciudad correspondientes a los IDs seleccionados
+        ciudades_seleccionadas = Ciudad.objects.filter(id__in=filtros['ciudad_list'])
         for ciudad in ciudades_seleccionadas:
-            filtros['ciudad_info'].append({
+            filtros['ciudad_info'].append({ # Usar siempre el ID numérico
                 'id': str(ciudad.id),
                 'nombre': ciudad.nombre
             })
@@ -248,10 +224,31 @@ def ciudades_por_departamentos(request):
     ciudades = Ciudad.objects.filter(departamento__in=departamentos).values('id', 'nombre')
     return JsonResponse(list(ciudades), safe=False)# para cambiar el estado de la vacante
 def cambiar_estado_vacante(request, vacante_id):
-    vacante = get_object_or_404(Vacante, id=vacante_id)
-    vacante.estado = not vacante.estado
-    vacante.save()
-    return redirect('lista_vacantes')
+    if request.method == 'POST':
+        vacante = get_object_or_404(Vacante, id=vacante_id)
+        vacante.estado = not vacante.estado
+        # Aquí podrías querer guardar quién actualizó, si tienes esa lógica
+        # vacante.usuario_actualizador = request.user 
+        vacante.save()
+
+        # Reconstruir los parámetros de la query string a partir del POST
+        query_params = QueryDict(mutable=True)
+        for key, value_list in request.POST.lists():
+            # Excluir el token CSRF y cualquier otro campo específico del POST
+            # que no sea un filtro.
+            if key not in ['csrfmiddlewaretoken']: # Añade aquí otros campos a excluir si es necesario
+                for value in value_list:
+                    query_params.appendlist(key, value)
+        
+        # Construir la URL de redirección con los filtros
+        redirect_url = reverse('lista_vacantes') # Asegúrate que 'lista_vacantes' es el name de tu URL
+        if query_params:
+            redirect_url += '?' + query_params.urlencode()
+            
+        return redirect(redirect_url)
+    
+    # Si no es POST, simplemente redirigir a la lista (o manejar como un error)
+    return redirect(reverse('lista_vacantes'))
 
 
 # Create your views here.
@@ -341,6 +338,7 @@ def registro_candidato_view(request):
     if request.method == "POST":
         form = RegistroCandidatoForm(request.POST)
         if form.is_valid():
+            messages.success(request, '¡Tu registro ha sido completado exitosamente! Por favor pasa con uno de nuestros profesionales para completar la postulación a las vacantes.')
             form.save()
             return redirect(reverse('registration_guide'))  # Redirigir a la Guía de Registro SISE
     else:
@@ -1136,13 +1134,6 @@ def cambiar_a_visto(request, vacante_id, candidato_id):
         return JsonResponse({'success': False, 'message': 'El estado no era "No visto"'})
     
     return JsonResponse({'error': 'Método no permitido'}, status=405)
-
-
-def cargar_ciudades(request):
-    departamento_id = request.GET.get("departamento_id")
-    ciudades = Ciudad.objects.filter(departamento_id=departamento_id).values("id", "nombre")
-    return JsonResponse(list(ciudades), safe=False)
-
 
 
 

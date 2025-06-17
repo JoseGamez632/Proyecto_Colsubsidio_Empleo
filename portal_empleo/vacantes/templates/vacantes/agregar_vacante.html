@@ -353,7 +353,7 @@ Agregar Vacante
                                     {{ form.departamento }}
                                 </div>
                             </div>
-                            <div class="col-md-6" id="ciudad-container" style="display: none;">
+                            <div class="col-md-6" id="ciudad-container"> <!-- Eliminamos display: none; JS lo controlará -->
                                 <div class="form-group">
                                     <label for="{{ form.ciudad.id_for_label }}">Ciudad o Municipio</label>
                                     {{ form.ciudad }}
@@ -421,43 +421,57 @@ Agregar Vacante
 
 <script>
     $(document).ready(function () {
-        $("#departamento-select").change(function () {
+        // --- Script para Tipo de Vacante (sin cambios) ---
+        $("#{{ form.tipo_vacante.id_for_label }}").change(function () {
+            var tipoVacante = $(this).val();
+            if (tipoVacante === "Convocatoria") {
+                $("#citacion-container").show();
+            } else {
+                $("#citacion-container").hide();
+            }
+        }).trigger('change'); // Ejecutar al cargar por si ya está seleccionado
+
+        // --- Script para Departamentos y Ciudades ---
+        var departamentoSelect = $("#{{ form.departamento.id_for_label }}");
+        var ciudadSelect = $("#{{ form.ciudad.id_for_label }}");
+        var ciudadContainer = $('#ciudad-container');
+
+        function updateCiudades() {
             var departamentoId = $(this).val();
-            if (departamentoId) {
+            var departamentoTexto = $(this).find('option:selected').text().trim(); // Obtener texto del departamento
+
+            if (departamentoId && departamentoId !== "") {
+                ciudadContainer.show(); // Mostrar contenedor de ciudad
                 $.ajax({
                     url: "{% url 'cargar_ciudades' %}",
                     data: { departamento_id: departamentoId },
                     success: function (data) {
-                        var ciudadSelect = $("#ciudad-select");
-                        ciudadSelect.empty();
+                        ciudadSelect.empty(); // Limpiar opciones anteriores
                         ciudadSelect.append('<option value="">Seleccione una ciudad</option>');
+
+                        // Llenar con nuevas ciudades
                         $.each(data, function (key, value) {
                             ciudadSelect.append('<option value="' + value.id + '">' + value.nombre + '</option>');
                         });
+
+                        // *** INICIO: Condicional para Bogotá ***
+                        if (departamentoTexto === 'Bogotá') { // <-- Comparamos con "Bogotá"
+                            // Buscar la opción de ciudad "Bogotá" por su texto y seleccionarla
+                            ciudadSelect.find('option').filter(function() {
+                                return $(this).text().trim() === 'Bogotá'; // <-- Buscamos "Bogotá"
+                            }).prop('selected', true);
+                        }
+                        // *** FIN: Condicional para Bogotá ***
                     }
                 });
             } else {
-                $("#ciudad-select").empty().append('<option value="">Seleccione un departamento primero</option>');
+                ciudadSelect.empty().append('<option value="">Seleccione un departamento primero</option>');
+                ciudadContainer.hide(); // Ocultar si no hay departamento
             }
-        });
-    });
-
-    document.addEventListener('DOMContentLoaded', function () {
-        const departamentoSelect = document.getElementById('{{ form.departamento.id_for_label }}');
-        const ciudadContainer = document.getElementById('ciudad-container');
-
-        departamentoSelect.addEventListener('change', function () {
-            if (departamentoSelect.options[departamentoSelect.selectedIndex].text === "Cundinamarca") {
-                ciudadContainer.style.display = 'block';
-            } else {
-                ciudadContainer.style.display = 'none';
-            }
-        });
-
-        // Verificar al cargar la página si el departamento ya es "Cundinamarca"
-        if (departamentoSelect.options[departamentoSelect.selectedIndex].text === "Cundinamarca") {
-            ciudadContainer.style.display = 'block';
         }
+
+        // Asignar el evento y ejecutarlo al cargar si hay un departamento seleccionado
+        departamentoSelect.change(updateCiudades).trigger('change');
     });
 </script>
 
