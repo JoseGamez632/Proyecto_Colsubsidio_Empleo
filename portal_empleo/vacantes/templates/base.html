@@ -341,6 +341,12 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'inicio' %}">Inicio</a>
                 </li>
+                {# Solo mostrar Copia de seguridad si usuario autenticado y es admin #}
+                {% if user.is_authenticated and user.username == 'admin' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'backup_estado' %}">Copia de seguridad</a>
+                </li>
+                {% endif %}
                 {% if request.user.is_authenticated %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'registro_candidato' %}">Registro de Candidato</a>
