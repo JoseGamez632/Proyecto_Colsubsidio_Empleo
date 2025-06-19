@@ -194,6 +194,29 @@ Vacantes Disponibles
             margin-right: 0.5rem; /* Espacio entre etiqueta y select */
         }
 </style>
+<style>
+    /* Estilos para botones de cambio de vista (copiados de lista_registros.html) */
+    .view-toggle-btn {
+        margin-right: 10px;
+        background-color: #6c757d; /* Color secundario de Bootstrap por defecto */
+        border-color: #6c757d;
+    }
+    .view-toggle-btn.active {
+        background-color: #ffc107 !important; /* Amarillo para el activo */
+        color: #212529 !important;
+        border-color: #e0a800 !important;
+        font-weight: bold;
+    }
+    .view-toggle-btn:not(.active):hover {
+        background-color: #5a6268;
+        border-color: #545b62;
+    }
+    /* Estilo para la tabla */
+    #table-view {
+        display: none; /* Oculta por defecto */
+    }
+</style>
+
 
 
 <style>
@@ -785,6 +808,17 @@ input:checked + .slider:before {
                     {% endif %}
                 </div>
             </div>
+            <!-- Botones de cambio de vista -->
+            <div class="my-3">
+                <div class="btn-group" role="group">
+                    <button id="view-cards" class="btn btn-secondary view-toggle-btn active">
+                        <i class="fas fa-id-card"></i> Ver tarjetas
+                    </button>
+                    <button id="view-table" class="btn btn-secondary view-toggle-btn">
+                        <i class="fas fa-table"></i> Ver tabla
+                    </button>
+                </div>
+            </div>
         </div>
         <div class="mb-4" id="active-filters">
             <h6 class="text-light">✅ Filtros Activos</h6>
@@ -810,7 +844,10 @@ input:checked + .slider:before {
         </div>
         
         <!-- Job Listings -->
-        <div class="grid-container">
+        <!-- Vista de Tarjetas Wrapper -->
+        <div id="cards-view"> {# Nuevo div contenedor para la vista de tarjetas #}
+            <div class="grid-container"> {# El div original con la clase grid-container #}
+                {% comment %} El bucle y la estructura de la tarjeta permanecen dentro de grid-container {% endcomment %}
             {% for vacante in page_obj %}
             <div class="vacante-card">
                 <div class="vacante-header">
@@ -1006,6 +1043,88 @@ input:checked + .slider:before {
                 </div>
             </div>
             {% endfor %}
+        </div>
+        </div> {# Cierre del nuevo div contenedor #}
+
+        <!-- Vista de Tabla -->
+        <div id="table-view">
+            <table class="table table-dark table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Cargo / ID</th>
+                        <th>Ubicación</th>
+                        <th>Modalidad</th>
+                        <th>Salario</th>
+                        {% if request.user.is_authenticated %}
+                        <th>Estado</th>
+                        {% endif %}
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for vacante in page_obj %}
+                    <tr>
+                        <td>
+                            <strong>{{ vacante.cargo }}</strong><br>
+                            <small class="text-muted">{{ vacante.codigo_vacante }}</small><br>
+                            <small class="text-muted">Empresa: {{ vacante.empresa_usuaria }}</small>
+                        </td>
+                        <td>
+                            {% if vacante.ciudad %}
+                                {{ vacante.ciudad }}
+                            {% elif vacante.departamento %}
+                                {{ vacante.departamento }}
+                            {% else %}
+                                No especificado
+                            {% endif %}
+                        </td>
+                        <td>{{ vacante.modalidad_trabajo }}</td>
+                        <td>
+                            {% if vacante.rango_salarial %}
+                                $ {{ vacante.rango_salarial|intcomma }}
+                            {% else %}
+                                A convenir
+                            {% endif %}
+                        </td>
+                        {% if request.user.is_authenticated %}
+                        <td>
+                            <form action="{% url 'cambiar_estado_vacante' vacante.id %}" method="POST" class="d-inline">
+                                {% csrf_token %}
+                                {% for key, value_list in request.GET.lists %}{% for value in value_list %}
+                                <input type="hidden" name="{{ key }}" value="{{ value }}">
+                                {% endfor %}{% endfor %}
+                                <label class="switch">
+                                    <input type="checkbox" onchange="this.form.submit()" {% if vacante.estado %}checked{% endif %}>
+                                    <span class="slider round"><span class="switch-text">{% if vacante.estado %}Activa{% else %}Inactiva{% endif %}</span></span>
+                                </label>
+                            </form>
+                        </td>
+                        {% endif %}
+                        <td>
+                            <button class="btn btn-outline-warning btn-sm mb-1" type="button" data-bs-toggle="modal" data-bs-target="#modal-{{ vacante.id }}">
+                                <i class="fas fa-eye"></i> Detalles
+                            </button>
+                            {% if vacante.estado %}
+                            <div class="checkbox-container mt-1">
+                                <input class="selection-checkbox" type="checkbox" id="table-check{{ vacante.id }}" onchange="handleVacanteSelection('{{ vacante.id }}')">
+                                <label for="table-check{{ vacante.id }}"></label> {# Se usará el estilo del checkbox personalizado #}
+                            </div>
+                            {% endif %}
+                            {% if request.user.is_authenticated %}
+                                <a href="{% url 'editar_vacante' vacante.id %}" class="btn btn-outline-info btn-sm mt-1"><i class="fas fa-edit"></i></a>
+                                <a href="{% url 'lista_candidatos' vacante.id %}" class="btn btn-outline-primary btn-sm mt-1"><i class="fas fa-users"></i></a>
+                                <form action="{% url 'eliminar_vacante' vacante.id %}" method="POST" class="d-inline" onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta vacante?');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-outline-danger btn-sm mt-1"><i class="fas fa-trash"></i></button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="{% if request.user.is_authenticated %}6{% else %}5{% endif %}" class="text-center">No se encontraron vacantes.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
@@ -1693,6 +1812,42 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Mostrar el tutorial
     showTutorial();
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    const viewCardsBtn = document.getElementById('view-cards');
+    const viewTableBtn = document.getElementById('view-table');
+    const cardsViewDiv = document.getElementById('cards-view');
+    const tableViewDiv = document.getElementById('table-view');
+
+    // Función para aplicar la vista guardada
+    function aplicarVistaGuardada() {
+        const vistaGuardada = localStorage.getItem('vistaVacantesPreferida'); // Clave diferente para esta página
+        if (vistaGuardada === 'tabla') {
+            cardsViewDiv.style.display = 'none';
+            tableViewDiv.style.display = 'block';
+            viewTableBtn.classList.add('active');
+            viewCardsBtn.classList.remove('active');
+        } else { // Por defecto o si es 'tarjetas'
+            cardsViewDiv.style.display = 'block';
+            tableViewDiv.style.display = 'none';
+            viewCardsBtn.classList.add('active');
+            viewTableBtn.classList.remove('active');
+        }
+    }
+
+    viewCardsBtn.addEventListener('click', function() {
+        localStorage.setItem('vistaVacantesPreferida', 'tarjetas');
+        aplicarVistaGuardada();
+    });
+
+    viewTableBtn.addEventListener('click', function() {
+        localStorage.setItem('vistaVacantesPreferida', 'tabla');
+        aplicarVistaGuardada();
+    });
+
+    // Aplicar la vista guardada al cargar la página
+    aplicarVistaGuardada();
 });
 
 </script>
