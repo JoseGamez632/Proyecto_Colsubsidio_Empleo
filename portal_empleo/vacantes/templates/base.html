@@ -32,6 +32,26 @@
     <!-- Select2 JS -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
+    <!-- Anti-Flicker Script & Style -->
+    <style>
+        /* Oculta la vista de tarjetas y muestra la de tabla si la clase está presente en <html> */
+        /* Esto previene el "parpadeo" al cargar la página con la vista de tabla preferida. */
+        html.vista-tabla-inicial #cards-view {
+            display: none;
+        }
+        html.vista-tabla-inicial #table-view {
+            display: block;
+        }
+    </style>
+    <script>
+        // Este script se ejecuta antes de que se renderice el body para evitar el parpadeo.
+        (function() {
+            if (localStorage.getItem('vistaVacantesPreferida') === 'tabla') {
+                document.documentElement.classList.add('vista-tabla-inicial');
+            }
+        })();
+    </script>
+
     <style>
         :root {
             --nav-bg: #1a1a1a;

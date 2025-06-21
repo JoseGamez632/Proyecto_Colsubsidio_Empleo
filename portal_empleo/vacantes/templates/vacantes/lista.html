@@ -1716,6 +1716,9 @@ function clearFilters() {
                 viewCardsBtn.classList.add('active');
                 viewTableBtn.classList.remove('active');
             }
+            // Una vez que el script ha aplicado la vista correcta, eliminamos la clase
+            // de anti-parpadeo para que los clics posteriores funcionen normalmente.
+            document.documentElement.classList.remove('vista-tabla-inicial');
         }
 
         viewCardsBtn.addEventListener('click', function() {
