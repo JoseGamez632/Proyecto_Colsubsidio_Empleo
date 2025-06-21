@@ -494,14 +494,13 @@ input:checked + .slider:before {
     background-color: #ffc107;
     color: black;
     border-radius: 8px;
-    border: 2px solid #ffc107;
     cursor: pointer;
     transition: all 0.3s ease;
 }
 
 .selection-checkbox:checked + label {
-    background-color: #28a745;
-    border-color: #28a745;
+    /* These will be handled by Bootstrap btn-success:checked styles or similar */
+    /* background-color: #28a745; */
     color: white;
 }
 
@@ -511,6 +510,30 @@ input:checked + .slider:before {
 
 .selection-checkbox:checked + label:after {
     content: "Aplicado";
+}
+
+/* Estilo para filas de tabla seleccionadas */
+tr.selected-row {
+    background-color: rgba(40, 167, 69, 0.2) !important; /* Verde claro para la fila de la tabla */
+    border: 1px solid #28a745;
+    transition: all 0.3s ease-in-out;
+}
+
+.table-actions-column > div { /* Renombramos para evitar conflicto si 'actions-column' se usa en tarjetas */
+    margin-bottom: 0.5rem; /* Espacio entre el grupo de 2 botones y el grupo de 3 botones */
+}
+
+/* Específico para la etiqueta del checkbox DENTRO de la tabla */
+.table-actions-column .checkbox-container label {
+    padding: 0; /* Bootstrap se encarga del padding con btn-sm */
+}
+
+.table-actions-column .btn, /* Todos los botones en la columna de acciones de la tabla */
+.table-actions-column .checkbox-container label { /* La etiqueta que parece botón */
+    height: 31px; /* Altura fija para todos los botones, ajusta según sea necesario */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 /* Estilos para Select2 */
 .select2-container--bootstrap4 .select2-selection--multiple {
@@ -945,7 +968,7 @@ input:checked + .slider:before {
                     <br>
                     {% if vacante.estado %}
                     <div class="checkbox-container">
-                        <input class="selection-checkbox" type="checkbox" id="check{{ vacante.id }}" onchange="handleVacanteSelection('{{ vacante.id }}')">
+                        <input class="selection-checkbox" type="checkbox" id="check{{ vacante.id }}" onchange="handleSelection(event, '{{ vacante.id }}')">
                         
                         <label for="check{{ vacante.id }}"></label>
                     </div>
@@ -954,94 +977,7 @@ input:checked + .slider:before {
                 </div>
             </div>
 
-            <!-- Modal para detalles de vacante -->
-            <div class="modal fade" id="modal-{{ vacante.id }}" tabindex="-1" role="dialog" aria-labelledby="modalLabel-{{ vacante.id }}" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="modalLabel-{{ vacante.id }}">Detalles de la Vacante: {{ vacante.cargo }}</h5>
-                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="row">
-                                <div class="col-md-12 mb-4">
-                                    <h6 class="text-warning mb-3">📝 Descripción de la Vacante</h6>
-                                    <p class="descripcion-vacante">{{ vacante.descripcion_vacante }}</p>
-                                </div>                                                                
-                                <div class="col-md-6">
-                                    <h6 class="text-warning mb-3">📊 Información General</h6>
-                                    <ul class="list-group list-group-flush bg-transparent">
-                                        <li class="list-group-item bg-transparent border-secondary">
-                                            <strong>👥 Número de puestos:</strong> {{ vacante.numero_puestos }}
-                                        </li>
-                                        <li class="list-group-item bg-transparent border-secondary">
-                                            <strong>⏳ Experiencia requerida:</strong> {{ vacante.tiempo_experiencia }}
-                                        </li>
-                                        <li class="list-group-item bg-transparent border-secondary">
-                                            <strong>🎓 Nivel de estudios:</strong> {{ vacante.nivel_estudios }}
-                                        </li>
-                                        <li class="list-group-item bg-transparent border-secondary">
-                                            <strong>📍 Ubicación:</strong> 
-                                            {% if vacante.ciudad %}
-                                                {{ vacante.ciudad }}
-                                            {% elif vacante.departamento %}
-                                                {{ vacante.departamento }}
-                                            {% else %}
-                                                No especificado
-                                            {% endif %}
-                                        </li>
-                                    </ul>
-                                </div>
-                                
-                                <div class="col-md-6">
-                                    <h6 class="text-warning mb-3">💼 Condiciones Laborales</h6>
-                                    <ul class="list-group list-group-flush bg-transparent">
-                                        <li class="list-group-item bg-transparent border-secondary">
-                                            <strong>🏢 Modalidad:</strong> {{ vacante.modalidad_trabajo }}
-                                        </li>
-                                        <li class="list-group-item bg-transparent border-secondary">
-                                            <strong>📄 Tipo de contrato:</strong> {{ vacante.tipo_contrato }}
-                                        </li>
-                                        <li class="list-group-item bg-transparent border-secondary">
-                                            <strong>⏰ Jornada:</strong> {{ vacante.jornada_trabajo }}
-                                        </li>
-                                        <li class="list-group-item bg-transparent border-secondary">
-                                            <strong>💰 Salario:</strong>
-                                            {% if vacante.rango_salarial %}
-                                                $ {{ vacante.rango_salarial|intcomma }}
-                                            {% else %}
-                                                A convenir
-                                            {% endif %}
-                                        </li>
-                                    </ul>
-                                </div>
-                                {% if request.user.is_authenticated %}
-                                <div class="col-md-12 mb-4">
-                                    <br>
-                                    <h6 class="text-warning mb-3">📅 Datos de citación a convocatoria</h6>
-                                    <p class="descripcion-vacante">{{ vacante.citacion_convocatoria }}</p>
-                                </div> 
-                                {% endif %}                                                               
 
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            {% if vacante.estado %}
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="checkbox" id="modal-check{{ vacante.id }}" 
-                                       value="{{ vacante.id }}" onchange="handleModalSelection('{{ vacante.id }}')" 
-                                       {% if vacante.id in selected_vacantes %}checked{% endif %}>
-                                <label class="form-check-label" for="modal-check{{ vacante.id }}">Seleccionar vacante</label>
-                            </div>
-                            {% endif %}
-                            <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cerrar</button>
-                            <br><br><br>
-                        </div>
-                        <hr>
-                        <hr>
-                    </div>
-                </div>
-            </div>
             {% endfor %}
         </div>
         </div> {# Cierre del nuevo div contenedor #}
@@ -1063,7 +999,7 @@ input:checked + .slider:before {
                 </thead>
                 <tbody>
                     {% for vacante in page_obj %}
-                    <tr>
+                    <tr id="row-{{ vacante.id }}"> {# ID añadido para facilitar la selección con JS #}
                         <td>
                             <strong>{{ vacante.cargo }}</strong><br>
                             <small class="text-muted">{{ vacante.codigo_vacante }}</small><br>
@@ -1100,23 +1036,29 @@ input:checked + .slider:before {
                             </form>
                         </td>
                         {% endif %}
-                        <td>
-                            <button class="btn btn-outline-warning btn-sm mb-1" type="button" data-bs-toggle="modal" data-bs-target="#modal-{{ vacante.id }}">
-                                <i class="fas fa-eye"></i> Detalles
-                            </button>
-                            {% if vacante.estado %}
-                            <div class="checkbox-container mt-1">
-                                <input class="selection-checkbox" type="checkbox" id="table-check{{ vacante.id }}" onchange="handleVacanteSelection('{{ vacante.id }}')">
-                                <label for="table-check{{ vacante.id }}"></label> {# Se usará el estilo del checkbox personalizado #}
+                        <td class="table-actions-column"> {# Clase para la columna de acciones de la tabla #}
+                            {# Grupo de 2 botones: Detalles y Aplicar #}
+                            <div class="d-flex gap-1">
+                                <button class="btn btn-outline-warning btn-sm flex-fill" type="button" data-bs-toggle="modal" data-bs-target="#modal-{{ vacante.id }}">
+                                    <i class="fas fa-eye"></i> Detalles
+                                </button>
+                                {% if vacante.estado %}
+                                <div class="checkbox-container flex-fill">
+                                    <input class="selection-checkbox" type="checkbox" id="table-check{{ vacante.id }}" onchange="handleSelection(event, '{{ vacante.id }}')">
+                                    <label for="table-check{{ vacante.id }}" class="btn btn-success btn-sm w-100"></label>
+                                </div>
+                                {% endif %}
                             </div>
-                            {% endif %}
                             {% if request.user.is_authenticated %}
-                                <a href="{% url 'editar_vacante' vacante.id %}" class="btn btn-outline-info btn-sm mt-1"><i class="fas fa-edit"></i></a>
-                                <a href="{% url 'lista_candidatos' vacante.id %}" class="btn btn-outline-primary btn-sm mt-1"><i class="fas fa-users"></i></a>
-                                <form action="{% url 'eliminar_vacante' vacante.id %}" method="POST" class="d-inline" onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta vacante?');">
+                            {# Grupo de 3 botones: Admin #}
+                            <div class="d-flex gap-1 justify-content-center"> {# Centrar este grupo de botones #}
+                                <a href="{% url 'editar_vacante' vacante.id %}" class="btn btn-outline-info btn-sm flex-fill"><i class="fas fa-edit"></i></a>
+                                <a href="{% url 'lista_candidatos' vacante.id %}" class="btn btn-outline-primary btn-sm flex-fill"><i class="fas fa-users"></i></a>
+                                <form action="{% url 'eliminar_vacante' vacante.id %}" method="POST" class="d-inline flex-fill" onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta vacante?');">
                                     {% csrf_token %}
-                                    <button type="submit" class="btn btn-outline-danger btn-sm mt-1"><i class="fas fa-trash"></i></button>
+                                    <button type="submit" class="btn btn-outline-danger btn-sm w-100"><i class="fas fa-trash"></i></button>
                                 </form>
+                            </div>
                             {% endif %}
                         </td>
                     </tr>
@@ -1164,6 +1106,76 @@ input:checked + .slider:before {
     </form>
 </div>
 
+<!-- Modals Section (Movido aquí para que no se oculte con el cambio de vista) -->
+{% for vacante in page_obj %}
+<div class="modal fade" id="modal-{{ vacante.id }}" tabindex="-1" role="dialog" aria-labelledby="modalLabel-{{ vacante.id }}" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalLabel-{{ vacante.id }}">Detalles de la Vacante: {{ vacante.cargo }}</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12 mb-4">
+                        <h6 class="text-warning mb-3">📝 Descripción de la Vacante</h6>
+                        <p class="descripcion-vacante">{{ vacante.descripcion_vacante }}</p>
+                    </div>                                                                
+                    <div class="col-md-6">
+                        <h6 class="text-warning mb-3">📊 Información General</h6>
+                        <ul class="list-group list-group-flush bg-transparent">
+                            <li class="list-group-item bg-transparent border-secondary">
+                                <strong>👥 Número de puestos:</strong> {{ vacante.numero_puestos }}
+                            </li>
+                            <li class="list-group-item bg-transparent border-secondary">
+                                <strong>⏳ Experiencia requerida:</strong> {{ vacante.tiempo_experiencia }}
+                            </li>
+                            <li class="list-group-item bg-transparent border-secondary">
+                                <strong>🎓 Nivel de estudios:</strong> {{ vacante.nivel_estudios }}
+                            </li>
+                            <li class="list-group-item bg-transparent border-secondary">
+                                <strong>📍 Ubicación:</strong> 
+                                {% if vacante.ciudad %}{{ vacante.ciudad }}{% elif vacante.departamento %}{{ vacante.departamento }}{% else %}No especificado{% endif %}
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <h6 class="text-warning mb-3">💼 Condiciones Laborales</h6>
+                        <ul class="list-group list-group-flush bg-transparent">
+                            <li class="list-group-item bg-transparent border-secondary"><strong>🏢 Modalidad:</strong> {{ vacante.modalidad_trabajo }}</li>
+                            <li class="list-group-item bg-transparent border-secondary"><strong>📄 Tipo de contrato:</strong> {{ vacante.tipo_contrato }}</li>
+                            <li class="list-group-item bg-transparent border-secondary"><strong>⏰ Jornada:</strong> {{ vacante.jornada_trabajo }}</li>
+                            <li class="list-group-item bg-transparent border-secondary">
+                                <strong>💰 Salario:</strong>
+                                {% if vacante.rango_salarial %}$ {{ vacante.rango_salarial|intcomma }}{% else %}A convenir{% endif %}
+                            </li>
+                        </ul>
+                    </div>
+                    {% if request.user.is_authenticated %}
+                    <div class="col-md-12 mb-4">
+                        <br>
+                        <h6 class="text-warning mb-3">📅 Datos de citación a convocatoria</h6>
+                        <p class="descripcion-vacante">{{ vacante.citacion_convocatoria }}</p>
+                    </div> 
+                    {% endif %}                                                               
+                </div>
+            </div>
+            <div class="modal-footer">
+                {% if vacante.estado %}
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="modal-check{{ vacante.id }}" value="{{ vacante.id }}" onchange="handleSelection(event, '{{ vacante.id }}')">
+                    <label class="form-check-label" for="modal-check{{ vacante.id }}">
+                        Seleccionar vacante
+                    </label>
+                </div>
+                {% endif %}
+                <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
 
 
 <!-- Floating Action Button -->
@@ -1565,290 +1577,233 @@ function clearFilters() {
         });
     }); 
     
-let selectedVacantes = [];
+    // =================================================================================
+    // INICIO DEL BLOQUE DE SCRIPT UNIFICADO
+    // =================================================================================
 
-function handleVacanteSelection(vacanteId) {
-    const checkbox = document.getElementById('check' + vacanteId);
-    const modalCheckbox = document.getElementById('modal-check' + vacanteId);
-    const vacanteCard = checkbox.closest('.vacante-card');
+    // Array global para almacenar los IDs de las vacantes seleccionadas
+    let selectedVacantes = [];
 
-    if (checkbox.checked) {
-        vacanteCard.classList.add('selected'); // Aplicar sombra verde al instante
-        if (!selectedVacantes.includes(vacanteId)) {
-            selectedVacantes.push(vacanteId);
-        }
-        if (modalCheckbox) modalCheckbox.checked = true;
-    } else {
-        vacanteCard.classList.remove('selected'); // Quitar sombra al instante
-        selectedVacantes = selectedVacantes.filter(id => id !== vacanteId);
-        if (modalCheckbox) modalCheckbox.checked = false;
-    }
+    // --- MANEJO DE SELECCIÓN DE VACANTES ---
 
-    updateFloatingButton();
-    localStorage.setItem('selectedVacantes', JSON.stringify(selectedVacantes));
-}
+    // Función unificada para manejar la selección desde cualquier checkbox (tarjeta, tabla, modal)
+    window.handleSelection = function(event, vacanteId) {
+        const isChecked = event.target.checked;
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Función para formatear con puntos de miles
-    const formatNumber = (input) => {
-        // Eliminar puntos existentes
-        let value = input.value.replace(/\./g, '');
-
-        // Asegurarse de que solo hay números
-        if (!isNaN(value) && value !== '') {
-            // Convertir a número y formatear con puntos de miles
-            value = parseInt(value).toLocaleString('es-CO');
-            input.value = value;
+        // Actualizar el array de vacantes seleccionadas
+        if (isChecked) {
+            if (!selectedVacantes.includes(vacanteId)) {
+                selectedVacantes.push(vacanteId);
+            }
         } else {
-            // Si no es número, limpiar el campo
-            input.value = '';
+            selectedVacantes = selectedVacantes.filter(id => id !== vacanteId);
         }
-    };
 
-    // Obtener los inputs
-    const minInput = document.getElementById('rango_salarial_min');
-    const maxInput = document.getElementById('rango_salarial_max');
+        // Actualizar el localStorage
+        localStorage.setItem('selectedVacantes', JSON.stringify(selectedVacantes));
 
-    // Aplicar la función mientras el usuario escribe
-    minInput.addEventListener('input', () => formatNumber(minInput));
-    maxInput.addEventListener('input', () => formatNumber(maxInput));
-});
+        // Sincronizar el estado visual de todos los elementos relacionados
+        updateVacanteVisualState(vacanteId, isChecked);
 
-
-function handleModalSelection(vacanteId) {
-    const modalCheckbox = document.getElementById('modal-check' + vacanteId);
-    const checkbox = document.getElementById('check' + vacanteId);
-    const vacanteCard = checkbox.closest('.vacante-card');
-
-    if (modalCheckbox.checked) {
-        vacanteCard.classList.add('selected'); // Aplicar sombra verde al instante
-        if (!selectedVacantes.includes(vacanteId)) {
-            selectedVacantes.push(vacanteId);
-        }
-        checkbox.checked = true;
-    } else {
-        vacanteCard.classList.remove('selected'); // Quitar sombra al instante
-        selectedVacantes = selectedVacantes.filter(id => id !== vacanteId);
-        checkbox.checked = false;
-    }
-
-    updateFloatingButton();
-    localStorage.setItem('selectedVacantes', JSON.stringify(selectedVacantes));
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    const stored = localStorage.getItem('selectedVacantes');
-    if (stored) {
-        selectedVacantes = JSON.parse(stored);
-        selectedVacantes.forEach(id => {
-            const checkbox = document.getElementById('check' + id);
-            const modalCheckbox = document.getElementById('modal-check' + id);
-            const vacanteCard = checkbox?.closest('.vacante-card');
-
-            if (checkbox && vacanteCard) {
-                checkbox.checked = true;
-                vacanteCard.classList.add('selected'); // Aplicar sombra en la carga
-            }
-            if (modalCheckbox) {
-                modalCheckbox.checked = true;
-            }
-        });
-    }
-    updateFloatingButton();
-});
-
-
-function updateFloatingButton() {
-    const button = document.getElementById('registroButton');
-    
-    if (selectedVacantes.length === 0) {
-        button.innerHTML = '✨ Registrar mis datos';
-        button.classList.remove('d-none');
-        button.classList.remove('btn-success');
-        button.classList.add('btn-warning');
-    } else {
-        button.innerHTML = `🎯 Aplicar a ${selectedVacantes.length} vacante${selectedVacantes.length > 1 ? 's' : ''}`;
-        button.classList.remove('d-none');
-        button.classList.remove('btn-warning');
-        button.classList.add('btn-success');
-    }
-    
-    localStorage.setItem('selectedVacantes', JSON.stringify(selectedVacantes));
-}
-
-function clearFilters() {
-    const formElements = document.querySelectorAll('.offcanvas-body form input, .offcanvas-body form select');
-    formElements.forEach(input => {
-        if (input.type === 'text' || input.tagName === 'SELECT') {
-            input.value = '';
-        }
-    });
-    window.location.href = window.location.pathname;
-}
-
-function redirectToRegistro(event) {
-    event.preventDefault();
-    const url = "{% url 'registro_candidato' %}?selected_vacantes=" + selectedVacantes.join(',');
-    window.location.href = url;
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    // Inicializar modales de Bootstrap
-    const modales = document.querySelectorAll('.modal');
-    modales.forEach(modal => {
-        new bootstrap.Modal(modal, {
-            backdrop: true,
-            keyboard: true,
-            focus: true
-        });
-    });
-
-    // Cargar selecciones guardadas
-    const stored = localStorage.getItem('selectedVacantes');
-    if (stored) {
-        selectedVacantes = JSON.parse(stored);
-        selectedVacantes.forEach(id => {
-            const checkbox = document.getElementById('check' + id);
-            const modalCheckbox = document.getElementById('modal-check' + id);
-            if (checkbox) checkbox.checked = true;
-            if (modalCheckbox) modalCheckbox.checked = true;
-        });
-        updateFloatingButton();
-    } else {
-        document.getElementById('registroButton').classList.remove('d-none');
-    }
-
-    // Manejar los departamentos y ciudades
-    const departamentoSelect = document.getElementById("departamento");
-    const ciudadSelect = document.getElementById("ciudad");
-
-    if (departamentoSelect) {
-        departamentoSelect.addEventListener("change", function() {
-            const departamentoId = this.value;
-            ciudadSelect.innerHTML = '<option value="">-- Selecciona una ciudad --</option>';
-
-            if (departamentoId) {
-                fetch(`/cargar-ciudades/?departamento_id=${departamentoId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        data.forEach(ciudad => {
-                            const option = document.createElement("option");
-                            option.value = ciudad.id;
-                            option.textContent = ciudad.nombre;
-                            ciudadSelect.appendChild(option);
-                        });
-                    })
-                    .catch(error => console.error("Error cargando ciudades:", error));
-            }
-        });
-
-        // Cargar ciudades si hay un departamento seleccionado al cargar la página
-        if (departamentoSelect.value) {
-            cargarCiudades(departamentoSelect.value, '{{ filtros.ciudad }}');
-        }
-    }
-});
-
-function cargarCiudades(departamentoId, ciudadSeleccionada) {
-    const ciudadSelect = document.getElementById("ciudad");
-    
-    if (departamentoId && ciudadSelect) {
-        fetch(`/cargar-ciudades/?departamento_id=${departamentoId}`)
-            .then(response => response.json())
-            .then(data => {
-                ciudadSelect.innerHTML = '<option value="">-- Selecciona una ciudad --</option>';
-                data.forEach(ciudad => {
-                    const option = document.createElement("option");
-                    option.value = ciudad.id;
-                    option.textContent = ciudad.nombre;
-                    if (ciudad.id == ciudadSeleccionada) {
-                        option.selected = true;
-                    }
-                    ciudadSelect.appendChild(option);
-                });
-            })
-            .catch(error => console.error("Error cargando ciudades:", error));
-    }
-    }
-    function desmarcarVacantes() {
-        // Limpiar el array de vacantes seleccionadas
-        selectedVacantes = [];
-        
-        // Desmarcar todos los checkboxes principales
-        const checkboxes = document.querySelectorAll('.selection-checkbox');
-        checkboxes.forEach(checkbox => {
-            checkbox.checked = false;
-        });
-        
-        // Desmarcar todos los checkboxes en los modales
-        const modalCheckboxes = document.querySelectorAll('[id^="modal-check"]');
-        modalCheckboxes.forEach(checkbox => {
-            checkbox.checked = false;
-        });
-        
-        // Limpiar el localStorage
-        localStorage.removeItem('selectedVacantes');
-        
         // Actualizar el botón flotante
         updateFloatingButton();
     }
-    function showTutorial() {
-    const noShow = localStorage.getItem('noShowTutorial');
-    if (!noShow) {
-        document.getElementById('tutorialModal').style.display = 'block';
-    }
-}
 
-function closeTutorial() {
-    document.getElementById('tutorialModal').style.display = 'none';
-    if (document.getElementById('noShowAgain').checked) {
-        localStorage.setItem('noShowTutorial', 'true');
-    }
-}
+    // Función para actualizar el estado visual de todos los elementos de una vacante
+    function updateVacanteVisualState(vacanteId, isChecked) {
+        // Checkbox de la vista de tarjeta y la tarjeta misma
+        const cardCheckbox = document.getElementById('check' + vacanteId);
+        if (cardCheckbox) {
+            cardCheckbox.checked = isChecked;
+            const vacanteCard = cardCheckbox.closest('.vacante-card');
+            if (vacanteCard) {
+                vacanteCard.classList.toggle('selected', isChecked);
+            }
+        }
 
-// Añade esto al final del DOMContentLoaded existente
-document.addEventListener('DOMContentLoaded', function() {
-    // ... código existente ...
-    
-    // Mostrar el tutorial
-    showTutorial();
-});
+        // Checkbox de la vista de tabla y la fila de la tabla
+        const tableCheckbox = document.getElementById('table-check' + vacanteId);
+        if (tableCheckbox) {
+            tableCheckbox.checked = isChecked;
+            const tableRow = document.getElementById('row-' + vacanteId);
+            if (tableRow) {
+                tableRow.classList.toggle('selected-row', isChecked);
+            }
+        }
 
-document.addEventListener('DOMContentLoaded', function() {
-    const viewCardsBtn = document.getElementById('view-cards');
-    const viewTableBtn = document.getElementById('view-table');
-    const cardsViewDiv = document.getElementById('cards-view');
-    const tableViewDiv = document.getElementById('table-view');
-
-    // Función para aplicar la vista guardada
-    function aplicarVistaGuardada() {
-        const vistaGuardada = localStorage.getItem('vistaVacantesPreferida'); // Clave diferente para esta página
-        if (vistaGuardada === 'tabla') {
-            cardsViewDiv.style.display = 'none';
-            tableViewDiv.style.display = 'block';
-            viewTableBtn.classList.add('active');
-            viewCardsBtn.classList.remove('active');
-        } else { // Por defecto o si es 'tarjetas'
-            cardsViewDiv.style.display = 'block';
-            tableViewDiv.style.display = 'none';
-            viewCardsBtn.classList.add('active');
-            viewTableBtn.classList.remove('active');
+        // Checkbox del modal
+        const modalCheckbox = document.getElementById('modal-check' + vacanteId);
+        if (modalCheckbox) {
+            modalCheckbox.checked = isChecked;
         }
     }
 
-    viewCardsBtn.addEventListener('click', function() {
-        localStorage.setItem('vistaVacantesPreferida', 'tarjetas');
-        aplicarVistaGuardada();
+    // --- FUNCIONES DEL BOTÓN FLOTANTE Y ACCIONES ---
+
+    function updateFloatingButton() {
+        const button = document.getElementById('registroButton');
+        if (!button) return;
+
+        if (selectedVacantes.length === 0) {
+            button.innerHTML = '✨ Registrar mis datos';
+            button.classList.remove('d-none');
+            button.classList.remove('btn-success');
+            button.classList.add('btn-warning');
+        } else {
+            button.innerHTML = `🎯 Aplicar a ${selectedVacantes.length} vacante${selectedVacantes.length > 1 ? 's' : ''}`;
+            button.classList.remove('d-none');
+            button.classList.remove('btn-warning');
+            button.classList.add('btn-success');
+        }
+    }
+
+    window.redirectToRegistro = function(event) {
+        event.preventDefault();
+        const url = "{% url 'registro_candidato' %}?selected_vacantes=" + selectedVacantes.join(',');
+        window.location.href = url;
+    }
+
+    window.desmarcarVacantes = function() {
+        const currentSelections = [...selectedVacantes];
+        selectedVacantes = [];
+        localStorage.setItem('selectedVacantes', JSON.stringify(selectedVacantes));
+        currentSelections.forEach(id => updateVacanteVisualState(id, false));
+        updateFloatingButton();
+    }
+
+    // --- LÓGICA DE INICIALIZACIÓN AL CARGAR LA PÁGINA ---
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Cargar selecciones guardadas del localStorage
+        const stored = localStorage.getItem('selectedVacantes');
+        if (stored) {
+            selectedVacantes = JSON.parse(stored);
+            selectedVacantes.forEach(id => {
+                updateVacanteVisualState(id, true);
+            });
+        }
+        updateFloatingButton();
+
+        // Lógica para el botón de desmarcar (ya definida arriba)
+
+        // Lógica para el tutorial
+        showTutorial();
+
+        // Lógica para el cambio de vista (tarjetas/tabla)
+        initializeViewToggle();
+
+        // Lógica para los filtros
+        initializeFilters();
     });
 
-    viewTableBtn.addEventListener('click', function() {
-        localStorage.setItem('vistaVacantesPreferida', 'tabla');
-        aplicarVistaGuardada();
-    });
+    // --- LÓGICA DE CAMBIO DE VISTA ---
+    function initializeViewToggle() {
+        const viewCardsBtn = document.getElementById('view-cards');
+        const viewTableBtn = document.getElementById('view-table');
+        const cardsViewDiv = document.getElementById('cards-view');
+        const tableViewDiv = document.getElementById('table-view');
 
-    // Aplicar la vista guardada al cargar la página
-    aplicarVistaGuardada();
-});
+        function aplicarVistaGuardada() {
+            const vistaGuardada = localStorage.getItem('vistaVacantesPreferida');
+            if (vistaGuardada === 'tabla') {
+                cardsViewDiv.style.display = 'none';
+                tableViewDiv.style.display = 'block';
+                viewTableBtn.classList.add('active');
+                viewCardsBtn.classList.remove('active');
+            } else {
+                cardsViewDiv.style.display = 'block';
+                tableViewDiv.style.display = 'none';
+                viewCardsBtn.classList.add('active');
+                viewTableBtn.classList.remove('active');
+            }
+        }
+
+        viewCardsBtn.addEventListener('click', function() {
+            localStorage.setItem('vistaVacantesPreferida', 'tarjetas');
+            aplicarVistaGuardada();
+        });
+
+        viewTableBtn.addEventListener('click', function() {
+            localStorage.setItem('vistaVacantesPreferida', 'tabla');
+            aplicarVistaGuardada();
+        });
+
+        aplicarVistaGuardada();
+    }
+
+    // --- LÓGICA DE FILTROS ---
+    function initializeFilters() {
+        // Formateo de números para el salario
+        const formatNumber = (input) => {
+            if (!input) return;
+            let value = input.value.replace(/\./g, '');
+            if (!isNaN(value) && value !== '') {
+                value = parseInt(value).toLocaleString('es-CO');
+                input.value = value;
+            } else {
+                input.value = '';
+            }
+        };
+        const minInput = document.getElementById('rango_salarial_min');
+        const maxInput = document.getElementById('rango_salarial_max');
+        if (minInput) minInput.addEventListener('input', () => formatNumber(minInput));
+        if (maxInput) maxInput.addEventListener('input', () => formatNumber(maxInput));
+
+        // Limpiar puntos antes de enviar el formulario de filtros
+        const filterForm = document.getElementById('filter-form');
+        if (filterForm) {
+            filterForm.addEventListener('submit', function(event) {
+                if (minInput && minInput.value) minInput.value = minInput.value.replace(/\./g, '');
+                if (maxInput && maxInput.value) maxInput.value = maxInput.value.replace(/\./g, '');
+            });
+        }
+    }
+
+    window.clearFilters = function() {
+        const form = document.getElementById('filter-form');
+        if (form) {
+            form.reset();
+            // Para Select2, necesitas un tratamiento especial para limpiar
+            $(form).find('select.multiselect-improved').val(null).trigger('change');
+        }
+        // Opcional: enviar el formulario para ver los resultados sin filtros
+        // form.submit(); 
+        // O redirigir a la página sin parámetros de filtro
+        window.location.href = window.location.pathname;
+    }
+
+    // --- LÓGICA DEL TUTORIAL ---
+    function showTutorial() {
+        const noShow = localStorage.getItem('noShowTutorial');
+        const tutorialModal = document.getElementById('tutorialModal');
+        if (!noShow && tutorialModal) {
+            tutorialModal.style.display = 'block';
+        }
+    }
+
+    window.closeTutorial = function() {
+        const tutorialModal = document.getElementById('tutorialModal');
+        const noShowAgainCheckbox = document.getElementById('noShowAgain');
+        if (tutorialModal) tutorialModal.style.display = 'none';
+        if (noShowAgainCheckbox && noShowAgainCheckbox.checked) {
+            localStorage.setItem('noShowTutorial', 'true');
+        }
+    }
+
+    // Para compatibilidad, se mantienen las funciones antiguas que ahora están vacías o llaman a la nueva lógica
+    // Esto es por si algún otro script las estuviera llamando, aunque lo ideal es eliminar estas llamadas.
+    function handleVacanteSelection(vacanteId) {
+        // Esta función ahora es manejada por handleSelection
+        console.warn("handleVacanteSelection está obsoleta. Usar handleSelection en su lugar.");
+    }
+    function handleModalSelection(vacanteId) {
+        // Esta función ahora es manejada por handleSelection
+        console.warn("handleModalSelection está obsoleta. Usar handleSelection en su lugar.");
+    }
+
+    // =================================================================================
+    // FIN DEL BLOQUE DE SCRIPT UNIFICADO
+    // =================================================================================
 
 </script>
 {% endblock %}
