@@ -41,6 +41,9 @@ urlpatterns = [
     path('vacantes/<int:vacante_id>/candidatos/<int:candidato_id>/comentarios/', views.obtener_comentarios, name='obtener_comentarios'),
     path('vacantes/<int:vacante_id>/candidatos/<int:candidato_id>/guardar_comentario/', views.guardar_comentario, name='guardar_comentario'),
     path('api/ciudades-por-departamentos/', views.ciudades_por_departamentos, name='ciudades_por_departamentos'),
+    path('backup/', views.backup_base_datos, name='backup'),
+    path('backup-estado/', views.backup_estado, name='backup_estado'),
+
 
 
 

@@ -25,6 +25,10 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User 
 from django.utils.timezone import localtime
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger # Asegúrate que esta línea exista
+import shutil
+from django.conf import settings
+import os
+import datetime
 
 
 
@@ -1177,7 +1181,40 @@ def guardar_comentario(request, vacante_id, candidato_id):
             data = {'success': True}
             return JsonResponse(data)
         else:
-             data = {'success': False}
-             return JsonResponse(data)
+            data = {'success': False}
+            return JsonResponse(data)
 
     return JsonResponse({'success': False})
+
+
+def backup_base_datos(request):
+    # Carpeta de backups
+    backup_dir = os.path.join(settings.BASE_DIR, 'backups')
+    if not os.path.exists(backup_dir):
+        os.makedirs(backup_dir)
+
+    # Nombre del archivo con fecha y hora
+    fecha_hora = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
+    nombre_backup = f'backup_{fecha_hora}.sqlite3'
+    ruta_backup = os.path.join(backup_dir, nombre_backup)
+
+    # Copiar la base de datos al backup
+    base_datos = os.path.join(settings.BASE_DIR, 'db.sqlite3')
+    shutil.copy2(base_datos, ruta_backup)
+
+    messages.success(request, f'Copia de seguridad creada: {nombre_backup}')
+    return redirect('backup_estado')
+
+
+def backup_estado(request):
+    # Revisar backups existentes
+    backup_dir = os.path.join(settings.BASE_DIR, 'backups')
+    archivos = os.listdir(backup_dir) if os.path.exists(backup_dir) else []
+
+    # Ordenar por fecha descendente
+    archivos.sort(reverse=True)
+
+    # Obtener el último backup
+    ultimo_backup = archivos[0] if archivos else 'No hay copias de seguridad aún.'
+
+    return render(request, 'paginas/backup_estado.html', {'ultimo_backup': ultimo_backup})
