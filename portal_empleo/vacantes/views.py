@@ -28,8 +28,6 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger # Aseg√
 import shutil
 from django.conf import settings
 import os
-import datetime
-
 
 
 
