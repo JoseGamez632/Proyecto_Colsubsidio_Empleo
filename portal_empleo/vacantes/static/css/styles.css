@@ -1,3 +1,12 @@
+/* ========================================================================== */
+/* ========= ESTILOS GENERALES Y DE OTROS COMPONENTES ======================= */
+/* ========================================================================== */
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #f8f9fa;
+  overflow-x: hidden;
+}
 
 .input-group input {
   border-radius: 0.25rem 0 0 0.25rem;
@@ -7,13 +16,7 @@
   vertical-align: middle;
 }
 
-
-
-body {
-  font-family: Arial, sans-serif;
-  background-color: #f8f9fa;
-}
-
+/* --- Estilos del Formulario de Login --- */
 .login-container {
   max-width: 400px;
   margin: 100px auto;
@@ -53,57 +56,70 @@ button:hover {
   background-color: #d6b136;
 }
 
-
 .container-button {
   display: flex;
   justify-content: flex-end;
 }
 
+/* --- Animación de Fondo (Estilo Global) --- */
 .bg {
-    animation:slide 3s ease-in-out infinite alternate;
-    background-image: linear-gradient(-60deg, #2a2a2a 50%, #f8d047 50%);
-    bottom:0;
-    left:-50%;
-    opacity:.5;
-    position:fixed;
-    right:-50%;
-    top:0;
-    z-index:-1;
-  }
-  
-  .bg2 {
-    animation-direction:alternate-reverse;
-    animation-duration:4s;
-  }
-  
-  .bg3 {
-    animation-duration:5s;
-  }
-  
-  .content {
-    background-color:rgba(255,255,255,.8);
-    border-radius:.25em;
-    box-shadow:0 0 .25em rgba(0,0,0,.25);
-    box-sizing:border-box;
-    left:50%;
-    padding:10vmin;
-    position:fixed;
-    text-align:center;
-    top:50%;
-    transform:translate(-50%, -50%);
-  }
-  
-  h1 {
-    font-family:monospace;
-  }
-  
-  @keyframes slide {
-    0% {
-      transform:translateX(-25%);
-    }
-    100% {
-      transform:translateX(25%);
-    }
-  }
+    animation: slide 3s ease-in-out infinite alternate;
+    background-image: linear-gradient(-60deg, #f8d047 50%, #1a1a1a 50%);
+    bottom: 0;
+    left: -50%;
+    opacity: .5;
+    position: fixed;
+    right: -50%;
+    top: 0;
+    z-index: -1;
+}
 
-  
+.bg2 {
+    animation-direction: alternate-reverse;
+    animation-duration: 4s;
+}
+
+.bg3 {
+    animation-duration: 5s;
+}
+
+@keyframes slide {
+    0% { transform: translateX(-25%); }
+    100% { transform: translateX(25%); }
+}
+
+/* --- Otros estilos movidos de base.html --- */
+html.vista-tabla-inicial #cards-view {
+    display: none;
+}
+html.vista-tabla-inicial #table-view {
+    display: block;
+}
+
+.form-container {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -15px;
+    margin-left: -15px;
+}
+
+.form-group {
+    flex: 0 0 50%;
+    max-width: 50%;
+    padding: 0 15px;
+    margin-bottom: 1rem;
+}
+
+@media (max-width: 991px) {
+    .form-group {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}
