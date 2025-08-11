@@ -10,12 +10,11 @@ from django.db.models.functions import Lower
 from django.db.models import Count, Q
 import unicodedata
 from django.db import migrations
-from django.views.generic import TemplateView
-import datetime
+from django.views.generic import TemplateView 
+from datetime import datetime
 import json
 import csv
 from django.views.decorators.http import require_POST
-from datetime import datetime
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
@@ -28,8 +27,6 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger # Aseg�
 import shutil
 from django.conf import settings
 import os
-import datetime
-
 
 
 
@@ -405,73 +402,9 @@ def descargar_excel(request):
     ws.append(headers)
     
     # Consulta de vacantes
-    vacantes = Vacante.objects.all()
+    vacantes = Vacante.objects.annotate(cantidad_candidatos=Count('candidatos'))
     
     for vacante in vacantes:
-        # Usar la función que ya sabemos que funciona para contar candidatos
-        cantidad_candidatos = 0
-        
-        try:
-            # Este bloque debe contener lo que encontraste que funciona para contar candidatos
-            # Por ejemplo, si una de estas técnicas funcionó, úsala:
-            relevant_tables = []
-            with connection.cursor() as cursor:
-                # Obtener tablas relevantes (esto es una simplificación del código anterior)
-                if connection.vendor == 'postgresql':
-                    cursor.execute("""
-                        SELECT table_name FROM information_schema.tables 
-                        WHERE table_schema = 'public'
-                    """)
-                elif connection.vendor == 'mysql':
-                    cursor.execute("SHOW TABLES")
-                else:
-                    cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
-                
-                tables = [table[0] for table in cursor.fetchall()]
-                
-                # Examinar cada tabla
-                for table in tables:
-                    try:
-                        if connection.vendor == 'postgresql':
-                            cursor.execute(f"""
-                                SELECT column_name FROM information_schema.columns 
-                                WHERE table_name = '{table}'
-                            """)
-                        elif connection.vendor == 'mysql':
-                            cursor.execute(f"DESCRIBE {table}")
-                        else:
-                            cursor.execute(f"PRAGMA table_info({table})")
-                            
-                        columns_data = cursor.fetchall()
-                        columns = []
-                        
-                        # Obtener nombres de columnas según el tipo de BD
-                        if connection.vendor == 'postgresql':
-                            columns = [col[0] for col in columns_data]
-                        elif connection.vendor == 'mysql':
-                            columns = [col[0] for col in columns_data]
-                        else:
-                            columns = [col[1] for col in columns_data]
-                        
-                        if 'vacante_id' in columns:
-                            relevant_tables.append((table, columns))
-                    except:
-                        continue
-            
-            # Probar cada tabla relevante para contar candidatos
-            for table, columns in relevant_tables:
-                if 'vacante_id' in columns:
-                    with connection.cursor() as cursor:
-                        query = f"SELECT COUNT(*) FROM {table} WHERE vacante_id = %s"
-                        cursor.execute(query, [vacante.id])
-                        count = cursor.fetchone()[0]
-                        if count > 0:
-                            cantidad_candidatos = count
-                            break
-                            
-        except Exception as e:
-            logger.error(f"Error al contar candidatos para vacante {vacante.codigo_vacante}: {e}")
-        
         # Añadir fila al Excel, con descripción completa
         ws.append([
             vacante.codigo_vacante,
@@ -493,7 +426,7 @@ def descargar_excel(request):
             vacante.fecha_publicacion.strftime("%d/%m/%Y"),
             vacante.tipo_vacante,
             vacante.citacion_convocatoria if vacante.citacion_convocatoria else "No aplica",
-            cantidad_candidatos,
+            vacante.cantidad_candidatos,
             vacante.usuario_publicador.username if vacante.usuario_publicador else "Sin registro",
             vacante.fecha_creacion.strftime("%d/%m/%Y %H:%M"),
             vacante.fecha_actualizacion.strftime("%d/%m/%Y %H:%M") if vacante.fecha_actualizacion else "Sin actualización"
@@ -1194,7 +1127,7 @@ def backup_base_datos(request):
         os.makedirs(backup_dir)
 
     # Nombre del archivo con fecha y hora
-    fecha_hora = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
+    fecha_hora = datetime.now().strftime('%Y%m%d_%H%M%S')
     nombre_backup = f'backup_{fecha_hora}.sqlite3'
     ruta_backup = os.path.join(backup_dir, nombre_backup)
 
