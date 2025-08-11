@@ -1,1 +1,24 @@
-.qodo
+# Entornos virtuales
+env/
+venv/
+.venv/
+
+# Archivos de Python compilados y caches
+*.pyc
+__pycache__/
+
+# Base de datos de desarrollo
+# Es una mejor práctica gestionar el esquema con migraciones y los datos con fixtures.
+db.sqlite3
+db.sqlite3-journal
+
+# Archivos de configuración local y secretos (si los usas)
+.env
+*.local
+
+# Directorio de Backups
+/backups/
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
