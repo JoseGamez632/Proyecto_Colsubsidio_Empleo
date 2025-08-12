@@ -905,11 +905,11 @@ tr.selected-row {
                                             <input name="{{ key }}" title="Django placeholder 52" type="hidden" value="{{ value }}"/>
                                         {% endfor %}
                                     {% endfor %}
-                                    <label class="switch" title="Activainactiva">
-<input __django_placeholder_56__checked__django_placeholder_57__="" onchange="this.form.submit()" type="checkbox"/>
-<span class="slider round" title="Activainactiva">
-<span class="switch-text" title="Activainactiva">{% if vacante.estado %}Activa{% else %}Inactiva{% endif %}</span>
-</span>
+                                    <label class="switch">
+    <input type="checkbox" onchange="this.form.submit()" {% if vacante.estado %}checked{% endif %}>
+    <span class="slider round">
+        <span class="switch-text">{% if vacante.estado %}Activa{% else %}Inactiva{% endif %}</span>
+    </span>
 </label>
 </form>
 </div>
@@ -1014,9 +1014,11 @@ tr.selected-row {
                                 {% for key, value_list in request.GET.lists %}{% for value in value_list %}
                                 <input name="{{ key }}" title="Django placeholder 109" type="hidden" value="{{ value }}"/>
                                 {% endfor %}{% endfor %}
-                                <label class="switch" title="Activainactiva">
-<input __django_placeholder_113__checked__django_placeholder_114__="" onchange="this.form.submit()" type="checkbox"/>
-<span class="slider round" title="Activainactiva"><span class="switch-text" title="Activainactiva">{% if vacante.estado %}Activa{% else %}Inactiva{% endif %}</span></span>
+                                <label class="switch">
+    <input type="checkbox" onchange="this.form.submit()" {% if vacante.estado %}checked{% endif %}>
+    <span class="slider round">
+        <span class="switch-text">{% if vacante.estado %}Activa{% else %}Inactiva{% endif %}</span>
+    </span>
 </label>
 </form>
 </td>
