@@ -6,7 +6,7 @@ Registro Candidato
 {% endblock %}
 
 {% block contenido %}
-<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet"/>
 <style>
     /* Mejora visual de las secciones */
     .form-section {
@@ -81,7 +81,6 @@ Registro Candidato
         }
     }
 </style>
-    
 <style>
     .vacante-tradicional {
         background-color: #4CAF50 !important; /* Verde para Tradicional */
@@ -481,407 +480,387 @@ Registro Candidato
     }
 </style>
 {% if not user.is_authenticated %}
-<div class="tutorial-modal" id="tutorialModal">
-    <div class="tutorial-content">
-        <div class="tutorial-header">
-            <h4>📝 Guía de Registro de Hoja de Vida</h4>
-            <button class="tutorial-close" onclick="closeTutorial()">×</button>
-        </div>
-        <div class="tutorial-body">
-            <div class="tutorial-step">
-                <div class="step-content">
-                    <h6><i class="fa-solid fa-circle-info fa-xl" style="color: #FFD43B;"></i> Descripción de Campos</h6>
-                    <p>Si tienes dudas en algun campo, oprime el boton <i class="fa-solid fa-circle-info" style="color: #FFD43B;"></i> para obtener mas información</p>
-                </div>
-            </div>
-            <div class="tutorial-step">
-                <span class="step-number">1</span>
-                <div class="step-content">
-                    <h6>Datos Personales</h6>
-                    <p>Diligencia tus datos personales:</p>
-                    <ul>
-                        <li>Sexo</li>
-                        <li>Tipo de Documento</li>
-                        <li>Número de Documento</li>
-                        <li>Nombres y Apellidos</li>
-                        <li>Número de Celular</li>
-                        <li>Demás información personal</li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="tutorial-step">
-                <span class="step-number">2</span>
-                <div class="step-content">
-                    <h6>Formación Académica</h6>
-                    <p>Registra tu nivel de formación académica y el programa académico más relevante que hayas alcanzado.</p>
-                </div>
-            </div>
-            
-            <div class="tutorial-step">
-                <span class="step-number">3</span>
-                <div class="step-content">
-                    <h6>Experiencia Laboral</h6>
-                    <p>Registra tus últimas 3 experiencias laborales con el siguiente formato:</p>
-                    <div class="example-box">
+<div class="tutorial-modal" id="tutorialModal" title="📝 guía de registro de hoja">
+<div class="tutorial-content" title="📝 guía de registro de hoja">
+<div class="tutorial-header" title="📝 guía de registro de hoja">
+<h4 title="📝 guía de registro de hoja">📝 Guía de Registro de Hoja de Vida</h4>
+<button class="tutorial-close" onclick="closeTutorial()">×</button>
+</div>
+<div class="tutorial-body" title="Descripción de campos si tienes dudas">
+<div class="tutorial-step" title="Descripción de campos si tienes dudas">
+<div class="step-content" title="Descripción de campos si tienes dudas">
+<h6 title="Descripción de campos"><i class="fa-solid fa-circle-info fa-xl" style="color: #FFD43B;"></i> Descripción de Campos</h6>
+<p title="Si tienes dudas en algun campo,">Si tienes dudas en algun campo, oprime el boton <i class="fa-solid fa-circle-info" style="color: #FFD43B;"></i> para obtener mas información</p>
+</div>
+</div>
+<div class="tutorial-step" title="1 datos personales diligencia tus datos">
+<span class="step-number">1</span>
+<div class="step-content" title="Datos personales diligencia tus datos personales">
+<h6 title="Datos personales">Datos Personales</h6>
+<p title="Diligencia tus datos personales">Diligencia tus datos personales:</p>
+<ul>
+<li>Sexo</li>
+<li>Tipo de Documento</li>
+<li>Número de Documento</li>
+<li>Nombres y Apellidos</li>
+<li>Número de Celular</li>
+<li>Demás información personal</li>
+</ul>
+</div>
+</div>
+<div class="tutorial-step" title="2 formación académica registra tu nivel">
+<span class="step-number">2</span>
+<div class="step-content" title="Formación académica registra tu nivel">
+<h6 title="Formación académica">Formación Académica</h6>
+<p title="Registra tu nivel de formación académica">Registra tu nivel de formación académica y el programa académico más relevante que hayas alcanzado.</p>
+</div>
+</div>
+<div class="tutorial-step" title="3 experiencia laboral registra tus últimas">
+<span class="step-number">3</span>
+<div class="step-content" title="Experiencia laboral registra tus últimas 3">
+<h6 title="Experiencia laboral">Experiencia Laboral</h6>
+<p title="Registra tus últimas 3 experiencias laborales">Registra tus últimas 3 experiencias laborales con el siguiente formato:</p>
+<div class="example-box" title="Último cargo - empresa - fecha">
                         Último cargo - Empresa - Fecha inicio a Fecha fin
                     </div>
-                </div>
-            </div>
-            
-            <div class="tutorial-step">
-                <span class="step-number">4</span>
-                <div class="step-content">
-                    <h6>Interés Ocupacional</h6>
-                    <p>Registra los tipos de cargos que te interesan para futuras oportunidades, por ejemplo:</p>
-                    <div class="example-box">
+</div>
+</div>
+<div class="tutorial-step" title="4 interés ocupacional registra los tipos">
+<span class="step-number">4</span>
+<div class="step-content" title="Interés ocupacional registra los tipos">
+<h6 title="Interés ocupacional">Interés Ocupacional</h6>
+<p title="Registra los tipos de cargos que">Registra los tipos de cargos que te interesan para futuras oportunidades, por ejemplo:</p>
+<div class="example-box" title="Auxiliar de bodega, call center, operario">
                         Auxiliar de bodega, Call center, Operario de producción
                     </div>
-                </div>
-            </div>
-            
-            <div class="tutorial-step">
-                <span class="step-number">5</span>
-                <div class="step-content">
-                    <h6>Perfil Laboral</h6>
-                    <p>Completa los datos adicionales de tu perfil:</p>
-                    <ul>
-                        <li>Localidad/Municipio</li>
-                        <li>Horario de Interés</li>
-                        <li>Aspiración Salarial</li>
-                        <li>Demás información requerida</li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="tutorial-step">
-                <span class="step-number">6</span>
-                <div class="step-content">
-                    <h6>Confirmar Vacantes</h6>
-                    <p>Selecciona las vacantes a las que deseas aplicar en "Vacantes disponibles" y presiona el botón registrar.</p>
-                </div>
-            </div>
-        </div>
-        <div class="tutorial-footer">
-            <label class="no-show-again">
-                <input type="checkbox" id="noShowAgain"> No mostrar de nuevo
+</div>
+</div>
+<div class="tutorial-step" title="5 perfil laboral completa los datos">
+<span class="step-number">5</span>
+<div class="step-content" title="Perfil laboral completa los datos adicionales">
+<h6 title="Perfil laboral">Perfil Laboral</h6>
+<p title="Completa los datos adicionales de tu">Completa los datos adicionales de tu perfil:</p>
+<ul>
+<li>Localidad/Municipio</li>
+<li>Horario de Interés</li>
+<li>Aspiración Salarial</li>
+<li>Demás información requerida</li>
+</ul>
+</div>
+</div>
+<div class="tutorial-step" title="6 confirmar vacantes selecciona las vacantes">
+<span class="step-number">6</span>
+<div class="step-content" title="Confirmar vacantes selecciona las vacantes">
+<h6 title="Confirmar vacantes">Confirmar Vacantes</h6>
+<p title="Selecciona las vacantes a las que">Selecciona las vacantes a las que deseas aplicar en "Vacantes disponibles" y presiona el botón registrar.</p>
+</div>
+</div>
+</div>
+<div class="tutorial-footer" title="No mostrar de nuevo ¡comenzar registro!">
+<label class="no-show-again" title="No mostrar de nuevo">
+<input id="noShowAgain" title="Noshowagain" type="checkbox"/> No mostrar de nuevo
             </label>
-            <button class="tutorial-button" onclick="closeTutorial()">¡Comenzar Registro!</button>
-        </div>
-    </div>
+<button class="tutorial-button" onclick="closeTutorial()" title="¡comenzar registro!">¡Comenzar Registro!</button>
+</div>
+</div>
 </div>
 {% endif %}
-<div class="authorization-modal" id="authorizationModal">
-    <div class="authorization-content">
-        <div class="authorization-header">
-            <h4>🔒 Autorización de Tratamiento de Datos</h4>
-        </div>
-        <div class="authorization-body">
-            <p>Autorizo expresamente de manera libre, previa, voluntaria y debidamente informada a la Caja Colombiana de Subsidio Familiar Colsubsidio, identificada con el NIT 860.007.336-1, sobre la cual manifiesto conocer que cuenta con una variedad de áreas de negocio para la prestación de diversos bienes y servicios, tales como: Registro de oferentes, Orientación ocupacional, formación, remisión de hojas de vida a empresas y asesoría para la postulación al subsidio al desempleo, ofrecidos por las Agencias de Empleo de Colsubsidio, así como, la venta de todo tipo de mercaderías a través de sus supermercados, droguerías, tiendas y canal virtual, la prestación de servicios de vivienda, salud, educación y cultura, recreación y turismo, alimentos y bebidas y crédito social, para que en el desarrollo de las mismas se sirva: recolectar, almacenar, usar, circular, suprimir, procesar, compilar, intercambiar, actualizar y disponer de los datos que sean suministrados por mí, así como para transferir dichos datos de manera total o parcial a las personas jurídicas en las cuales tengan participación accionaria o de capital o entidades vinculadas, así como a sus aliados comerciales estratégicos con fines administrativos, comerciales y de mercadeo para el envío de información sobre los diferentes programas y servicios, en especial para el envío de campañas, promociones o concursos de carácter comercial y publicitario, invitaciones a eventos, evaluar la calidad del servicio, realizar estudios o investigaciones de mercado, comercialización de servicios y productos a través de los diferentes canales de información</p>
-            
-            <ul style="margin-top: 15px; margin-bottom: 15px;">
-                <li>Recolección de información personal</li>
-                <li>Almacenamiento seguro de los datos</li>
-                <li>Uso de la información para procesos de selección</li>
-                <li>Transferencia a terceros cuando sea necesario</li>
-                <li>Comunicación de oportunidades laborales</li>
-            </ul>
-
-            <p>Entiendo que puedo ejercer mis derechos de conocer, actualizar, rectificar y suprimir mi información personal, así como el derecho a revocar el consentimiento otorgado para el tratamiento de datos personales.</p>
-        </div>
-        <div class="authorization-footer">
-            <button class="auth-button auth-decline" onclick="declineAuthorization()">No Autorizo</button>
-            <button class="auth-button auth-accept" onclick="acceptAuthorization()">Autorizo</button>
-        </div>
-    </div>
+<div class="authorization-modal" id="authorizationModal" title="🔒 autorización de tratamiento de datos">
+<div class="authorization-content" title="🔒 autorización de tratamiento de datos">
+<div class="authorization-header" title="🔒 autorización de tratamiento de datos">
+<h4 title="🔒 autorización de tratamiento de datos">🔒 Autorización de Tratamiento de Datos</h4>
 </div>
-
-
-<div class="container mt-5" style="text-align: center;">
-    <!-- <h1 class="text-center">Formulario de Registro de Candidato</h1> -->
-  
-    <div class="card shadow-sm p-4 text-light bg-dark">
+<div class="authorization-body" title="Autorizo expresamente de manera libre, previa,">
+<p title="Autorizo expresamente de manera libre, previa,">Autorizo expresamente de manera libre, previa, voluntaria y debidamente informada a la Caja Colombiana de Subsidio Familiar Colsubsidio, identificada con el NIT 860.007.336-1, sobre la cual manifiesto conocer que cuenta con una variedad de áreas de negocio para la prestación de diversos bienes y servicios, tales como: Registro de oferentes, Orientación ocupacional, formación, remisión de hojas de vida a empresas y asesoría para la postulación al subsidio al desempleo, ofrecidos por las Agencias de Empleo de Colsubsidio, así como, la venta de todo tipo de mercaderías a través de sus supermercados, droguerías, tiendas y canal virtual, la prestación de servicios de vivienda, salud, educación y cultura, recreación y turismo, alimentos y bebidas y crédito social, para que en el desarrollo de las mismas se sirva: recolectar, almacenar, usar, circular, suprimir, procesar, compilar, intercambiar, actualizar y disponer de los datos que sean suministrados por mí, así como para transferir dichos datos de manera total o parcial a las personas jurídicas en las cuales tengan participación accionaria o de capital o entidades vinculadas, así como a sus aliados comerciales estratégicos con fines administrativos, comerciales y de mercadeo para el envío de información sobre los diferentes programas y servicios, en especial para el envío de campañas, promociones o concursos de carácter comercial y publicitario, invitaciones a eventos, evaluar la calidad del servicio, realizar estudios o investigaciones de mercado, comercialización de servicios y productos a través de los diferentes canales de información</p>
+<ul style="margin-top: 15px; margin-bottom: 15px;">
+<li>Recolección de información personal</li>
+<li>Almacenamiento seguro de los datos</li>
+<li>Uso de la información para procesos de selección</li>
+<li>Transferencia a terceros cuando sea necesario</li>
+<li>Comunicación de oportunidades laborales</li>
+</ul>
+<p title="Entiendo que puedo ejercer mis derechos">Entiendo que puedo ejercer mis derechos de conocer, actualizar, rectificar y suprimir mi información personal, así como el derecho a revocar el consentimiento otorgado para el tratamiento de datos personales.</p>
+</div>
+<div class="authorization-footer" title="No autorizo autorizo">
+<button class="auth-button auth-decline" onclick="declineAuthorization()" title="No autorizo">No Autorizo</button>
+<button class="auth-button auth-accept" onclick="acceptAuthorization()" title="Autorizo">Autorizo</button>
+</div>
+</div>
+</div>
+<div class="container mt-5" style="text-align: center;" title="Datos feria fecha de feria feria">
+<!-- <h1 class="text-center">Formulario de Registro de Candidato</h1> -->
+<div class="card shadow-sm p-4 text-light bg-dark" title="Datos feria fecha de feria feria">
       {% if form.errors %}
       <div class="alert alert-danger">
-        <ul>
+<ul>
           {% for field in form %}
             {% for error in field.errors %}
               <li>{{ error }}</li>
             {% endfor %}
           {% endfor %}
         </ul>
-      </div>
+</div>
       {% endif %}
   
       <form method="post">
         {% csrf_token %}
   
         {% if request.user.is_authenticated %}
-        <div class="form-section">
-          <h3 class="section-title">Datos Feria</h3>
-          <div class="row">
-            <div class="form-group col-md-6">
-              <label for="fecha_feria">Fecha de Feria</label>
-              <input type="date" name="fecha_feria" id="fecha_feria" class="form-control" value="{{ form.fecha_feria.value|date:'Y-m-d' }}" {% if form.fecha_feria.field.required %}required{% endif %}>
-            </div>
-            <div class="form-group col-md-6">
-              <label for="id_feria">Feria</label>
+        <div class="form-section" title="Datos feria fecha de feria feria">
+<h3 class="section-title" title="Datos feria">Datos Feria</h3>
+<div class="row" title="Fecha de feria feria tipo">
+<div class="form-group col-md-6" title="Fecha de feria">
+<label for="fecha_feria" title="Fecha de feria">Fecha de Feria</label>
+<input __django_placeholder_17__required__django_placeholder_18__="" class="form-control" id="fecha_feria" name="fecha_feria" title="Fecha feria" type="date" value="{{ form.fecha_feria.value|date:'Y-m-d' }}"/>
+</div>
+<div class="form-group col-md-6" title="Feria">
+<label for="id_feria" title="Feria">Feria</label>
               {{ form.feria }}
             </div>
-            <div class="form-group col-md-6">
-              <label for="tipo_feria">Tipo de Feria</label>
+<div class="form-group col-md-6" title="Tipo de feria">
+<label for="tipo_feria" title="Tipo de feria">Tipo de Feria</label>
               {{ form.tipo_feria }}
             </div>
-            <div class="form-group col-md-6" id="campo-no-citado" style="display:none;">
-              <div class="custom-check">
-                <input type="checkbox" class="custom-check-input" id="no_citado_checkbox">
-                <label for="no_citado_checkbox" class="custom-check-label">
-                  <i class="fa-solid fa-ban" style="color: #f8d047; margin-right: 8px;"></i> Marcar como <strong>"No Citado"</strong>
-                </label>
-              </div>
-            </div>
-            <div class="form-group col-md-6" id="campo-codigo-sise" style="display:none;">
-              <label for="codigo_sise">Código SISE</label>
+<div class="form-group col-md-6" id="campo-no-citado" style="display:none;" title='Marcar como "no citado"'>
+<div class="custom-check" title='Marcar como "no citado"'>
+<input class="custom-check-input" id="no_citado_checkbox" title="No citado checkbox" type="checkbox"/>
+<label class="custom-check-label" for="no_citado_checkbox" title='Marcar como "no citado"'>
+<i class="fa-solid fa-ban" style="color: #f8d047; margin-right: 8px;"></i> Marcar como <strong>"No Citado"</strong>
+</label>
+</div>
+</div>
+<div class="form-group col-md-6" id="campo-codigo-sise" style="display:none;" title="Código sise">
+<label for="codigo_sise" title="Código sise">Código SISE</label>
               {{ form.codigo_sise }}
             </div>
-            <div class="form-group col-md-6" id="campo-empresa-sise" style="display:none;">
-              <label for="empresa_sise">Empresa SISE</label>
+<div class="form-group col-md-6" id="campo-empresa-sise" style="display:none;" title="Empresa sise">
+<label for="empresa_sise" title="Empresa sise">Empresa SISE</label>
               {{ form.empresa_sise }}
             </div>
-            <div class="form-group col-md-6" id="campo-cargo-sise" style="display:none;">
-              <label for="cargo_sise">Cargo SISE</label>
+<div class="form-group col-md-6" id="campo-cargo-sise" style="display:none;" title="Cargo sise">
+<label for="cargo_sise" title="Cargo sise">Cargo SISE</label>
               {{ form.cargo_sise }}
             </div>
-            <div class="form-group col-md-6">
-              <label for="id_tecnico_seleccion">Técnico de Selección</label>
+<div class="form-group col-md-6" title="Técnico de selección">
+<label for="id_tecnico_seleccion" title="Técnico de selección">Técnico de Selección</label>
               {{ form.tecnico_seleccion }}
             </div>
-          </div>
-        </div>
+</div>
+</div>
         {% endif %}
   
-        <div class="form-section">
-          <h3 class="section-title">Datos Personales y Contacto</h3>
-          <div class="row">
-            <div class="form-group col-md-6">
-              <label for="id_tipo_documento">Tipo de Documento</label>
-              <span class="info-icon" onclick="mostrarInstruccion('tip-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
-              <small id="tip-info" style="display: none;">Selecciona el tipo de doumento con el que te identificas en Colombia</small>
+        <div class="form-section" title="Datos personales y contacto tipo">
+<h3 class="section-title" title="Datos personales y contacto">Datos Personales y Contacto</h3>
+<div class="row" title="Tipo de documento selecciona el tipo">
+<div class="form-group col-md-6" title="Tipo de documento selecciona el tipo">
+<label for="id_tipo_documento" title="Tipo de documento">Tipo de Documento</label>
+<span class="info-icon" onclick="mostrarInstruccion('tip-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
+<small id="tip-info" style="display: none;" title="Selecciona el tipo de doumento">Selecciona el tipo de doumento con el que te identificas en Colombia</small>
               {{ form.tipo_documento }}
             </div>
-            <div class="form-group col-md-6">
-              <label for="numero_documento">Número de Documento</label>
-              <span class="info-icon" onclick="mostrarInstruccion('doc-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
-              <small id="doc-info" style="display: none;">ingresa tu numero de documento de identidad sin espacios ni simbolos Ejemplo: 1022123456</small>
+<div class="form-group col-md-6" title="Número de documento ingresa tu numero">
+<label for="numero_documento" title="Número de documento">Número de Documento</label>
+<span class="info-icon" onclick="mostrarInstruccion('doc-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
+<small id="doc-info" style="display: none;" title="Ingresa tu numero de documento">ingresa tu numero de documento de identidad sin espacios ni simbolos Ejemplo: 1022123456</small>
               {{ form.numero_documento }}
             </div>
-            <div class="form-group col-md-6">
-              <label for="id_nombres">Nombres</label>
-              <span class="info-icon" onclick="mostrarInstruccion('nom-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
-              <small id="nom-info" style="display: none;">Digita tus nombre Ejemplo: Jose Manuel</small>
+<div class="form-group col-md-6" title="Nombres digita tus nombre ejemplo jose">
+<label for="id_nombres" title="Nombres">Nombres</label>
+<span class="info-icon" onclick="mostrarInstruccion('nom-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
+<small id="nom-info" style="display: none;" title="Digita tus nombre ejemplo jose manuel">Digita tus nombre Ejemplo: Jose Manuel</small>
               {{ form.nombres }}
             </div>
-            <div class="form-group col-md-6">
-              <label for="id_apellidos">Apellidos</label>
-              <span class="info-icon" onclick="mostrarInstruccion('apell-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
-              <small id="apell-info" style="display: none;">Digita tus apellidos Ejemplo: Perez Martinez</small>
+<div class="form-group col-md-6" title="Apellidos digita tus apellidos ejemplo perez">
+<label for="id_apellidos" title="Apellidos">Apellidos</label>
+<span class="info-icon" onclick="mostrarInstruccion('apell-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
+<small id="apell-info" style="display: none;" title="Digita tus apellidos ejemplo perez martinez">Digita tus apellidos Ejemplo: Perez Martinez</small>
               {{ form.apellidos }}
             </div>
-            <div class="form-group col-md-6">
-              <label for="id_sexo">Sexo</label>
-              <span class="info-icon" onclick="mostrarInstruccion('sex-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
-              <small id="sex-info" style="display: none;">Seleciona el sexo de nacimiento</small>
+<div class="form-group col-md-6" title="Sexo seleciona el sexo de nacimiento">
+<label for="id_sexo" title="Sexo">Sexo</label>
+<span class="info-icon" onclick="mostrarInstruccion('sex-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
+<small id="sex-info" style="display: none;" title="Seleciona el sexo de nacimiento">Seleciona el sexo de nacimiento</small>
               {{ form.sexo }}
             </div>
-            <div class="form-group col-md-6">
-              <label for="fecha_nacimiento">Fecha de Nacimiento</label>
-              <span class="info-icon" onclick="mostrarInstruccion('nac-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
-              <small id="nac-info" style="display: none;">Selecciona en el calendario desplegable su fecha de nacimiento</small>
-              <input type="date" name="fecha_nacimiento" id="fecha_nacimiento" class="form-control" value="{{ form.fecha_nacimiento.value|date:'Y-m-d' }}" {% if form.fecha_nacimiento.field.required %}required{% endif %}>
-            </div>
-            <div class="form-group col-md-6">
-              <label for="numero_celular">Número de Celular</label>
-              <span class="info-icon" onclick="mostrarInstruccion('cel-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
-              <small id="cel-info" style="display: none;">Agrega un numero celular con simbolos ni espacios Ejemplo: 3102001133</small>
+<div class="form-group col-md-6" title="Fecha de nacimiento selecciona en">
+<label for="fecha_nacimiento" title="Fecha de nacimiento">Fecha de Nacimiento</label>
+<span class="info-icon" onclick="mostrarInstruccion('nac-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
+<small id="nac-info" style="display: none;" title="Selecciona en el calendario desplegable su">Selecciona en el calendario desplegable su fecha de nacimiento</small>
+<input __django_placeholder_32__required__django_placeholder_33__="" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento" title="Fecha nacimiento" type="date" value="{{ form.fecha_nacimiento.value|date:'Y-m-d' }}"/>
+</div>
+<div class="form-group col-md-6" title="Número de celular agrega un numero">
+<label for="numero_celular" title="Número de celular">Número de Celular</label>
+<span class="info-icon" onclick="mostrarInstruccion('cel-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
+<small id="cel-info" style="display: none;" title="Agrega un numero celular con simbolos">Agrega un numero celular con simbolos ni espacios Ejemplo: 3102001133</small>
               {{ form.numero_celular }}
             </div>
-            <div class="form-group col-md-6">
-              <label for="id_correo_electronico">Correo Electrónico</label>
-              <span class="info-icon" onclick="mostrarInstruccion('email-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
-              <small id="email-info" style="display: none;">Ingrese un correo válido, como usuario@email.com</small>
+<div class="form-group col-md-6" title="Correo electrónico ingrese un correo válido,">
+<label for="id_correo_electronico" title="Correo electrónico">Correo Electrónico</label>
+<span class="info-icon" onclick="mostrarInstruccion('email-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
+<small id="email-info" style="display: none;" title="Ingrese un correo válido, como usuario@email.com">Ingrese un correo válido, como usuario@email.com</small>
               {{ form.correo_electronico }}
             </div>
-          </div>
-        </div>
-  
-        <div class="form-section">
-          <h3 class="section-title">Formación Académica y Experiencia</h3>
-          <div class="row">
-            <div class="form-group col-md-6">
-              <label for="id_formacion_academica">Formación Académica</label>
-              <span class="info-icon" onclick="mostrarInstruccion('form-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
-              <small id="form-info" style="display: none;">Seleciona el mayor nivel academico o mas relevante para el cargo</small>
+</div>
+</div>
+<div class="form-section" title="Formación académica y experiencia formación académica">
+<h3 class="section-title" title="Formación académica y experiencia">Formación Académica y Experiencia</h3>
+<div class="row" title="Formación académica seleciona el mayor nivel">
+<div class="form-group col-md-6" title="Formación académica seleciona el mayor nivel">
+<label for="id_formacion_academica" title="Formación académica">Formación Académica</label>
+<span class="info-icon" onclick="mostrarInstruccion('form-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
+<small id="form-info" style="display: none;" title="Seleciona el mayor nivel academico o">Seleciona el mayor nivel academico o mas relevante para el cargo</small>
               {{ form.formacion_academica }}
             </div>
-            <div class="form-group col-md-6" id="semestre-grado-field" style="display: none;">
-                <label for="id_semestre_grado">Semestre o grado en curso</label>
-                <span class="info-icon" onclick="mostrarInstruccion('sem-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
-                <small id="sem-info" style="display: none;">Ya que seleccionaste que estas estudiando, digita el semestre o tiempo cursado a la fecha Ejemplo: 5 Semestre</small>
+<div class="form-group col-md-6" id="semestre-grado-field" style="display: none;" title="Semestre o grado en curso ya">
+<label for="id_semestre_grado" title="Semestre o grado en curso">Semestre o grado en curso</label>
+<span class="info-icon" onclick="mostrarInstruccion('sem-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
+<small id="sem-info" style="display: none;" title="Ya que seleccionaste que estas estudiando,">Ya que seleccionaste que estas estudiando, digita el semestre o tiempo cursado a la fecha Ejemplo: 5 Semestre</small>
                 {{ form.semestre_grado }}
             </div>
-        <div class="form-group col-md-6" id="campo-interes-practica" style="display:none;">
-              <label for="interes_practica">¿Interés en Prácticas?</label>
+<div class="form-group col-md-6" id="campo-interes-practica" style="display:none;" title="¿interés en prácticas?">
+<label for="interes_practica" title="¿interés en prácticas?">¿Interés en Prácticas?</label>
               {{ form.interes_practica }}
             </div>
-            <div class="form-group col-md-6">
-              <label for="id_programa_academico">Programa Académico o grado cursado</label>
-              <span class="info-icon" onclick="mostrarInstruccion('prog-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
-              <small id="prog-info" style="display: none;">Digita el programa academico culminado o en curso mas relevante Ejemplo: Bachiller, Ingeniero Civil, Medicina, etc</small>
+<div class="form-group col-md-6" title="Programa académico o grado cursado digita">
+<label for="id_programa_academico" title="Programa académico o grado cursado">Programa Académico o grado cursado</label>
+<span class="info-icon" onclick="mostrarInstruccion('prog-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
+<small id="prog-info" style="display: none;" title="Digita el programa academico culminado o">Digita el programa academico culminado o en curso mas relevante Ejemplo: Bachiller, Ingeniero Civil, Medicina, etc</small>
               {{ form.programa_academico }}
             </div>
-            <div class="form-group col-md-6">
-              <label for="id_experiencia_laboral">Experiencia Laboral</label>
+<div class="form-group col-md-6" title="Experiencia laboral ingresa las ultimas 3">
+<label for="id_experiencia_laboral" title="Experiencia laboral">Experiencia Laboral</label>
                                   {% comment %} <span class="info-icon" onclick="mostrarInstruccion('exper-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span> {% endcomment %}
-                                  <small id="exper-info" style="display: none;">Ingresa las ultimas 3 experiencia laborales iniciando por la mas reciente con el siguiente formato:<br>
-                                    Ultimo cargo - Fecha de inicio a Fecha de retiro<br> Penultimo cargo - Feha de inicio a Fecha de retiro <br> Tercer cargo - Fecha de inicio a Fecha de retiro <br>
+                                  <small id="exper-info" style="display: none;" title="Ingresa las ultimas 3 experiencia laborales">Ingresa las ultimas 3 experiencia laborales iniciando por la mas reciente con el siguiente formato:<br/>
+                                    Ultimo cargo - Fecha de inicio a Fecha de retiro<br/> Penultimo cargo - Feha de inicio a Fecha de retiro <br/> Tercer cargo - Fecha de inicio a Fecha de retiro <br/>
                                     NOTA: En caso de no tener experiencia colocar "NO TENGO EXPERIENCIA"</small>
-                                    <h2 style="font-size: 14px; font-weight: 300; margin-bottom: 1rem;">
-                                        Ingresa las últimas 3 experiencias laborales iniciando por la más reciente con el siguiente formato:<br>
-                                        Último cargo - Empresa - Fecha de inicio a Fecha de retiro<br>
-                                        Penúltimo cargo - Empresa - Fecha de inicio a Fecha de retiro<br>
-                                        Tercer cargo - Empresa - Fecha de inicio a Fecha de retiro<br>
-                                        <strong>NOTA:</strong> En caso de no tener experiencia colocar "NO TENGO EXPERIENCIA"<br>
-                                    </h2>
+<h2 style="font-size: 14px; font-weight: 300; margin-bottom: 1rem;" title="Ingresa las últimas 3 experiencias laborales">
+                                        Ingresa las últimas 3 experiencias laborales iniciando por la más reciente con el siguiente formato:<br/>
+                                        Último cargo - Empresa - Fecha de inicio a Fecha de retiro<br/>
+                                        Penúltimo cargo - Empresa - Fecha de inicio a Fecha de retiro<br/>
+                                        Tercer cargo - Empresa - Fecha de inicio a Fecha de retiro<br/>
+<strong>NOTA:</strong> En caso de no tener experiencia colocar "NO TENGO EXPERIENCIA"<br/>
+</h2>
             
               {{ form.experiencia_laboral }}
             </div>
-            <div class="form-group col-md-6">
-              <label for="id_interes_ocupacional">Cargos de Interés</label>
-              <span class="info-icon" onclick="mostrarInstruccion('carg-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
-              <small id="carg-info" style="display: none;">Digita varios tipos de cargos que te interesarian Ejemplo: Auxiliar de Bodega, Call Center, Ayudante de Obra, Servicios Generales</small>
-              <h2 style="font-size: 14px; font-weight: 300; margin-bottom: 1rem;">
-                Ingresa los cargos de tu interés o de los que te gustaría te contactaran <br> en próximas convocatorias.
+<div class="form-group col-md-6" title="Cargos de interés digita varios tipos">
+<label for="id_interes_ocupacional" title="Cargos de interés">Cargos de Interés</label>
+<span class="info-icon" onclick="mostrarInstruccion('carg-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
+<small id="carg-info" style="display: none;" title="Digita varios tipos de cargos que">Digita varios tipos de cargos que te interesarian Ejemplo: Auxiliar de Bodega, Call Center, Ayudante de Obra, Servicios Generales</small>
+<h2 style="font-size: 14px; font-weight: 300; margin-bottom: 1rem;" title="Ingresa los cargos de tu interés">
+                Ingresa los cargos de tu interés o de los que te gustaría te contactaran <br/> en próximas convocatorias.
               </h2>
               {{ form.interes_ocupacional }}
             </div>
-          </div>
-        </div>
-  
-        <div class="form-section">
-          <h3 class="section-title">Disponibilidad y Ubicación</h3>
-          <div class="row">
-            <div class="form-group col-md-6">
-              <label for="id_departamento">Departamento o Ciudad</label>
-              <span class="info-icon" onclick="mostrarInstruccion('depa-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
-              <small id="depa-info" style="display: none;">Selecciona si vives en Cundinamarca o Bogotá Ejemplo: Cundinamarca</small>
+</div>
+</div>
+<div class="form-section" title="Disponibilidad y ubicación departamento o ciudad">
+<h3 class="section-title" title="Disponibilidad y ubicación">Disponibilidad y Ubicación</h3>
+<div class="row" title="Departamento o ciudad selecciona si vives">
+<div class="form-group col-md-6" title="Departamento o ciudad selecciona si vives">
+<label for="id_departamento" title="Departamento o ciudad">Departamento o Ciudad</label>
+<span class="info-icon" onclick="mostrarInstruccion('depa-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
+<small id="depa-info" style="display: none;" title="Selecciona si vives en cundinamarca o">Selecciona si vives en Cundinamarca o Bogotá Ejemplo: Cundinamarca</small>
               {{ form.departamento }}
             </div>
-            <div class="form-group col-md-6">
-              <label for="id_ciudad">Municipio o Localidad</label>
-              <span class="info-icon" onclick="mostrarInstruccion('ciud-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
-              <small id="ciud-info" style="display: none;">Selecciona el Municipio o Localidad en la que vives Ejemplo: Cajica</small>
+<div class="form-group col-md-6" title="Municipio o localidad selecciona el municipio">
+<label for="id_ciudad" title="Municipio o localidad">Municipio o Localidad</label>
+<span class="info-icon" onclick="mostrarInstruccion('ciud-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
+<small id="ciud-info" style="display: none;" title="Selecciona el municipio o localidad">Selecciona el Municipio o Localidad en la que vives Ejemplo: Cajica</small>
               {{ form.ciudad }}
             </div>
-            <div class="form-group col-md-6">
-              <label for="id_horario_interesado">Horario de Interés</label>
-              <span class="info-icon" onclick="mostrarInstruccion('hor-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
-              <small id="hor-info" style="display: none;">Selecciona la disponibilidad de tiempo que tienes para trabajar</small>
+<div class="form-group col-md-6" title="Horario de interés selecciona la disponibilidad">
+<label for="id_horario_interesado" title="Horario de interés">Horario de Interés</label>
+<span class="info-icon" onclick="mostrarInstruccion('hor-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
+<small id="hor-info" style="display: none;" title="Selecciona la disponibilidad de tiempo que">Selecciona la disponibilidad de tiempo que tienes para trabajar</small>
               {{ form.horario_interesado }}
             </div>
-            <div class="form-group col-md-6">
-              <label for="id_aspiracion_salarial">Aspiración Salarial</label>
-              <span class="info-icon" onclick="mostrarInstruccion('asps-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
-              <small id="asps-info" style="display: none;">Selecciona el rango de salario que aspiras ganar en un empleo</small>
+<div class="form-group col-md-6" title="Aspiración salarial selecciona el rango">
+<label for="id_aspiracion_salarial" title="Aspiración salarial">Aspiración Salarial</label>
+<span class="info-icon" onclick="mostrarInstruccion('asps-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
+<small id="asps-info" style="display: none;" title="Selecciona el rango de salario que">Selecciona el rango de salario que aspiras ganar en un empleo</small>
               {{ form.aspiracion_salarial }}
             </div>
-          </div>
-        </div>
-  
-        <div class="form-section">
-          <h3 class="section-title">Datos Adicionales y Vacantes Aplicadas</h3>
-          <div class="row">
-            <div class="form-group col-md-6">
-              <label for="id_registrado_en_sise">¿Está registrado en la plataforma del Servicio Puiblico de empleo?</label>
+</div>
+</div>
+<div class="form-section" title="Datos adicionales y vacantes aplicadas ¿está">
+<h3 class="section-title" title="Datos adicionales y vacantes aplicadas">Datos Adicionales y Vacantes Aplicadas</h3>
+<div class="row" title="¿está registrado en la plataforma del">
+<div class="form-group col-md-6" title="¿está registrado en la plataforma del">
+<label for="id_registrado_en_sise" title="¿está registrado en la plataforma del">¿Está registrado en la plataforma del Servicio Puiblico de empleo?</label>
               {{ form.registrado_en_sise }}
             </div>
-            <div class="form-group col-md-6">
-              <label for="id_candidato_discapacidad">¿Es candidato con discapacidad?</label>
-              <span class="info-icon" onclick="mostrarInstruccion('disc-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
-              <small id="disc-info" style="display: none;">Si cuentas con algun tipo de discapacidad selecciona "Si", de lo contrario selecciona "No"</small>
+<div class="form-group col-md-6" title="¿es candidato con discapacidad? si cuentas">
+<label for="id_candidato_discapacidad" title="¿es candidato con discapacidad?">¿Es candidato con discapacidad?</label>
+<span class="info-icon" onclick="mostrarInstruccion('disc-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
+<small id="disc-info" style="display: none;" title="Si cuentas con algun tipo">Si cuentas con algun tipo de discapacidad selecciona "Si", de lo contrario selecciona "No"</small>
 
               {{ form.candidato_discapacidad }}
             </div>
-            <div class="form-group col-md-6" id="tipo_discapacidad_container" style="display:none;">
-              <label for="id_tipo_discapacidad">Tipo de Discapacidad</label>
-              <span class="info-icon" onclick="mostrarInstruccion('tipdis-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
-              <small id="tipdis-info" style="display: none;">Digita el tipo de discapacidad y de que porcentaje es</small>
+<div class="form-group col-md-6" id="tipo_discapacidad_container" style="display:none;" title="Tipo de discapacidad digita el tipo">
+<label for="id_tipo_discapacidad" title="Tipo de discapacidad">Tipo de Discapacidad</label>
+<span class="info-icon" onclick="mostrarInstruccion('tipdis-info')"><i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i></span>
+<small id="tipdis-info" style="display: none;" title="Digita el tipo de discapacidad y">Digita el tipo de discapacidad y de que porcentaje es</small>
               {{ form.tipo_discapacidad }}
             </div>
-            <div class="form-group col-md-6">
-                <label for="vacantes">Vacantes aplicadas</label>
-                <span class="info-icon" onclick="mostrarInstruccion('vacd-info')">
-                    <i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i>
-                </span>
-                <small id="vacd-info" style="display: none;">En esta parte podras ver las vacantes a las que vas a aplicar</small>
-                <select id="vacantes" name="vacantes_disponibles" class="form-control" multiple="multiple">
+<div class="form-group col-md-6" title="Vacantes aplicadas en esta parte podras">
+<label for="vacantes" title="Vacantes aplicadas">Vacantes aplicadas</label>
+<span class="info-icon" onclick="mostrarInstruccion('vacd-info')">
+<i class="fa-solid fa-circle-info fa-lg" style="color: #FFD43B;"></i>
+</span>
+<small id="vacd-info" style="display: none;" title="En esta parte podras ver">En esta parte podras ver las vacantes a las que vas a aplicar</small>
+<select class="form-control" id="vacantes" multiple="multiple" name="vacantes_disponibles" title="Vacantes disponibles">
                     {% for vacante_obj in form.fields.vacantes_disponibles.queryset %}
                         {% if vacante_obj.estado %}  {# Ahora solo se muestran vacantes activas para todos los usuarios #}
-                            <option value="{{ vacante_obj.id }}"
-                                {% if vacante_obj in selected_vacantes %}selected{% endif %}
-                                class="{% if vacante_obj.tipo_vacante == 'Tradicional' %}vacante-tradicional{% else %}vacante-convocatoria{% endif %}">
+                            <option __django_placeholder_55__selected__django_placeholder_56__="" class="{% if vacante_obj.tipo_vacante == 'Tradicional' %}vacante-tradicional{% else %}vacante-convocatoria{% endif %}" value="{{ vacante_obj.id }}">
                                 {{ vacante_obj }}
                             </option>
                         {% endif %}
                     {% endfor %}
                 </select>
-            </div>
-  </div>
-        </div>
-  
-        <button type="submit" class="btn btn-primary btn-block mt-3">
+</div>
+</div>
+</div>
+<button class="btn btn-primary btn-block mt-3" title="Actualizarregistrar" type="submit">
           {% if is_edit %}Actualizar{% else %}Registrar{% endif %}
         </button>
-      </form>
-    </div>
+</form>
 </div>
-
-<div class="modal fade" id="registroExitosoModal" tabindex="-1" role="dialog" aria-labelledby="registroExitosoModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content" style="
+</div>
+<div aria-hidden="true" aria-labelledby="registroExitosoModalLabel" class="modal fade" id="registroExitosoModal" role="dialog" tabindex="-1" title="🎉 ¡registro exitoso! tus datos">
+<div class="modal-dialog modal-dialog-centered" role="document" title="🎉 ¡registro exitoso! tus datos">
+<div class="modal-content" style="
         background: linear-gradient(135deg, #1a1a1a, #2b2b2b);
         color: #fff;
         border-radius: 20px;
         border: 1px solid #444;
         box-shadow: 0 10px 40px rgba(0,0,0,0.8);
         overflow: hidden;
-        animation: fadeInModal 0.6s ease;">
-        
-        <div class="modal-header" style="border-bottom: none; text-align:center; display:block;">
-          <div style="
+        animation: fadeInModal 0.6s ease;" title="🎉 ¡registro exitoso! tus datos">
+<div class="modal-header" style="border-bottom: none; text-align:center; display:block;" title="🎉 ¡registro exitoso!">
+<div style="
             font-size: 60px;
             margin-bottom: 10px;
             animation: pulse 1.2s infinite;
             color: #f8d047;">
             🎉
           </div>
-          <h4 class="modal-title" id="registroExitosoModalLabel" style="
+<h4 class="modal-title" id="registroExitosoModalLabel" style="
             color: #f8d047;
             font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 1px;
-            text-align:center;">
+            text-align:center;" title="¡registro exitoso!">
             ¡Registro Exitoso!
           </h4>
-        </div>
-  
-        <div class="modal-body" style="font-size: 1.2rem; text-align:center; line-height: 1.6; padding: 25px 30px;">
-          Tus datos de registro se han guardado correctamente.<br>
-          <strong>Acércate a uno de nuestros profesionales de selección</strong><br>
+</div>
+<div class="modal-body" style="font-size: 1.2rem; text-align:center; line-height: 1.6; padding: 25px 30px;" title="Tus datos de registro se han">
+          Tus datos de registro se han guardado correctamente.<br/>
+<strong>Acércate a uno de nuestros profesionales de selección</strong><br/>
           para completar tu registro y aplicar a las vacantes.
         </div>
-  
-        <div class="modal-footer" style="border-top: none; justify-content: center; padding: 20px;">
-          <button type="button" class="btn" id="aceptarRegistroModal" style="
+<div class="modal-footer" style="border-top: none; justify-content: center; padding: 20px;" title="Continuar">
+<button class="btn" id="aceptarRegistroModal" style="
             background: linear-gradient(145deg, #f8d047, #e6b800);
             color: #333;
             padding: 14px 30px;
@@ -892,15 +871,14 @@ Registro Candidato
             letter-spacing: 1px;
             transition: all 0.3s ease;
             box-shadow: 0 8px 20px rgba(248, 208, 71, 0.4);
-            border: none;">
+            border: none;" title="Continuar" type="button">
             Continuar
           </button>
-        </div>
-      </div>
-    </div>
-  </div>
-  
-  <style>
+</div>
+</div>
+</div>
+</div>
+<style>
   @keyframes fadeInModal {
     from { opacity: 0; transform: translateY(-20px); }
     to { opacity: 1; transform: translateY(0); }
@@ -916,10 +894,7 @@ Registro Candidato
     box-shadow: 0 12px 25px rgba(248, 208, 71, 0.6);
   }
   </style>
-  
-
-
-<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 <script>
@@ -957,7 +932,6 @@ Registro Candidato
         }
     });
 </script>
-    
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const tipoFeriaSelect = document.getElementById('tipo_feria');
@@ -1070,8 +1044,6 @@ Registro Candidato
         }
     });
 </script>
-        
-
 <script>
     
     document.addEventListener('DOMContentLoaded', function() {
@@ -1344,8 +1316,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     </script>
-
-    <script>
+<script>
         //filtrar ciudades por departamento
         $(document).ready(function () {
             $("#id_departamento").change(function () {

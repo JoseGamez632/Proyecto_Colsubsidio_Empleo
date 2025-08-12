@@ -229,172 +229,160 @@ Agregar Vacante
         }
     }
 </style>
-
-<div class="container main-container">
-    <div class="row justify-content-center">
-        <div class="col-md-10">
-            <div class="form-card text-light">
-                <h1 class="page-title">Agregar Vacante</h1>
+<div class="container main-container" title="Agregar vacante información de la posición">
+<div class="row justify-content-center" title="Agregar vacante información de la posición">
+<div class="col-md-10" title="Agregar vacante información de la posición">
+<div class="form-card text-light" title="Agregar vacante información de la posición">
+<h1 class="page-title" title="Agregar vacante">Agregar Vacante</h1>
 
                 {% if form.errors %}
                 <div class="alert alert-danger">
-                    <ul class="mb-0">
+<ul class="mb-0">
                         {% for field in form %}
                             {% for error in field.errors %}
                                 <li>{{ error }}</li>
                             {% endfor %}
                         {% endfor %}
                     </ul>
-                </div>
+</div>
                 {% endif %}
 
-                <form method="post" class="form">
+                <form class="form" method="post">
                     {% csrf_token %}
                     
-                    <div class="form-section">
-                        <h3 class="section-title">Información de la Posición</h3>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="{{ form.cargo.id_for_label }}">Cargo</label>
+                    <div class="form-section" title="Información de la posición cargo área">
+<h3 class="section-title" title="Información de la posición">Información de la Posición</h3>
+<div class="row" title="Cargo área">
+<div class="col-md-6" title="Cargo">
+<div class="form-group" title="Cargo">
+<label for="{{ form.cargo.id_for_label }}" title="Cargo">Cargo</label>
                                     {{ form.cargo }}
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="{{ form.area.id_for_label }}">Área</label>
+</div>
+<div class="col-md-6" title="Área">
+<div class="form-group" title="Área">
+<label for="{{ form.area.id_for_label }}" title="Área">Área</label>
                                     {{ form.area }}
                                 </div>
-                            </div>
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="{{ form.numero_puestos.id_for_label }}">Número de Puestos</label>
+</div>
+</div>
+<div class="row" title="Número de puestos tipo de vacante">
+<div class="col-md-6" title="Número de puestos">
+<div class="form-group" title="Número de puestos">
+<label for="{{ form.numero_puestos.id_for_label }}" title="Número de puestos">Número de Puestos</label>
                                     {{ form.numero_puestos }}
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="{{ form.tipo_vacante.id_for_label }}">Tipo de Vacante</label>
+</div>
+<div class="col-md-6" title="Tipo de vacante">
+<div class="form-group" title="Tipo de vacante">
+<label for="{{ form.tipo_vacante.id_for_label }}" title="Tipo de vacante">Tipo de Vacante</label>
                                     {{ form.tipo_vacante }}
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-section">
-                        <h3 class="section-title">Modalidad y Contrato</h3>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="{{ form.modalidad_trabajo.id_for_label }}">Modalidad de Trabajo</label>
+</div>
+</div>
+</div>
+<div class="form-section" title="Modalidad y contrato modalidad de trabajo">
+<h3 class="section-title" title="Modalidad y contrato">Modalidad y Contrato</h3>
+<div class="row" title="Modalidad de trabajo tipo de contrato">
+<div class="col-md-6" title="Modalidad de trabajo">
+<div class="form-group" title="Modalidad de trabajo">
+<label for="{{ form.modalidad_trabajo.id_for_label }}" title="Modalidad de trabajo">Modalidad de Trabajo</label>
                                     {{ form.modalidad_trabajo }}
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="{{ form.tipo_contrato.id_for_label }}">Tipo de Contrato</label>
+</div>
+<div class="col-md-6" title="Tipo de contrato">
+<div class="form-group" title="Tipo de contrato">
+<label for="{{ form.tipo_contrato.id_for_label }}" title="Tipo de contrato">Tipo de Contrato</label>
                                     {{ form.tipo_contrato }}
                                 </div>
-                            </div>
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="{{ form.jornada_trabajo.id_for_label }}">Jornada de Trabajo</label>
+</div>
+</div>
+<div class="row" title="Jornada de trabajo salario">
+<div class="col-md-6" title="Jornada de trabajo">
+<div class="form-group" title="Jornada de trabajo">
+<label for="{{ form.jornada_trabajo.id_for_label }}" title="Jornada de trabajo">Jornada de Trabajo</label>
                                     {{ form.jornada_trabajo }}
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="{{ form.rango_salarial.id_for_label }}">Salario</label>
+</div>
+<div class="col-md-6" title="Salario">
+<div class="form-group" title="Salario">
+<label for="{{ form.rango_salarial.id_for_label }}" title="Salario">Salario</label>
                                     {{ form.rango_salarial }}
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-section">
-                        <h3 class="section-title">Requisitos</h3>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="{{ form.tiempo_experiencia.id_for_label }}">Tiempo de Experiencia</label>
+</div>
+</div>
+</div>
+<div class="form-section" title="Requisitos tiempo de experiencia nivel">
+<h3 class="section-title" title="Requisitos">Requisitos</h3>
+<div class="row" title="Tiempo de experiencia nivel de estudios">
+<div class="col-md-6" title="Tiempo de experiencia">
+<div class="form-group" title="Tiempo de experiencia">
+<label for="{{ form.tiempo_experiencia.id_for_label }}" title="Tiempo de experiencia">Tiempo de Experiencia</label>
                                     {{ form.tiempo_experiencia }}
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="{{ form.nivel_estudios.id_for_label }}">Nivel de Estudios</label>
+</div>
+<div class="col-md-6" title="Nivel de estudios">
+<div class="form-group" title="Nivel de estudios">
+<label for="{{ form.nivel_estudios.id_for_label }}" title="Nivel de estudios">Nivel de Estudios</label>
                                     {{ form.nivel_estudios }}
                                 </div>
-                            </div>
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <label for="{{ form.descripcion_vacante.id_for_label }}">Descripción de la Vacante</label>
+</div>
+</div>
+<div class="row" title="Descripción de la vacante">
+<div class="col-12" title="Descripción de la vacante">
+<div class="form-group" title="Descripción de la vacante">
+<label for="{{ form.descripcion_vacante.id_for_label }}" title="Descripción de la vacante">Descripción de la Vacante</label>
                                     {{ form.descripcion_vacante }}
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-section">
-                        <h3 class="section-title">Ubicación y Empresa</h3>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="{{ form.departamento.id_for_label }}">Departamento</label>
+</div>
+</div>
+</div>
+<div class="form-section" title="Ubicación y empresa departamento ciudad o">
+<h3 class="section-title" title="Ubicación y empresa">Ubicación y Empresa</h3>
+<div class="row" title="Departamento ciudad o municipio">
+<div class="col-md-6" title="Departamento">
+<div class="form-group" title="Departamento">
+<label for="{{ form.departamento.id_for_label }}" title="Departamento">Departamento</label>
                                     {{ form.departamento }}
                                 </div>
-                            </div>
-                            <div class="col-md-6" id="ciudad-container"> <!-- Eliminamos display: none; JS lo controlará -->
-                                <div class="form-group">
-                                    <label for="{{ form.ciudad.id_for_label }}">Ciudad o Municipio</label>
+</div>
+<div class="col-md-6" id="ciudad-container" title="Ciudad o municipio"> <!-- Eliminamos display: none; JS lo controlará -->
+<div class="form-group" title="Ciudad o municipio">
+<label for="{{ form.ciudad.id_for_label }}" title="Ciudad o municipio">Ciudad o Municipio</label>
                                     {{ form.ciudad }}
                                 </div>
-                            </div>
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="{{ form.empresa_usuaria.id_for_label }}">Empresa Usuaria</label>
+</div>
+</div>
+<div class="row" title="Empresa usuaria">
+<div class="col-md-6" title="Empresa usuaria">
+<div class="form-group" title="Empresa usuaria">
+<label for="{{ form.empresa_usuaria.id_for_label }}" title="Empresa usuaria">Empresa Usuaria</label>
                                     {{ form.empresa_usuaria }}
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-section" id="citacion-container" style="display: none;">
-                        <h3 class="section-title">Información de Convocatoria</h3>
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <label for="{{ form.citacion_convocatoria.id_for_label }}">Datos de Citación</label>
+</div>
+</div>
+</div>
+<div class="form-section" id="citacion-container" style="display: none;" title="Información de convocatoria datos de citación">
+<h3 class="section-title" title="Información de convocatoria">Información de Convocatoria</h3>
+<div class="row" title="Datos de citación">
+<div class="col-12" title="Datos de citación">
+<div class="form-group" title="Datos de citación">
+<label for="{{ form.citacion_convocatoria.id_for_label }}" title="Datos de citación">Datos de Citación</label>
                                     {{ form.citacion_convocatoria }}
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="actions-container">
-                        <button type="button" class="btn btn-secondary" onclick="window.history.back();">Cancelar</button>
-                        <button type="submit" class="btn btn-primary">Guardar Vacante</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
 </div>
-
+</div>
+</div>
+<div class="actions-container" title="Cancelar guardar vacante">
+<button class="btn btn-secondary" onclick="window.history.back();" title="Cancelar" type="button">Cancelar</button>
+<button class="btn btn-primary" title="Guardar vacante" type="submit">Guardar Vacante</button>
+</div>
+</form>
+</div>
+</div>
+</div>
+</div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
 <script>
     $(document).ready(function () {
         // Detecta cuando cambia el tipo de vacante
@@ -418,7 +406,6 @@ Agregar Vacante
         }
     });
 </script>
-
 <script>
     $(document).ready(function () {
         // --- Script para Tipo de Vacante (sin cambios) ---
