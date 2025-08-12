@@ -85,39 +85,36 @@
     100% { transform: scale(1); opacity: 1; }
   }
 </style>
-
 <section class="backup-section">
-  <div class="container">
-    <div class="backup-card scroll-animation-scale">
-      <span class="icon-backup">📦</span>
-      <h2>Copia de Seguridad</h2>
-      <p>Realiza una copia manual de tu base de datos para mantener tus registros seguros.</p>
-
-      <div class="ultimo-backup">
+<div class="container" title="📦 copia de seguridad realiza">
+<div class="backup-card scroll-animation-scale" title="📦 copia de seguridad realiza">
+<span class="icon-backup">📦</span>
+<h2 title="Copia de seguridad">Copia de Seguridad</h2>
+<p title="Realiza una copia manual de tu">Realiza una copia manual de tu base de datos para mantener tus registros seguros.</p>
+<div class="ultimo-backup" title="Última copia aún no se ha">
         {% if ultimo_backup %}
           Última copia: {{ ultimo_backup }}
         {% else %}
           Aún no se ha realizado ninguna copia de seguridad.
         {% endif %}
       </div>
-
-      <form method="get" action="{% url 'backup' %}">
-        <button type="submit" class="btn btn-outline-warning">Generar Copia Ahora</button>
-      </form>
+<form action="{% url 'backup' %}" method="get">
+<button class="btn btn-outline-warning" title="Generar copia ahora" type="submit">Generar Copia Ahora</button>
+</form>
 
       {% if messages %}
         <div class="mt-3">
           {% for message in messages %}
-            <div class="alert alert-success">{{ message }}</div>
+            <div class="alert alert-success" title="Message">{{ message }}</div>
           {% endfor %}
         </div>
       {% endif %}
 
-      <div class="mt-4">
-        <a href="{% url 'inicio' %}" class="btn btn-vacantes">← Volver al Inicio</a>
-      </div>
-    </div>
-  </div>
+      <div class="mt-4" title="← volver al inicio">
+<a class="btn btn-vacantes" href="{% url 'inicio' %}" title="← volver al inicio">← Volver al Inicio</a>
+</div>
+</div>
+</div>
 </section>
 
 {% endblock %}

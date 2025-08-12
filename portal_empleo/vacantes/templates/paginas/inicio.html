@@ -746,89 +746,85 @@ TalentGO
         transform: scale(1);
     }
 </style>
-
 <!-- Header con Logo y Call-to-Action -->
 <header>
-    <div class="decorative-circle circle-1"></div>
-    <div class="decorative-circle circle-2"></div>
-    <div class="header-content scale-in">
-        <img src="{% static 'img/logo_color3.png' %}" alt="TalentGO Logo" class="logo">
-        <p class="lead fade-in" style="animation-delay: 0.5s">Conectando profesionales con las mejores oportunidades laborales para impulsar el talento y el crecimiento empresarial</p>
-        <a href="{% url 'lista_vacantes' %}" class="btn-vacantes fade-in" style="animation-delay: 0.8s">
+<div class="decorative-circle circle-1"></div>
+<div class="decorative-circle circle-2"></div>
+<div class="header-content scale-in" title="Conectando profesionales con las mejores oportunidades">
+<img alt="TalentGO Logo" class="logo" src="{% static 'img/logo_color3.png' %}"/>
+<p class="lead fade-in" style="animation-delay: 0.5s" title="Conectando profesionales con las mejores oportunidades">Conectando profesionales con las mejores oportunidades laborales para impulsar el talento y el crecimiento empresarial</p>
+<a class="btn-vacantes fade-in" href="{% url 'lista_vacantes' %}" style="animation-delay: 0.8s" title="Descubre nuestras vacantes">
             Descubre Nuestras Vacantes
         </a>
-    </div>
+</div>
 </header>
-
 <main>
-    <!-- Estadísticas - NUEVA SECCIÓN -->
-    <section class="stats-section">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-3 col-sm-6">
-                    <div class="stat-item scroll-animation">
-                        <div class="stat-number" data-count="500">500+</div>
-                        <div class="stat-label">Personas Colocadas</div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-sm-6">
-                    <div class="stat-item scroll-animation" style="animation-delay: 0.2s">
-                        <div class="stat-number" data-count="150">150+</div>
-                        <div class="stat-label">Empresas Aliadas</div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-sm-6">
-                    <div class="stat-item scroll-animation" style="animation-delay: 0.4s">
-                        <div class="stat-number" data-count="50">50+</div>
-                        <div class="stat-label">Vacantes Activas</div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-sm-6">
-                    <div class="stat-item scroll-animation" style="animation-delay: 0.6s">
-                        <div class="stat-number" data-count="95">95%</div>
-                        <div class="stat-label">Satisfacción</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Proceso con Mejoras Visuales -->
-    <section class="proceso-section">
-        <div class="decorative-circle circle-3"></div>
-        <div class="container">
-            <h2 class="section-title scroll-animation">El Camino al Éxito Profesional</h2>
-            <div class="proceso-linea">
-                <div class="proceso-item scroll-animation">
-                    <div class="proceso-numero">1</div>
-                    <h4>Explora Vacantes</h4>
-                    <p>Navega por nuestra selección de oportunidades laborales cuidadosamente seleccionadas que se ajustan a tus habilidades y aspiraciones</p>
-                    <a href="{% url 'lista_vacantes' %}" class="btn btn-outline-warning">Ver Vacantes Disponibles</a>
-                </div>
-                <div class="proceso-item scroll-animation" style="animation-delay: 0.2s">
-                    <div class="proceso-numero">2</div>
-                    <h4>Completar tu Perfil</h4>
-                    <p>Registra tus datos personales y profesionales para realizar tu postulación y aumentar tus oportunidades laborales.</p>
-                    <!-- <a href="#" class="btn btn-outline-warning">Iniciar Registro</a> -->
-                </div>
-                <div class="proceso-item scroll-animation" style="animation-delay: 0.4s">
-                    <div class="proceso-numero">3</div>
-                    <h4>Asesoría Personalizada</h4>
-                    <p>Recibe orientación profesional de nuestros expertos para optimizar tu postulación y prepararte para el proceso de selección</p>
-                    <!-- <a href="#" class="btn btn-outline-warning">Agendar Asesoría</a> -->
-                </div>
-                <div class="proceso-item scroll-animation" style="animation-delay: 0.6s">
-                    <div class="proceso-numero">4</div>
-                    <h4>Servicio Público de Empleo</h4>
-                    <p>Finaliza tu proceso registrando o actualizando tu hoja de vida en la plataforma oficial del Servicio Público de Empleo</p>
-                    <a href="{% url 'registration_guide' %}" class="btn btn-outline-warning">Guía de Registro SISE</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Testimonios - NUEVA SECCIÓN -->
-    <!-- <section class="testimonials-section">
+<!-- Estadísticas - NUEVA SECCIÓN -->
+<section class="stats-section">
+<div class="container" title="500+ personas colocadas 150+ empresas aliadas">
+<div class="row" title="500+ personas colocadas 150+ empresas aliadas">
+<div class="col-md-3 col-sm-6" title="500+ personas colocadas">
+<div class="stat-item scroll-animation" title="500+ personas colocadas">
+<div class="stat-number" data-count="500">500+</div>
+<div class="stat-label" title="Personas colocadas">Personas Colocadas</div>
+</div>
+</div>
+<div class="col-md-3 col-sm-6" title="150+ empresas aliadas">
+<div class="stat-item scroll-animation" style="animation-delay: 0.2s" title="150+ empresas aliadas">
+<div class="stat-number" data-count="150">150+</div>
+<div class="stat-label" title="Empresas aliadas">Empresas Aliadas</div>
+</div>
+</div>
+<div class="col-md-3 col-sm-6" title="50+ vacantes activas">
+<div class="stat-item scroll-animation" style="animation-delay: 0.4s" title="50+ vacantes activas">
+<div class="stat-number" data-count="50">50+</div>
+<div class="stat-label" title="Vacantes activas">Vacantes Activas</div>
+</div>
+</div>
+<div class="col-md-3 col-sm-6" title="95 satisfacción">
+<div class="stat-item scroll-animation" style="animation-delay: 0.6s" title="95 satisfacción">
+<div class="stat-number" data-count="95">95%</div>
+<div class="stat-label" title="Satisfacción">Satisfacción</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Proceso con Mejoras Visuales -->
+<section class="proceso-section">
+<div class="decorative-circle circle-3"></div>
+<div class="container" title="El camino al éxito profesional 1">
+<h2 class="section-title scroll-animation" title="El camino al éxito profesional">El Camino al Éxito Profesional</h2>
+<div class="proceso-linea" title="1 explora vacantes navega por nuestra">
+<div class="proceso-item scroll-animation" title="1 explora vacantes navega por nuestra">
+<div class="proceso-numero">1</div>
+<h4 title="Explora vacantes">Explora Vacantes</h4>
+<p title="Navega por nuestra selección de oportunidades">Navega por nuestra selección de oportunidades laborales cuidadosamente seleccionadas que se ajustan a tus habilidades y aspiraciones</p>
+<a class="btn btn-outline-warning" href="{% url 'lista_vacantes' %}" title="Ver vacantes disponibles">Ver Vacantes Disponibles</a>
+</div>
+<div class="proceso-item scroll-animation" style="animation-delay: 0.2s" title="2 completar tu perfil registra tus">
+<div class="proceso-numero">2</div>
+<h4 title="Completar tu perfil">Completar tu Perfil</h4>
+<p title="Registra tus datos personales y profesionales">Registra tus datos personales y profesionales para realizar tu postulación y aumentar tus oportunidades laborales.</p>
+<!-- <a href="#" class="btn btn-outline-warning">Iniciar Registro</a> -->
+</div>
+<div class="proceso-item scroll-animation" style="animation-delay: 0.4s" title="3 asesoría personalizada recibe orientación profesional">
+<div class="proceso-numero">3</div>
+<h4 title="Asesoría personalizada">Asesoría Personalizada</h4>
+<p title="Recibe orientación profesional de nuestros expertos">Recibe orientación profesional de nuestros expertos para optimizar tu postulación y prepararte para el proceso de selección</p>
+<!-- <a href="#" class="btn btn-outline-warning">Agendar Asesoría</a> -->
+</div>
+<div class="proceso-item scroll-animation" style="animation-delay: 0.6s" title="4 servicio público de empleo finaliza">
+<div class="proceso-numero">4</div>
+<h4 title="Servicio público de empleo">Servicio Público de Empleo</h4>
+<p title="Finaliza tu proceso registrando o actualizando">Finaliza tu proceso registrando o actualizando tu hoja de vida en la plataforma oficial del Servicio Público de Empleo</p>
+<a class="btn btn-outline-warning" href="{% url 'registration_guide' %}" title="Guía de registro sise">Guía de Registro SISE</a>
+</div>
+</div>
+</div>
+</section>
+<!-- Testimonios - NUEVA SECCIÓN -->
+<!-- <section class="testimonials-section">
         <div class="container">
             <h2 class="section-title scroll-animation">Lo Que Dicen Nuestros Usuarios</h2>
             <div class="row">
@@ -865,19 +861,17 @@ TalentGO
             </div>
         </div>
     </section> -->
-
-    <!-- Video con Mejoras Visuales -->
-    <section class="video-section">
-        <div class="container">
-            <h2 class="section-title scroll-animation">Conoce como actualizar tu perfil en el<br>Servicio Publico de Empleo</h2>
-            <div class="video-container scroll-animation-scale">
-                <iframe src="https://www.youtube.com/embed/2_2ap_Qe9dM?si=sVrPwQjEze5KjNgh" title="TalentGO - Conectando Talento con Oportunidades" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-            </div>
-        </div>
-    </section>
-
-    <!-- Empresas Aliadas - NUEVA SECCIÓN -->
-    <!-- <section class="partners-section">
+<!-- Video con Mejoras Visuales -->
+<section class="video-section">
+<div class="container" title="Conoce como actualizar tu perfil">
+<h2 class="section-title scroll-animation" title="Conoce como actualizar tu perfil">Conoce como actualizar tu perfil en el<br/>Servicio Publico de Empleo</h2>
+<div class="video-container scroll-animation-scale">
+<iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="" frameborder="0" referrerpolicy="strict-origin-when-cross-origin" src="https://www.youtube.com/embed/2_2ap_Qe9dM?si=sVrPwQjEze5KjNgh" title="TalentGO - Conectando Talento con Oportunidades"></iframe>
+</div>
+</div>
+</section>
+<!-- Empresas Aliadas - NUEVA SECCIÓN -->
+<!-- <section class="partners-section">
         <div class="container">
             <h2 class="section-title scroll-animation">Empresas que Confían en Nosotros</h2>
             <div class="row align-items-center justify-content-center">
@@ -902,17 +896,16 @@ TalentGO
             </div>
         </div>
     </section> -->
-
-    <!-- Call to Action - NUEVA SECCIÓN -->
-    <section class="cta-section">
-        <div class="container">
-            <div class="cta-content scroll-animation">
-                <h2 class="cta-title">¿Listo para dar el siguiente paso en tu vida laboral?</h2>
-                <p class="cta-text">Únete a miles de personas que han encontrado su oportunidad ideal con TalentGO</p>
-                <a href="{% url 'lista_vacantes' %}" class="btn-vacantes">Comienza Ahora</a>
-            </div>
-        </div>
-    </section>
+<!-- Call to Action - NUEVA SECCIÓN -->
+<section class="cta-section">
+<div class="container" title="¿listo para dar el siguiente paso">
+<div class="cta-content scroll-animation" title="¿listo para dar el siguiente paso">
+<h2 class="cta-title" title="¿listo para dar el siguiente paso">¿Listo para dar el siguiente paso en tu vida laboral?</h2>
+<p class="cta-text" title="Únete a miles de personas que">Únete a miles de personas que han encontrado su oportunidad ideal con TalentGO</p>
+<a class="btn-vacantes" href="{% url 'lista_vacantes' %}" title="Comienza ahora">Comienza Ahora</a>
+</div>
+</div>
+</section>
 </main>
 
 
@@ -922,7 +915,7 @@ TalentGO
 
 <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+<script crossorigin="anonymous" src="https://kit.fontawesome.com/a076d05399.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Animaciones al hacer scroll

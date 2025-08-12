@@ -144,180 +144,172 @@
         100% { opacity: 1; }
     }
 </style>
-
-<div class="container mt-5">    
-    <div class="filters-container">
-        <!-- Buscador y filtros -->
-        <div class="row">
-            <div class="col-md-6">
-                <form method="get" id="search-form" class="mb-3">
-                    <div class="input-group">
-                        <input type="text" name="q" value="{{ query }}" class="form-control bg-dark text-white" placeholder="Busca por cédula o nombre">
-                        <div class="input-group-append">
-                            <button class="btn btn-primary" type="submit">🔍</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-             <div class="col-md-6 d-flex justify-content-end align-items-center">
-                <!--<button id="btn-pending" class="btn btn-warning mr-2">
+<div class="container mt-5" title="🔍 descargar listado ver tarjetas ver">
+<div class="filters-container" title="🔍 descargar listado ver tarjetas ver">
+<!-- Buscador y filtros -->
+<div class="row" title="🔍 descargar listado">
+<div class="col-md-6">
+<form class="mb-3" id="search-form" method="get">
+<div class="input-group">
+<input class="form-control bg-dark text-white" name="q" placeholder="Busca por cédula o nombre" title="Busca por cédula o nombre" type="text" value="{{ query }}"/>
+<div class="input-group-append">
+<button class="btn btn-primary" type="submit">🔍</button>
+</div>
+</div>
+</form>
+</div>
+<div class="col-md-6 d-flex justify-content-end align-items-center" title="Descargar listado">
+<!--<button id="btn-pending" class="btn btn-warning mr-2">
                     <i class="fas fa-exclamation-triangle"></i> Ver pendientes de actualizar
                 </button>-->
-                <a href="{% url 'exportar_candidatos' %}" class="btn btn-success">
-                    <i class="fas fa-download"></i> Descargar listado
+<a class="btn btn-success" href="{% url 'exportar_candidatos' %}" title="Descargar listado">
+<i class="fas fa-download"></i> Descargar listado
                 </a>
-            </div> 
-        </div>
-        
-        <!-- Opciones de visualización -->
-        <div class="row mt-3">
-            <div class="col-md-6">
-                <div class="btn-group" role="group">
-                    <button id="view-cards" class="btn btn-secondary view-toggle-btn active">
-                        <i class="fas fa-id-card"></i> Ver tarjetas
+</div>
+</div>
+<!-- Opciones de visualización -->
+<div class="row mt-3" title="Ver tarjetas ver tabla ordenar por">
+<div class="col-md-6" title="Ver tarjetas ver tabla">
+<div class="btn-group" role="group" title="Ver tarjetas ver tabla">
+<button class="btn btn-secondary view-toggle-btn active" id="view-cards" title="Ver tarjetas">
+<i class="fas fa-id-card"></i> Ver tarjetas
                     </button>
-                    <button id="view-table" class="btn btn-secondary view-toggle-btn">
-                        <i class="fas fa-table"></i> Ver tabla
+<button class="btn btn-secondary view-toggle-btn" id="view-table" title="Ver tabla">
+<i class="fas fa-table"></i> Ver tabla
                     </button>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="d-flex justify-content-end">
-                    <div class="sort-option {% if order_by == 'nombres' %}active{% endif %}" data-order="nombres">
+</div>
+</div>
+<div class="col-md-6" title="Ordenar por nombre ▲▼ ordenar por">
+<div class="d-flex justify-content-end" title="Ordenar por nombre ▲▼ ordenar por">
+<div class="sort-option {% if order_by == 'nombres' %}active{% endif %}" data-order="nombres" title="Ordenar por nombre ▲▼">
                         Ordenar por nombre
                         {% if order_by == 'nombres' %}
                             {% if order_dir == 'asc' %}▲{% else %}▼{% endif %}
                         {% endif %}
                     </div>
-                    <div class="sort-option {% if order_by == 'fecha_feria' %}active{% endif %}" data-order="fecha_feria">
+<div class="sort-option {% if order_by == 'fecha_feria' %}active{% endif %}" data-order="fecha_feria" title="Ordenar por fecha ▲▼">
                         Ordenar por fecha
                         {% if order_by == 'fecha_feria' %}
                             {% if order_dir == 'asc' %}▲{% else %}▼{% endif %}
                         {% endif %}
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Vista de tarjetas -->
-    <div id="cards-view">
-        <div class="row" id="candidates-container">
+</div>
+</div>
+</div>
+</div>
+<!-- Vista de tarjetas -->
+<div id="cards-view" title="Nuevo cédula feria pendiente fecha editar">
+<div class="row" id="candidates-container" title="Nuevo cédula feria pendiente fecha editar">
             {% for registro in page_obj %} {# <--- Cambio aquí #}
-                <div class="col-md-4 candidate-item" data-id="{{ registro.pk }}" data-feria="{{ registro.feria }}">
-                    <div class="card bg-dark candidate-card {% if not registro.feria %}pending-update{% endif %}">
+                <div class="col-md-4 candidate-item" data-feria="{{ registro.feria }}" data-id="{{ registro.pk }}" title="Nuevo cédula feria pendiente fecha editar">
+<div class="card bg-dark candidate-card {% if not registro.feria %}pending-update{% endif %}" title="Nuevo cédula feria pendiente fecha editar">
                         {% if registro.is_new %}
-                        <div class="new-badge bg-warning text-white">NUEVO</div>
+                        <div class="new-badge bg-warning text-white" title="Nuevo">NUEVO</div>
                         {% endif %}
                         <div class="card-header">
-                            <h5 class="card-title mb-0 text-white">{{ registro.nombres }} {{ registro.apellidos }}</h5>
-                        </div>
-                        <div class="card-body text-light">
-                            <p class="card-text"><i class="fas fa-id-card text-warning"></i> <strong class="text-warning">Cédula:</strong> {{ registro.numero_documento }}</p>
-                            <p class="card-text"><i class="fas fa-building text-warning"></i> <strong class="text-warning">Feria:</strong> 
+<h5 class="card-title mb-0 text-white">{{ registro.nombres }} {{ registro.apellidos }}</h5>
+</div>
+<div class="card-body text-light" title="Cédula feria pendiente fecha editar">
+<p class="card-text" title="Cédula"><i class="fas fa-id-card text-warning"></i> <strong class="text-warning">Cédula:</strong> {{ registro.numero_documento }}</p>
+<p class="card-text" title="Feria pendiente"><i class="fas fa-building text-warning"></i> <strong class="text-warning">Feria:</strong> 
                                 {% if registro.feria %}
                                     {{ registro.feria }}
                                 {% else %}
-                                    <span class="badge bg-warning text-dark">Pendiente</span>
+                                    <span class="badge bg-warning text-dark" title="Pendiente">Pendiente</span>
                                 {% endif %}
                             </p>
-                            <p class="card-text"><i class="fas fa-calendar-alt text-warning"></i> <strong class="text-warning">Fecha:</strong> {{ registro.fecha_feria|date:"d/m/Y" }}</p>
-                            <div class="text-center mt-3">
-                                <a href="{% url 'editar_registro' registro.pk %}" class="btn btn-warning btn-sm">
-                                    <i class="fas fa-edit"></i> Editar
+<p class="card-text" title="Fecha"><i class="fas fa-calendar-alt text-warning"></i> <strong class="text-warning">Fecha:</strong> {{ registro.fecha_feria|date:"d/m/Y" }}</p>
+<div class="text-center mt-3" title="Editar">
+<a class="btn btn-warning btn-sm" href="{% url 'editar_registro' registro.pk %}" title="Editar">
+<i class="fas fa-edit"></i> Editar
                                 </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+</div>
+</div>
+</div>
+</div>
             {% empty %}
-                <div class="col-12 text-center">
-                    <div class="alert alert-warning" role="alert">
+                <div class="col-12 text-center" title="No se encontraron registros.">
+<div class="alert alert-warning" role="alert" title="No se encontraron registros.">
                         No se encontraron registros.
                     </div>
-                </div>
+</div>
             {% endfor %}
         </div>
-    </div>    <!-- Vista de tabla (inicialmente oculta) -->
-    <div id="table-view" style="display: none;">
-        <table class="table table-dark table-striped">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Nombre Completo</th>
-                    <th>Cédula</th>
-                    <th>Feria</th>
-                    <th>Fecha Registro</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
+</div> <!-- Vista de tabla (inicialmente oculta) -->
+<div id="table-view" style="display: none;" title="# nombre completo cédula feria fecha">
+<table class="table table-dark table-striped">
+<thead>
+<tr>
+<th>#</th>
+<th>Nombre Completo</th>
+<th>Cédula</th>
+<th>Feria</th>
+<th>Fecha Registro</th>
+<th>Acciones</th>
+</tr>
+</thead>
+<tbody>
                 {% for registro in page_obj %} {# <--- Cambio aquí #}
                     <tr class="{% if not registro.feria %}table-warning text-dark{% endif %} {% if registro.is_new %}table-success{% endif %}">
-                        <td>{{ forloop.counter }}</td>
-                        <td>{{ registro.nombres }} {{ registro.apellidos }}</td>
-                        <td>{{ registro.numero_documento }}</td>
-                        <td>
+<td>{{ forloop.counter }}</td>
+<td>{{ registro.nombres }} {{ registro.apellidos }}</td>
+<td>{{ registro.numero_documento }}</td>
+<td>
                             {% if registro.feria %}
                                 {{ registro.feria }}
                             {% else %}
-                                <span class="badge bg-warning text-dark">Pendiente</span>
+                                <span class="badge bg-warning text-dark" title="Pendiente">Pendiente</span>
                             {% endif %}
                         </td>
-                        <td>{{ registro.fecha_feria|date:"d/m/Y" }}</td>
-                        <td>
-                            <a href="{% url 'editar_registro' registro.pk %}" class="btn btn-warning btn-sm">
-                                <i class="fas fa-edit"></i> Editar
+<td>{{ registro.fecha_feria|date:"d/m/Y" }}</td>
+<td>
+<a class="btn btn-warning btn-sm" href="{% url 'editar_registro' registro.pk %}" title="Editar">
+<i class="fas fa-edit"></i> Editar
                             </a>
-                        </td>
-                    </tr>
+</td>
+</tr>
                 {% empty %}
                     <tr>
-                        <td colspan="6" class="text-center">No se encontraron registros.</td>
-                    </tr>
+<td class="text-center" colspan="6">No se encontraron registros.</td>
+</tr>
                 {% endfor %}
             </tbody>
-        </table>
-    </div>
-    <div class="pagination justify-content-center mt-4">
-        <span class="step-links">
+</table>
+</div>
+<div class="pagination justify-content-center mt-4" title="« primera anterior página de .">
+<span class="step-links" title="« primera anterior página de .">
             {% if page_obj.has_previous %}
-                <a href="?page=1{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="btn btn-outline-secondary btn-sm">&laquo; Primera</a>
-                <a href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="btn btn-outline-secondary btn-sm">Anterior</a>
+                <a class="btn btn-outline-secondary btn-sm" href="?page=1{% for key, value in request.GET.items %}{% if key != 'page' %}&amp;{{ key }}={{ value }}{% endif %}{% endfor %}" title="« primera">« Primera</a>
+<a class="btn btn-outline-secondary btn-sm" href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&amp;{{ key }}={{ value }}{% endif %}{% endfor %}" title="Anterior">Anterior</a>
             {% endif %}
     
-            <span class="current mx-2">
+            <span class="current mx-2" title="Página de .">
                 Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
             </span>
     
             {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="btn btn-outline-secondary btn-sm">Siguiente</a>
-                <a href="?page={{ page_obj.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="btn btn-outline-secondary btn-sm">Última &raquo;</a>
+                <a class="btn btn-outline-secondary btn-sm" href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&amp;{{ key }}={{ value }}{% endif %}{% endfor %}" title="Siguiente">Siguiente</a>
+<a class="btn btn-outline-secondary btn-sm" href="?page={{ page_obj.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != 'page' %}&amp;{{ key }}={{ value }}{% endif %}{% endfor %}" title="Última »">Última »</a>
             {% endif %}
         </span>
-    </div>
-    
-    <!-- Opcional: Selector para cantidad por página -->
-    <div class="text-center" id="items-por-pagina-selector"> <!-- ID añadido, mt-2 eliminado para control CSS -->
-        <form method="get" action="" class="d-inline-block">
+</div>
+<!-- Opcional: Selector para cantidad por página -->
+<div class="text-center" id="items-por-pagina-selector" title="Registros por página 10 20 50"> <!-- ID añadido, mt-2 eliminado para control CSS -->
+<form action="" class="d-inline-block" method="get">
             {% for key, value in request.GET.items %}
                 {% if key != 'por_pagina' and key != 'page' %}
-                    <input type="hidden" name="{{ key }}" value="{{ value }}">
+                    <input name="{{ key }}" title="Django placeholder 92" type="hidden" value="{{ value }}"/>
                 {% endif %}
             {% endfor %}
-            <label for="por_pagina">Registros por página:</label> <!-- Cambiado "Vacantes" por "Registros" -->
-            <select name="por_pagina" id="por_pagina" onchange="this.form.submit()" class="form-select form-select-sm d-inline-block" style="width: auto;">
-                <option value="10" {% if items_por_pagina == 10 %}selected{% endif %}>10</option>
-                <option value="20" {% if items_por_pagina == 20 %}selected{% endif %}>20</option>
-                <option value="50" {% if items_por_pagina == 50 %}selected{% endif %}>50</option>
-            </select>
-        </form>
-    </div>
-    
+            <label for="por_pagina" title="Registros por página">Registros por página:</label> <!-- Cambiado "Vacantes" por "Registros" -->
+<select class="form-select form-select-sm d-inline-block" id="por_pagina" name="por_pagina" onchange="this.form.submit()" style="width: auto;" title="Por pagina">
+<option __django_placeholder_96__selected__django_placeholder_97__="" value="10">10</option>
+<option __django_placeholder_98__selected__django_placeholder_99__="" value="20">20</option>
+<option __django_placeholder_100__selected__django_placeholder_101__="" value="50">50</option>
+</select>
+</form>
 </div>
-
-
-
+</div>
 <!-- Scripts para la funcionalidad -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
