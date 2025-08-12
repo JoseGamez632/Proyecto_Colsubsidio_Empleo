@@ -14,10 +14,6 @@ Vacantes Disponibles
         color: black !important;
     }
 </style>
-
-    
-
-
 <style> /* Filtros Vacantes */
     /* Asegurar desplazamiento en el dropdown de Select2 */
     .select2-dropdown {
@@ -152,7 +148,6 @@ Vacantes Disponibles
         }
     }
 </style>
-    
 <style>
     /* Estilos para el contenedor de paginación */
     .pagination {
@@ -216,9 +211,6 @@ Vacantes Disponibles
         display: none; /* Oculta por defecto */
     }
 </style>
-
-
-
 <style>
     .vacante-card.selected {
     box-shadow: 0 0 10px 3px rgba(40, 167, 69, 0.8);
@@ -772,115 +764,114 @@ tr.selected-row {
 
 </style>
 {% if not user.is_authenticated %}
-<div class="tutorial-modal" id="tutorialModal">
-    <div class="tutorial-content">
-        <div class="tutorial-header">
-            <h4>✨ ¡Bienvenido al Portal de Vacantes! ✨</h4>
-            <br>
-            <button class="btn btn-warning" onclick="closeTutorial()">Cerrar</button>
-            <br>
-        </div>
-        <br>
-        <div class="tutorial-body">
-            <div class="tutorial-step">
-                <span class="step-number">1</span>
-                <p>Realiza los filtros correspondientes según lo requiera tu perfil.</p>
+<div class="tutorial-modal" id="tutorialModal" title="✨ ¡bienvenido al portal de vacantes!">
+<div class="tutorial-content" title="✨ ¡bienvenido al portal de vacantes!">
+<div class="tutorial-header" title="✨ ¡bienvenido al portal de vacantes!">
+<h4 title="✨ ¡bienvenido al portal de vacantes!">✨ ¡Bienvenido al Portal de Vacantes! ✨</h4>
+<br/>
+<button class="btn btn-warning" onclick="closeTutorial()" title="Cerrar">Cerrar</button>
+<br/>
+</div>
+<br/>
+<div class="tutorial-body" title="1 realiza los filtros correspondientes según">
+<div class="tutorial-step" title="1 realiza los filtros correspondientes según">
+<span class="step-number">1</span>
+<p title="Realiza los filtros correspondientes según lo">Realiza los filtros correspondientes según lo requiera tu perfil.</p>
+</div>
+<div class="tutorial-step" title="2 revisa las vacantes y ve">
+<span class="step-number">2</span>
+<p title="Revisa las vacantes y ve seleccionando">Revisa las vacantes y ve seleccionando todas las vacantes que te interesen.</p>
+</div>
+<div class="tutorial-step" title="3 cuando finalices de seleccionar">
+<span class="step-number">3</span>
+<p title="Cuando finalices de seleccionar las vacantes">Cuando finalices de seleccionar las vacantes de tu interés oprime el botón "Aplicar a # vacantes".</p>
+</div>
+<div class="tutorial-note" title="Nota en caso de no aplicar">
+<strong>Nota:</strong> En caso de no aplicar a ninguna de las vacantes oprime el botón "Registrar mis datos" para tenerte en cuenta en futuras vacantes.
             </div>
-            <div class="tutorial-step">
-                <span class="step-number">2</span>
-                <p>Revisa las vacantes y ve seleccionando todas las vacantes que te interesen.</p>
-            </div>
-            <div class="tutorial-step">
-                <span class="step-number">3</span>
-                <p>Cuando finalices de seleccionar las vacantes de tu interés oprime el botón "Aplicar a # vacantes".</p>
-            </div>
-            <div class="tutorial-note">
-                <strong>Nota:</strong> En caso de no aplicar a ninguna de las vacantes oprime el botón "Registrar mis datos" para tenerte en cuenta en futuras vacantes.
-            </div>
-        </div>
-        <div class="tutorial-footer">
-            <label class="no-show-again">
-                <input type="checkbox" id="noShowAgain"> No mostrar de nuevo
+</div>
+<div class="tutorial-footer" title="No mostrar de nuevo ¡comenzar registro!">
+<label class="no-show-again" title="No mostrar de nuevo">
+<input id="noShowAgain" title="Noshowagain" type="checkbox"/> No mostrar de nuevo
             </label>
-            <button class="btn btn-warning" onclick="closeTutorial()">¡Comenzar Registro!</button>
-        </div>
-    </div>
+<button class="btn btn-warning" onclick="closeTutorial()" title="¡comenzar registro!">¡Comenzar Registro!</button>
+</div>
+</div>
 </div>
 {% endif %}
 {% load humanize %}
-<div class="gradient-bg">
-    <div class="container py-5">
-        <!-- Header Section -->
-        <div class="mb-5">
-            <!-- <h1 class="text-warning mb-4 fw-bold">Listado de Vacantes Activas</h1> -->
-            <div class="d-flex flex-wrap gap-2 justify-content-center">
-                <div class="d-flex gap-2 w-100 justify-content-center">
-                    <button type="button" class="btn btn-outline-light btn-sm" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample">
+<div class="gradient-bg" title="🔍 filtrar vacantes 🧹 borrar filtros">
+<div class="container py-5" title="🔍 filtrar vacantes 🧹 borrar filtros">
+<!-- Header Section -->
+<div class="mb-5" title="🔍 filtrar vacantes 🧹 borrar filtros">
+<!-- <h1 class="text-warning mb-4 fw-bold">Listado de Vacantes Activas</h1> -->
+<div class="d-flex flex-wrap gap-2 justify-content-center" title="🔍 filtrar vacantes 🧹 borrar filtros">
+<div class="d-flex gap-2 w-100 justify-content-center" title="🔍 filtrar vacantes 🧹 borrar filtros">
+<button class="btn btn-outline-light btn-sm" data-bs-target="#offcanvasExample" data-bs-toggle="offcanvas" title="🔍 filtrar vacantes" type="button">
                         🔍 Filtrar Vacantes
                     </button>
-                    <button type="button" class="btn btn-outline-light btn-sm" onclick="clearFilters()">
+<button class="btn btn-outline-light btn-sm" onclick="clearFilters()" title="🧹 borrar filtros" type="button">
                         🧹 Borrar Filtros
                     </button>
-                    <button type="button" class="btn btn-outline-light btn-sm" onclick="desmarcarVacantes()">
+<button class="btn btn-outline-light btn-sm" onclick="desmarcarVacantes()" title="❌ desmarcar selección" type="button">
                         ❌ Desmarcar Selección
                     </button>
-                </div>
-                <div class="d-flex gap-2 w-100 justify-content-center">
+</div>
+<div class="d-flex gap-2 w-100 justify-content-center" title="➕ agregar vacante descargar excel vacantes">
                     {% if request.user.is_authenticated %}
-                    <a class="btn btn-outline-light btn-sm" href="{% url 'agregar_vacante' %}">
+                    <a class="btn btn-outline-light btn-sm" href="{% url 'agregar_vacante' %}" title="➕ agregar vacante">
                         ➕ Agregar Vacante
                     </a>
-                    <a href="{% url 'descargar_excel' %}" class="btn btn-success btn-sm"><i class="fa-solid fa-file-excel"></i> Descargar Excel Vacantes</a>
+<a class="btn btn-success btn-sm" href="{% url 'descargar_excel' %}" title="Descargar excel vacantes"><i class="fa-solid fa-file-excel"></i> Descargar Excel Vacantes</a>
                     {% endif %}
                 </div>
-            </div>
-            <!-- Botones de cambio de vista -->
-            <div class="my-3">
-                <div class="btn-group" role="group">
-                    <button id="view-cards" class="btn btn-secondary view-toggle-btn active">
-                        <i class="fas fa-id-card"></i> Ver tarjetas
+</div>
+<!-- Botones de cambio de vista -->
+<div class="my-3" title="Ver tarjetas ver tabla">
+<div class="btn-group" role="group" title="Ver tarjetas ver tabla">
+<button class="btn btn-secondary view-toggle-btn active" id="view-cards" title="Ver tarjetas">
+<i class="fas fa-id-card"></i> Ver tarjetas
                     </button>
-                    <button id="view-table" class="btn btn-secondary view-toggle-btn">
-                        <i class="fas fa-table"></i> Ver tabla
+<button class="btn btn-secondary view-toggle-btn" id="view-table" title="Ver tabla">
+<i class="fas fa-table"></i> Ver tabla
                     </button>
-                </div>
-            </div>
-        </div>
-        <div class="mb-4" id="active-filters">
-            <h6 class="text-light">✅ Filtros Activos</h6>
-            <div class="active-filters-container" id="active-filters-container">
+</div>
+</div>
+</div>
+<div class="mb-4" id="active-filters" title="✅ filtros activos ❌ ❌">
+<h6 class="text-light" title="✅ filtros activos">✅ Filtros Activos</h6>
+<div class="active-filters-container" id="active-filters-container" title="Active filters container">
                 {% for key, value in filtros.items %}
                     {% if value %}
                         {% if value is list %}
                             {% for val in value %}
                                 <span class="filter-badge">
                                     {{ key|title }}: <strong>{{ val }}</strong>
-                                    <span class="remove-filter" data-filter-key="{{ key }}" data-filter-value="{{ val }}">❌</span>
-                                </span>
+<span class="remove-filter" data-filter-key="{{ key }}" data-filter-value="{{ val }}">❌</span>
+</span>
                             {% endfor %}
                         {% else %}
                             <span class="filter-badge">
                                 {{ key|title }}: <strong>{{ value }}</strong>
-                                <span class="remove-filter" data-filter-key="{{ key }}" data-filter-value="{{ value }}">❌</span>
-                            </span>
+<span class="remove-filter" data-filter-key="{{ key }}" data-filter-value="{{ value }}">❌</span>
+</span>
                         {% endif %}
                     {% endif %}
                 {% endfor %}
             </div>
-        </div>
-        
-        <!-- Job Listings -->
-        <!-- Vista de Tarjetas Wrapper -->
-        <div id="cards-view"> {# Nuevo div contenedor para la vista de tarjetas #}
-            <div class="grid-container"> {# El div original con la clase grid-container #}
+</div>
+<!-- Job Listings -->
+<!-- Vista de Tarjetas Wrapper -->
+<div id="cards-view" title="El bucle y la estructura"> {# Nuevo div contenedor para la vista de tarjetas #}
+            <div class="grid-container" title="El bucle y la estructura"> {# El div original con la clase grid-container #}
                 {% comment %} El bucle y la estructura de la tarjeta permanecen dentro de grid-container {% endcomment %}
             {% for vacante in page_obj %}
-            <div class="vacante-card">
-                <div class="vacante-header">
-                    <div class="checkbox-container">
-                            <div class="vacante-info">
-                            <div class="vacante-title">{{ vacante.cargo }}</div>
-                            <div class="vacante-location">
+            <div class="vacante-card" title="📍 no especificado 🗑️ ✏️ 👥">
+<div class="vacante-header" title="📍 no especificado 🗑️ ✏️ 👥">
+<div class="checkbox-container" title="📍 no especificado 🗑️ ✏️ 👥">
+<div class="vacante-info" title="📍 no especificado 🗑️ ✏️ 👥">
+<div class="vacante-title" title="Cargo">{{ vacante.cargo }}</div>
+<div class="vacante-location" title="📍 no especificado">
     📍 
     {% if vacante.ciudad %}
         {{ vacante.ciudad }}
@@ -892,123 +883,114 @@ tr.selected-row {
 </div>
                             {% if request.user.is_authenticated %}
                             {% if request.user.is_authenticated %}
-                            <br>
-                            <div class="vacante-actions">
-                                <form action="{% url 'eliminar_vacante' vacante.id %}" method="POST" class="d-inline" 
-                                      onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta vacante?');">
+                            <br/>
+<div class="vacante-actions" title="🗑️ ✏️ 👥 activainactiva">
+<form action="{% url 'eliminar_vacante' vacante.id %}" class="d-inline" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta vacante?');">
                                     {% csrf_token %}
-                                    <button type="submit" class="btn btn-outline-danger btn-sm">
+                                    <button class="btn btn-outline-danger btn-sm" type="submit">
                                         🗑️
                                     </button>
-                                </form>
-                                <a href="{% url 'editar_vacante' vacante.id %}" class="btn btn-outline-info btn-sm">
+</form>
+<a class="btn btn-outline-info btn-sm" href="{% url 'editar_vacante' vacante.id %}" title="Editar vacante">
                                     ✏️
                                 </a>
-                                <a href="{% url 'lista_candidatos' vacante.id %}" class="btn btn-outline-primary btn-sm">
+<a class="btn btn-outline-primary btn-sm" href="{% url 'lista_candidatos' vacante.id %}" title="Lista candidatos">
                                     👥
                                 </a>
-                                <form action="{% url 'cambiar_estado_vacante' vacante.id %}" method="POST" style="display: inline;">
+<form action="{% url 'cambiar_estado_vacante' vacante.id %}" method="POST" style="display: inline;">
                                     {% csrf_token %}
                                     {# Incluir los parámetros GET actuales como campos ocultos para preservar filtros #}
                                     {% for key, value_list in request.GET.lists %}
                                         {% for value in value_list %}
-                                            <input type="hidden" name="{{ key }}" value="{{ value }}">
+                                            <input name="{{ key }}" title="Django placeholder 52" type="hidden" value="{{ value }}"/>
                                         {% endfor %}
                                     {% endfor %}
                                     <label class="switch">
-                                        <input type="checkbox" onchange="this.form.submit()" {% if vacante.estado %}checked{% endif %}>
-                                        <span class="slider round">
-                                            <span class="switch-text">{% if vacante.estado %}Activa{% else %}Inactiva{% endif %}</span>
-                                        </span>
-                                    </label>
-                                </form>
-                            </div>
+    <input type="checkbox" onchange="this.form.submit()" {% if vacante.estado %}checked{% endif %}>
+    <span class="slider round">
+        <span class="switch-text">{% if vacante.estado %}Activa{% else %}Inactiva{% endif %}</span>
+    </span>
+</label>
+</form>
+</div>
                             {% endif %}
-                            <div class="vacante-meta">
-                                <small>🧑‍💼 Creado: {{ vacante.usuario_publicador.username|default:"No asignado" }} ({{ vacante.fecha_creacion|date:"d/m/Y" }})</small><br>
-                                <small>🔁 Actualizado: {{ vacante.usuario_actualizador.username|default:"" }} ({{ vacante.fecha_actualizacion|date:"d/m/Y" }})</small><br>
-                                <small>👥 Candidatos: {{ vacante.num_candidatos }}</small><br>
-                                <small>ID Vacante: {{ vacante.codigo_vacante|default:"No asignado" }}</small>
-
-                            </div>
+                            <div class="vacante-meta" title="🧑‍💼 creado 🔁 actualizado 👥 candidatos">
+<small title="🧑‍💼 creado">🧑‍💼 Creado: {{ vacante.usuario_publicador.username|default:"No asignado" }} ({{ vacante.fecha_creacion|date:"d/m/Y" }})</small><br/>
+<small title="🔁 actualizado">🔁 Actualizado: {{ vacante.usuario_actualizador.username|default:"" }} ({{ vacante.fecha_actualizacion|date:"d/m/Y" }})</small><br/>
+<small title="👥 candidatos">👥 Candidatos: {{ vacante.num_candidatos }}</small><br/>
+<small title="Id vacante">ID Vacante: {{ vacante.codigo_vacante|default:"No asignado" }}</small>
+</div>
                             {% endif %}
                         </div>
-                    </div>
-                    
-
-                </div>
-
-                <div class="badge-container">
-                    <div class="info-badge">
+</div>
+</div>
+<div class="badge-container" title="👥 vacantes ⏳ 🎓 🏢 💰">
+<div class="info-badge" title="👥 vacantes">
                         👥 {{ vacante.numero_puestos }} vacantes
                     </div>
-                    <div class="info-badge">
+<div class="info-badge">
                         ⏳ {{ vacante.tiempo_experiencia }}
                     </div>
-                    <div class="info-badge">
+<div class="info-badge">
                         🎓 {{ vacante.nivel_estudios }}
                     </div>
-                    <div class="info-badge">
+<div class="info-badge">
                         🏢 {{ vacante.modalidad_trabajo }}
                     </div>
-                    <div class="info-badge">
+<div class="info-badge" title="💰 $ salario a convenir">
                             {% if vacante.rango_salarial %}
                             💰 $  {{ vacante.rango_salarial|intcomma }}
                             {% else %}
                                 Salario a convenir
                             {% endif %}
                     </div>
-                </div>
-                <br>
-                <!-- Botón de Descripción Vacante - Ocupa toda la parte inferior -->
-                <div class="mt-auto">
-                    <button class="btn btn-outline-warning w-100 toggle-info d-flex align-items-center justify-content-center" 
-                            type="button"
-                            data-bs-toggle="modal" 
-                            data-bs-target="#modal-{{ vacante.id }}">
+</div>
+<br/>
+<!-- Botón de Descripción Vacante - Ocupa toda la parte inferior -->
+<div class="mt-auto" title="Descripción vacante">
+<button class="btn btn-outline-warning w-100 toggle-info d-flex align-items-center justify-content-center" data-bs-target="#modal-{{ vacante.id }}" data-bs-toggle="modal" title="Descripción vacante" type="button">
                         Descripción Vacante <i class="fas fa-chevron-down toggle-icon ms-2"></i>
-                    </button>
-                    <br>
+</button>
+<br/>
                     {% if vacante.estado %}
                     <div class="checkbox-container">
-                        <input class="selection-checkbox" type="checkbox" id="check{{ vacante.id }}" onchange="handleSelection(event, '{{ vacante.id }}')">
-                        
-                        <label for="check{{ vacante.id }}"></label>
-                    </div>
+<input class="selection-checkbox" id="check{{ vacante.id }}" onchange="handleSelection(event, '{{ vacante.id }}')" title="Check django placeholder 79" type="checkbox"/>
+<label for="check{{ vacante.id }}"></label>
+</div>
                     {% endif %}
 
                 </div>
-            </div>
+</div>
 
 
             {% endfor %}
         </div>
-        </div> {# Cierre del nuevo div contenedor #}
+</div> {# Cierre del nuevo div contenedor #}
 
         <!-- Vista de Tabla -->
-        <div id="table-view">
-            <table class="table table-dark table-striped table-hover">
-                <thead>
-                    <tr>
-                        <th>Cargo / ID</th>
-                        <th>Ubicación</th>
-                        <th>Modalidad</th>
-                        <th>Salario</th>
+<div id="table-view" title="Cargo / id ubicación modalidad salario">
+<table class="table table-dark table-striped table-hover">
+<thead>
+<tr>
+<th>Cargo / ID</th>
+<th>Ubicación</th>
+<th>Modalidad</th>
+<th>Salario</th>
                         {% if request.user.is_authenticated %}
                         <th>Estado</th>
                         {% endif %}
                         <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
+</tr>
+</thead>
+<tbody>
                     {% for vacante in page_obj %}
                     <tr id="row-{{ vacante.id }}"> {# ID añadido para facilitar la selección con JS #}
                         <td>
-                            <strong>{{ vacante.cargo }}</strong><br>
-                            <small class="text-muted">{{ vacante.codigo_vacante }}</small><br>
-                            <small class="text-muted">Empresa: {{ vacante.empresa_usuaria }}</small>
-                        </td>
-                        <td>
+<strong>{{ vacante.cargo }}</strong><br/>
+<small class="text-muted" title="Codigo vacante">{{ vacante.codigo_vacante }}</small><br/>
+<small class="text-muted" title="Empresa">Empresa: {{ vacante.empresa_usuaria }}</small>
+</td>
+<td>
                             {% if vacante.ciudad %}
                                 {{ vacante.ciudad }}
                             {% elif vacante.departamento %}
@@ -1017,8 +999,8 @@ tr.selected-row {
                                 No especificado
                             {% endif %}
                         </td>
-                        <td>{{ vacante.modalidad_trabajo }}</td>
-                        <td>
+<td>{{ vacante.modalidad_trabajo }}</td>
+<td>
                             {% if vacante.rango_salarial %}
                                 $ {{ vacante.rango_salarial|intcomma }}
                             {% else %}
@@ -1027,311 +1009,296 @@ tr.selected-row {
                         </td>
                         {% if request.user.is_authenticated %}
                         <td>
-                            <form action="{% url 'cambiar_estado_vacante' vacante.id %}" method="POST" class="d-inline">
+<form action="{% url 'cambiar_estado_vacante' vacante.id %}" class="d-inline" method="POST">
                                 {% csrf_token %}
                                 {% for key, value_list in request.GET.lists %}{% for value in value_list %}
-                                <input type="hidden" name="{{ key }}" value="{{ value }}">
+                                <input name="{{ key }}" title="Django placeholder 109" type="hidden" value="{{ value }}"/>
                                 {% endfor %}{% endfor %}
                                 <label class="switch">
-                                    <input type="checkbox" onchange="this.form.submit()" {% if vacante.estado %}checked{% endif %}>
-                                    <span class="slider round"><span class="switch-text">{% if vacante.estado %}Activa{% else %}Inactiva{% endif %}</span></span>
-                                </label>
-                            </form>
-                        </td>
+    <input type="checkbox" onchange="this.form.submit()" {% if vacante.estado %}checked{% endif %}>
+    <span class="slider round">
+        <span class="switch-text">{% if vacante.estado %}Activa{% else %}Inactiva{% endif %}</span>
+    </span>
+</label>
+</form>
+</td>
                         {% endif %}
                         <td class="table-actions-column"> {# Clase para la columna de acciones de la tabla #}
                             {# Grupo de 2 botones: Detalles y Aplicar #}
-                            <div class="d-flex gap-1">
-                                <button class="btn btn-outline-warning btn-sm flex-fill" type="button" data-bs-toggle="modal" data-bs-target="#modal-{{ vacante.id }}">
-                                    <i class="fas fa-eye"></i> Detalles
+                            <div class="d-flex gap-1" title="Detalles">
+<button class="btn btn-outline-warning btn-sm flex-fill" data-bs-target="#modal-{{ vacante.id }}" data-bs-toggle="modal" title="Detalles" type="button">
+<i class="fas fa-eye"></i> Detalles
                                 </button>
                                 {% if vacante.estado %}
                                 <div class="checkbox-container flex-fill">
-                                    <input class="selection-checkbox" type="checkbox" id="table-check{{ vacante.id }}" onchange="handleSelection(event, '{{ vacante.id }}')">
-                                    <label for="table-check{{ vacante.id }}" class="btn btn-success btn-sm w-100"></label>
-                                </div>
+<input class="selection-checkbox" id="table-check{{ vacante.id }}" onchange="handleSelection(event, '{{ vacante.id }}')" title="Table check django placeholder 123" type="checkbox"/>
+<label class="btn btn-success btn-sm w-100" for="table-check{{ vacante.id }}"></label>
+</div>
                                 {% endif %}
                             </div>
                             {% if request.user.is_authenticated %}
                             {# Grupo de 3 botones: Admin #}
                             <div class="d-flex gap-1 justify-content-center"> {# Centrar este grupo de botones #}
-                                <a href="{% url 'editar_vacante' vacante.id %}" class="btn btn-outline-info btn-sm flex-fill"><i class="fas fa-edit"></i></a>
-                                <a href="{% url 'lista_candidatos' vacante.id %}" class="btn btn-outline-primary btn-sm flex-fill"><i class="fas fa-users"></i></a>
-                                <form action="{% url 'eliminar_vacante' vacante.id %}" method="POST" class="d-inline flex-fill" onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta vacante?');">
+                                <a class="btn btn-outline-info btn-sm flex-fill" href="{% url 'editar_vacante' vacante.id %}" title="Editar vacante"><i class="fas fa-edit"></i></a>
+<a class="btn btn-outline-primary btn-sm flex-fill" href="{% url 'lista_candidatos' vacante.id %}" title="Lista candidatos"><i class="fas fa-users"></i></a>
+<form action="{% url 'eliminar_vacante' vacante.id %}" class="d-inline flex-fill" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta vacante?');">
                                     {% csrf_token %}
-                                    <button type="submit" class="btn btn-outline-danger btn-sm w-100"><i class="fas fa-trash"></i></button>
-                                </form>
-                            </div>
+                                    <button class="btn btn-outline-danger btn-sm w-100" type="submit"><i class="fas fa-trash"></i></button>
+</form>
+</div>
                             {% endif %}
                         </td>
-                    </tr>
+</tr>
                     {% empty %}
-                    <tr><td colspan="{% if request.user.is_authenticated %}6{% else %}5{% endif %}" class="text-center">No se encontraron vacantes.</td></tr>
+                    <tr><td class="text-center" colspan="{% if request.user.is_authenticated %}6{% else %}5{% endif %}">No se encontraron vacantes.</td></tr>
                     {% endfor %}
                 </tbody>
-            </table>
-        </div>
-    </div>
+</table>
 </div>
-
-<div class="pagination justify-content-center mt-4">
-    <span class="step-links">
+</div>
+</div>
+<div class="pagination justify-content-center mt-4" title="« primera anterior página de .">
+<span class="step-links" title="« primera anterior página de .">
         {% if page_obj.has_previous %}
-            <a href="?page=1{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="btn btn-outline-secondary btn-sm">&laquo; Primera</a>
-            <a href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="btn btn-outline-secondary btn-sm">Anterior</a>
+            <a class="btn btn-outline-secondary btn-sm" href="?page=1{% for key, value in request.GET.items %}{% if key != 'page' %}&amp;{{ key }}={{ value }}{% endif %}{% endfor %}" title="« primera">« Primera</a>
+<a class="btn btn-outline-secondary btn-sm" href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&amp;{{ key }}={{ value }}{% endif %}{% endfor %}" title="Anterior">Anterior</a>
         {% endif %}
 
-        <span class="current mx-2">
+        <span class="current mx-2" title="Página de .">
             Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
         </span>
 
         {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="btn btn-outline-secondary btn-sm">Siguiente</a>
-            <a href="?page={{ page_obj.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="btn btn-outline-secondary btn-sm">Última &raquo;</a>
+            <a class="btn btn-outline-secondary btn-sm" href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&amp;{{ key }}={{ value }}{% endif %}{% endfor %}" title="Siguiente">Siguiente</a>
+<a class="btn btn-outline-secondary btn-sm" href="?page={{ page_obj.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != 'page' %}&amp;{{ key }}={{ value }}{% endif %}{% endfor %}" title="Última »">Última »</a>
         {% endif %}
     </span>
 </div>
-
 <!-- Opcional: Selector para cantidad por página -->
-<div class="text-center" id="items-por-pagina-selector"> <!-- ID añadido, mt-2 eliminado para control CSS -->
-    <form method="get" action="" class="d-inline-block">
+<div class="text-center" id="items-por-pagina-selector" title="Vacantes por página 10 20 50"> <!-- ID añadido, mt-2 eliminado para control CSS -->
+<form action="" class="d-inline-block" method="get">
         {% for key, value in request.GET.items %}
             {% if key != 'por_pagina' and key != 'page' %}
-                <input type="hidden" name="{{ key }}" value="{{ value }}">
+                <input name="{{ key }}" title="Django placeholder 175" type="hidden" value="{{ value }}"/>
             {% endif %}
         {% endfor %}
-        <label for="por_pagina">Vacantes por página:</label> <!-- Estilo aplicado vía CSS -->
-        <select name="por_pagina" id="por_pagina" onchange="this.form.submit()" class="form-select form-select-sm d-inline-block" style="width: auto;">
-            <option value="10" {% if items_por_pagina == 10 %}selected{% endif %}>10</option>
-            <option value="20" {% if items_por_pagina == 20 %}selected{% endif %}>20</option>
-            <option value="50" {% if items_por_pagina == 50 %}selected{% endif %}>50</option>
-        </select>
-    </form>
+        <label for="por_pagina" title="Vacantes por página">Vacantes por página:</label> <!-- Estilo aplicado vía CSS -->
+<select class="form-select form-select-sm d-inline-block" id="por_pagina" name="por_pagina" onchange="this.form.submit()" style="width: auto;" title="Por pagina">
+<option __django_placeholder_179__selected__django_placeholder_180__="" value="10">10</option>
+<option __django_placeholder_181__selected__django_placeholder_182__="" value="20">20</option>
+<option __django_placeholder_183__selected__django_placeholder_184__="" value="50">50</option>
+</select>
+</form>
 </div>
-
 <!-- Modals Section (Movido aquí para que no se oculte con el cambio de vista) -->
 {% for vacante in page_obj %}
-<div class="modal fade" id="modal-{{ vacante.id }}" tabindex="-1" role="dialog" aria-labelledby="modalLabel-{{ vacante.id }}" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalLabel-{{ vacante.id }}">Detalles de la Vacante: {{ vacante.cargo }}</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-12 mb-4">
-                        <h6 class="text-warning mb-3">📝 Descripción de la Vacante</h6>
-                        <p class="descripcion-vacante">{{ vacante.descripcion_vacante }}</p>
-                    </div>                                                                
-                    <div class="col-md-6">
-                        <h6 class="text-warning mb-3">📊 Información General</h6>
-                        <ul class="list-group list-group-flush bg-transparent">
-                            <li class="list-group-item bg-transparent border-secondary">
-                                <strong>👥 Número de puestos:</strong> {{ vacante.numero_puestos }}
+<div aria-hidden="true" aria-labelledby="modalLabel-{{ vacante.id }}" class="modal fade" id="modal-{{ vacante.id }}" role="dialog" tabindex="-1" title="Detalles de la vacante 📝 descripción">
+<div class="modal-dialog modal-dialog-centered" role="document" title="Detalles de la vacante 📝 descripción">
+<div class="modal-content" title="Detalles de la vacante 📝 descripción">
+<div class="modal-header" title="Detalles de la vacante">
+<h5 class="modal-title" id="modalLabel-{{ vacante.id }}" title="Detalles de la vacante">Detalles de la Vacante: {{ vacante.cargo }}</h5>
+<button aria-label="Close" class="btn-close btn-close-white" data-bs-dismiss="modal" type="button"></button>
+</div>
+<div class="modal-body" title="📝 descripción de la vacante 📊">
+<div class="row" title="📝 descripción de la vacante 📊">
+<div class="col-md-12 mb-4" title="📝 descripción de la vacante">
+<h6 class="text-warning mb-3" title="📝 descripción de la vacante">📝 Descripción de la Vacante</h6>
+<p class="descripcion-vacante" title="Descripcion vacante">{{ vacante.descripcion_vacante }}</p>
+</div>
+<div class="col-md-6" title="📊 información general 👥 número">
+<h6 class="text-warning mb-3" title="📊 información general">📊 Información General</h6>
+<ul class="list-group list-group-flush bg-transparent">
+<li class="list-group-item bg-transparent border-secondary">
+<strong>👥 Número de puestos:</strong> {{ vacante.numero_puestos }}
                             </li>
-                            <li class="list-group-item bg-transparent border-secondary">
-                                <strong>⏳ Experiencia requerida:</strong> {{ vacante.tiempo_experiencia }}
+<li class="list-group-item bg-transparent border-secondary">
+<strong>⏳ Experiencia requerida:</strong> {{ vacante.tiempo_experiencia }}
                             </li>
-                            <li class="list-group-item bg-transparent border-secondary">
-                                <strong>🎓 Nivel de estudios:</strong> {{ vacante.nivel_estudios }}
+<li class="list-group-item bg-transparent border-secondary">
+<strong>🎓 Nivel de estudios:</strong> {{ vacante.nivel_estudios }}
                             </li>
-                            <li class="list-group-item bg-transparent border-secondary">
-                                <strong>📍 Ubicación:</strong> 
+<li class="list-group-item bg-transparent border-secondary">
+<strong>📍 Ubicación:</strong> 
                                 {% if vacante.ciudad %}{{ vacante.ciudad }}{% elif vacante.departamento %}{{ vacante.departamento }}{% else %}No especificado{% endif %}
                             </li>
-                        </ul>
-                    </div>
-                    
-                    <div class="col-md-6">
-                        <h6 class="text-warning mb-3">💼 Condiciones Laborales</h6>
-                        <ul class="list-group list-group-flush bg-transparent">
-                            <li class="list-group-item bg-transparent border-secondary"><strong>🏢 Modalidad:</strong> {{ vacante.modalidad_trabajo }}</li>
-                            <li class="list-group-item bg-transparent border-secondary"><strong>📄 Tipo de contrato:</strong> {{ vacante.tipo_contrato }}</li>
-                            <li class="list-group-item bg-transparent border-secondary"><strong>⏰ Jornada:</strong> {{ vacante.jornada_trabajo }}</li>
-                            <li class="list-group-item bg-transparent border-secondary">
-                                <strong>💰 Salario:</strong>
+</ul>
+</div>
+<div class="col-md-6" title="💼 condiciones laborales 🏢 modalidad 📄">
+<h6 class="text-warning mb-3" title="💼 condiciones laborales">💼 Condiciones Laborales</h6>
+<ul class="list-group list-group-flush bg-transparent">
+<li class="list-group-item bg-transparent border-secondary"><strong>🏢 Modalidad:</strong> {{ vacante.modalidad_trabajo }}</li>
+<li class="list-group-item bg-transparent border-secondary"><strong>📄 Tipo de contrato:</strong> {{ vacante.tipo_contrato }}</li>
+<li class="list-group-item bg-transparent border-secondary"><strong>⏰ Jornada:</strong> {{ vacante.jornada_trabajo }}</li>
+<li class="list-group-item bg-transparent border-secondary">
+<strong>💰 Salario:</strong>
                                 {% if vacante.rango_salarial %}$ {{ vacante.rango_salarial|intcomma }}{% else %}A convenir{% endif %}
                             </li>
-                        </ul>
-                    </div>
+</ul>
+</div>
                     {% if request.user.is_authenticated %}
-                    <div class="col-md-12 mb-4">
-                        <br>
-                        <h6 class="text-warning mb-3">📅 Datos de citación a convocatoria</h6>
-                        <p class="descripcion-vacante">{{ vacante.citacion_convocatoria }}</p>
-                    </div> 
+                    <div class="col-md-12 mb-4" title="📅 datos de citación a convocatoria">
+<br/>
+<h6 class="text-warning mb-3" title="📅 datos de citación a convocatoria">📅 Datos de citación a convocatoria</h6>
+<p class="descripcion-vacante" title="Citacion convocatoria">{{ vacante.citacion_convocatoria }}</p>
+</div> 
                     {% endif %}                                                               
                 </div>
-            </div>
-            <div class="modal-footer">
+</div>
+<div class="modal-footer" title="Seleccionar vacante cerrar">
                 {% if vacante.estado %}
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="checkbox" id="modal-check{{ vacante.id }}" value="{{ vacante.id }}" onchange="handleSelection(event, '{{ vacante.id }}')">
-                    <label class="form-check-label" for="modal-check{{ vacante.id }}">
+                <div class="form-check form-check-inline" title="Seleccionar vacante">
+<input class="form-check-input" id="modal-check{{ vacante.id }}" onchange="handleSelection(event, '{{ vacante.id }}')" title="Modal check django placeholder 211" type="checkbox" value="{{ vacante.id }}"/>
+<label class="form-check-label" for="modal-check{{ vacante.id }}" title="Seleccionar vacante">
                         Seleccionar vacante
                     </label>
-                </div>
+</div>
                 {% endif %}
-                <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cerrar</button>
-            </div>
-        </div>
-    </div>
+                <button class="btn btn-outline-light" data-bs-dismiss="modal" title="Cerrar" type="button">Cerrar</button>
+</div>
+</div>
+</div>
 </div>
 {% endfor %}
 
 
 <!-- Floating Action Button -->
-<a href="{% url 'registro_candidato' %}" class="btn btn-warning floating-button d-none" id="registroButton" onclick="redirectToRegistro(event)">
+<a class="btn btn-warning floating-button d-none" href="{% url 'registro_candidato' %}" id="registroButton" onclick="redirectToRegistro(event)" title="✨ registrar mis datos">
     ✨ Registrar mis datos
 </a>
-
 <!-- Offcanvas Filter -->
-<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample">
-    <div class="offcanvas-header">
-        <h5 class="offcanvas-title text-light">🔍 Filtrar Vacantes</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
-    </div>
-    
-    <div class="offcanvas-body">
-        <!-- Contenedor con desplazamiento para manejo de contenido largo -->
-        <div class="filters-container">
-            <form action="" method="GET" id="filter-form">
-                <div class="mb-3">
+<div class="offcanvas offcanvas-start" id="offcanvasExample" tabindex="-1" title="🔍 filtrar vacantes 📊 estado activa">
+<div class="offcanvas-header" title="🔍 filtrar vacantes">
+<h5 class="offcanvas-title text-light" title="🔍 filtrar vacantes">🔍 Filtrar Vacantes</h5>
+<button class="btn-close btn-close-white" data-bs-dismiss="offcanvas" type="button"></button>
+</div>
+<div class="offcanvas-body" title="📊 estado activa inactiva 🔎 id">
+<!-- Contenedor con desplazamiento para manejo de contenido largo -->
+<div class="filters-container" title="📊 estado activa inactiva 🔎 id">
+<form action="" id="filter-form" method="GET">
+<div class="mb-3" title="📊 estado activa inactiva 🔎 id">
                 {# --- FILTRO DE ESTADO (Estilo Área - Adaptado para Boolean) --- #}
                 {% if request.user.is_authenticated %}
-                <div class="mb-3">
-                    <label for="estado" class="form-label text-light">📊 Estado</label>
+                <div class="mb-3" title="📊 estado activa inactiva">
+<label class="form-label text-light" for="estado" title="📊 estado">📊 Estado</label>
                     {# Asegúrate de usar la misma clase JS que para Área si usas una librería #}
-                    <select class="form-control multiselect-improved" id="estado" name="estado" multiple="multiple">
+                    <select class="form-control multiselect-improved" id="estado" multiple="multiple" name="estado" title="Activa inactiva">
                         {# Opciones escritas directamente con value="True" y value="False" #}
                         {# La condición 'selected' busca los strings 'True' o 'False' en la lista de filtros #}
-                        <option value="True" {% if 'True' in filtros.estado_list %}selected{% endif %}>Activa</option>
-                        <option value="False" {% if 'False' in filtros.estado_list %}selected{% endif %}>Inactiva</option>
-                    </select>
+                        <option __django_placeholder_223__selected__django_placeholder_224__="" title="Activa" value="True">Activa</option>
+<option __django_placeholder_225__selected__django_placeholder_226__="" title="Inactiva" value="False">Inactiva</option>
+</select>
                     {# Ya NO necesitas el bucle {% for %} ni la variable estado_choices #}
                 </div>
                 {% endif %}
                 {# --- FIN FILTRO DE ESTADO --- #}
                 {% if request.user.is_authenticated %}
-                <div class="mb-3">
-                    <label for="codigo_vacante" class="form-label text-light">🔎 ID Vacante</label>
-                    <input type="text" class="form-control" id="codigo_vacante" name="codigo_vacante" value="{{ request.GET.codigo_vacante }}">
-                </div>
+                <div class="mb-3" title="🔎 id vacante">
+<label class="form-label text-light" for="codigo_vacante" title="🔎 id vacante">🔎 ID Vacante</label>
+<input class="form-control" id="codigo_vacante" name="codigo_vacante" title="Codigo vacante" type="text" value="{{ request.GET.codigo_vacante }}"/>
+</div>
                 {% endif %}
 
                 {% if request.user.is_authenticated %}
                 {# Filtro por Usuario Publicador #}
-                <div class="mb-3">
-                    <label for="usuario_publicador" class="form-label text-light">👤 Creado por</label>
+                <div class="mb-3" title="👤 creado por">
+<label class="form-label text-light" for="usuario_publicador" title="👤 creado por">👤 Creado por</label>
                     {# Asume que pasas 'usuarios_publicadores' desde la vista #}
                     {# Y 'filtros.usuario_publicador_list' contiene los IDs seleccionados #}
-                    <select class="form-control multiselect-improved" id="usuario_publicador" name="usuario_publicador" multiple="multiple">
+                    <select class="form-control multiselect-improved" id="usuario_publicador" multiple="multiple" name="usuario_publicador" title="Usuario publicador">
                         {% for usuario in usuarios_publicadores %}
-                            <option value="{{ usuario.id }}" {% if usuario.id|stringformat:"s" in filtros.usuario_publicador_list %}selected{% endif %}>
+                            <option __django_placeholder_239__selected__django_placeholder_240__="" value="{{ usuario.id }}">
                                 {{ usuario.username }} {# O usuario.get_full_name si prefieres #}
                             </option>
                         {% endfor %}
                     </select>
-                </div>
+</div>
                 {% endif %}
 
-                <div class="mb-3">
-                    <label for="cargo" class="form-label text-light">💼 Cargo</label>
-                    <input type="text" class="form-control" id="cargo" name="cargo" value="{{ request.GET.cargo }}">
-                </div>
-                <div class="mb-3">
-                    <label for="area" class="form-label text-light">🎯 Área</label>
-                    <select class="form-control multiselect-improved" id="area" name="area" multiple="multiple">
+                <div class="mb-3" title="💼 cargo">
+<label class="form-label text-light" for="cargo" title="💼 cargo">💼 Cargo</label>
+<input class="form-control" id="cargo" name="cargo" title="Cargo" type="text" value="{{ request.GET.cargo }}"/>
+</div>
+<div class="mb-3" title="🎯 área">
+<label class="form-label text-light" for="area" title="🎯 área">🎯 Área</label>
+<select class="form-control multiselect-improved" id="area" multiple="multiple" name="area" title="Area">
                         {% for value, label in area_choices %}
-                            <option value="{{ value }}" {% if value in filtros.area_list %}selected{% endif %}>{{ label }}</option>
+                            <option __django_placeholder_248__selected__django_placeholder_249__="" title="Label" value="{{ value }}">{{ label }}</option>
                         {% endfor %}
                     </select>
-                </div>
-
-
-
-                <div class="mb-3">
-                    <label for="modalidad_trabajo" class="form-label text-light">🏢 Modalidad de Trabajo</label>
-                    <select class="form-control multiselect-improved" id="modalidad_trabajo" name="modalidad_trabajo" multiple="multiple">
+</div>
+<div class="mb-3" title="🏢 modalidad de trabajo">
+<label class="form-label text-light" for="modalidad_trabajo" title="🏢 modalidad de trabajo">🏢 Modalidad de Trabajo</label>
+<select class="form-control multiselect-improved" id="modalidad_trabajo" multiple="multiple" name="modalidad_trabajo" title="Modalidad trabajo">
                         {% for value, label in modalidad_trabajo_choices %}
-                            <option value="{{ value }}" {% if value in filtros.modalidad_trabajo_list %}selected{% endif %}>{{ label }}</option>
+                            <option __django_placeholder_254__selected__django_placeholder_255__="" title="Label" value="{{ value }}">{{ label }}</option>
                         {% endfor %}
                     </select>
-                </div>
-
-                <div class="mb-3">
-                    <label for="tipo_contrato" class="form-label text-light">📄 Tipo de Contrato</label>
-                    <select class="form-control multiselect-improved" id="tipo_contrato" name="tipo_contrato" multiple="multiple">
+</div>
+<div class="mb-3" title="📄 tipo de contrato">
+<label class="form-label text-light" for="tipo_contrato" title="📄 tipo de contrato">📄 Tipo de Contrato</label>
+<select class="form-control multiselect-improved" id="tipo_contrato" multiple="multiple" name="tipo_contrato" title="Tipo contrato">
                         {% for value, label in tipo_contrato_choices %}
-                            <option value="{{ value }}" {% if value in filtros.tipo_contrato_list %}selected{% endif %}>{{ label }}</option>
+                            <option __django_placeholder_260__selected__django_placeholder_261__="" title="Label" value="{{ value }}">{{ label }}</option>
                         {% endfor %}
                     </select>
-                </div>
-
-                <div class="mb-3">
-                    <label for="jornada_trabajo" class="form-label text-light">⏰ Jornada de Trabajo</label>
-                    <select class="form-control multiselect-improved" id="jornada_trabajo" name="jornada_trabajo" multiple="multiple">
+</div>
+<div class="mb-3" title="⏰ jornada de trabajo">
+<label class="form-label text-light" for="jornada_trabajo" title="⏰ jornada de trabajo">⏰ Jornada de Trabajo</label>
+<select class="form-control multiselect-improved" id="jornada_trabajo" multiple="multiple" name="jornada_trabajo" title="Jornada trabajo">
                         {% for value, label in jornada_trabajo_choices %}
-                            <option value="{{ value }}" {% if value in filtros.jornada_trabajo_list %}selected{% endif %}>{{ label }}</option>
+                            <option __django_placeholder_266__selected__django_placeholder_267__="" title="Label" value="{{ value }}">{{ label }}</option>
                         {% endfor %}
                     </select>
-                </div>
-
-                <div class="mb-3">
-                    <label for="tiempo_experiencia" class="form-label text-light">⌛ Tiempo de Experiencia</label>
-                    <select class="form-control multiselect-improved" id="tiempo_experiencia" name="tiempo_experiencia" multiple="multiple">
+</div>
+<div class="mb-3" title="⌛ tiempo de experiencia">
+<label class="form-label text-light" for="tiempo_experiencia" title="⌛ tiempo de experiencia">⌛ Tiempo de Experiencia</label>
+<select class="form-control multiselect-improved" id="tiempo_experiencia" multiple="multiple" name="tiempo_experiencia" title="Tiempo experiencia">
                         {% for value, label in tiempo_experiencia_choices %}
-                            <option value="{{ value }}" {% if value in filtros.tiempo_experiencia_list %}selected{% endif %}>{{ label }}</option>
+                            <option __django_placeholder_272__selected__django_placeholder_273__="" title="Label" value="{{ value }}">{{ label }}</option>
                         {% endfor %}
                     </select>
-                </div>
-
-                <div class="mb-3">
-                    <label for="nivel_estudios" class="form-label text-light">🎓 Nivel de Estudios</label>
-                    <select class="form-control multiselect-improved" id="nivel_estudios" name="nivel_estudios" multiple="multiple">
+</div>
+<div class="mb-3" title="🎓 nivel de estudios">
+<label class="form-label text-light" for="nivel_estudios" title="🎓 nivel de estudios">🎓 Nivel de Estudios</label>
+<select class="form-control multiselect-improved" id="nivel_estudios" multiple="multiple" name="nivel_estudios" title="Nivel estudios">
                         {% for value, label in nivel_estudios_choices %}
-                            <option value="{{ value }}" {% if value in filtros.nivel_estudios_list %}selected{% endif %}>{{ label }}</option>
+                            <option __django_placeholder_278__selected__django_placeholder_279__="" title="Label" value="{{ value }}">{{ label }}</option>
                         {% endfor %}
                     </select>
-                </div>
-
-                
-                <div class="mb-3">
-                    <label for="ciudad" class="form-label text-light">📍 Ciudad</label>
-                    <select class="form-control multiselect-improved" id="ciudad" name="ciudad" multiple="multiple">
+</div>
+<div class="mb-3" title="📍 ciudad bogotá d.c.">
+<label class="form-label text-light" for="ciudad" title="📍 ciudad">📍 Ciudad</label>
+<select class="form-control multiselect-improved" id="ciudad" multiple="multiple" name="ciudad" title="Bogotá d.c.">
                         {# --- Opción Manual para Bogotá D.C. --- #}
                         {# ¡IMPORTANTE! Reemplaza '1217' con el ID numérico REAL de Bogotá D.C. #}
                         {% with bogota_id_str='1217' %} {# <-- Usamos el ID como string directamente #}
-                        <option value="{{ bogota_id_str }}" {% if bogota_id_str in filtros.ciudad_list %}selected{% endif %}>Bogotá D.C.</option>
+                        <option __django_placeholder_287__selected__django_placeholder_288__="" title="Bogotá d.c." value="{{ bogota_id_str }}">Bogotá D.C.</option>
                         {% endwith %}
                     
                         <!-- Recorrer las ciudades de Cundinamarca -->
                         {% for ciudad in ciudades_cundinamarca %}
-                            <option value="{{ ciudad.id }}" {% if ciudad.id|stringformat:"s" in filtros.ciudad_list %}selected{% endif %}>{{ ciudad.nombre }}</option>
+                            <option __django_placeholder_292__selected__django_placeholder_293__="" title="Nombre" value="{{ ciudad.id }}">{{ ciudad.nombre }}</option>
                         {% endfor %}
                     </select>
-                    </div>
-                
-                <div class="mb-3">
-                    <label class="form-label text-light" for="rango_salarial_min">💰 Rango Salarial</label>
-                    <div class="d-flex gap-2">
-                        <input type="text" class="form-control" placeholder="Desde" id="rango_salarial_min" name="rango_salarial_min" value="{{ filtros.rango_salarial_min }}">
-                        <input type="text" class="form-control" placeholder="Hasta" id="rango_salarial_max" name="rango_salarial_max" value="{{ filtros.rango_salarial_max }}">
-                    </div>
-                </div>
-                
-                <div class="d-grid gap-2 mt-4 mb-3">
-                    <button type="submit" class="btn btn-primary">
+</div>
+<div class="mb-3" title="💰 rango salarial">
+<label class="form-label text-light" for="rango_salarial_min" title="💰 rango salarial">💰 Rango Salarial</label>
+<div class="d-flex gap-2">
+<input class="form-control" id="rango_salarial_min" name="rango_salarial_min" placeholder="Desde" title="Desde" type="text" value="{{ filtros.rango_salarial_min }}"/>
+<input class="form-control" id="rango_salarial_max" name="rango_salarial_max" placeholder="Hasta" title="Hasta" type="text" value="{{ filtros.rango_salarial_max }}"/>
+</div>
+</div>
+<div class="d-grid gap-2 mt-4 mb-3" title="🔍 aplicar filtros 🧹 borrar filtros">
+<button class="btn btn-primary" title="🔍 aplicar filtros" type="submit">
                         🔍 Aplicar Filtros
                     </button>
-                    <button type="button" class="btn btn-danger" onclick="clearFilters()">
+<button class="btn btn-danger" onclick="clearFilters()" title="🧹 borrar filtros" type="button">
                         🧹 Borrar Filtros
                     </button>
-                </div>
-            </form>
-        </div>
-    </div>
+</div>
+</div></form>
+</div>
+</div>
 </div>
 <script> // Filtros Vacantes
     $(document).ready(function() {
@@ -1361,7 +1328,6 @@ tr.selected-row {
         $('#codigo_vacante, #cargo, #rango_salarial_min, #rango_salarial_max').val('');
     }
     </script>
-    
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("active-filters-container").addEventListener("click", function (event) {

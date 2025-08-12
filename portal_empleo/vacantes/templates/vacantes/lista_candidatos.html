@@ -8,280 +8,251 @@ Candidatos para la Vacante
 
 {% block contenido %}
 
-<div class="container-fluid" style="opacity: 90%; background-color: #525252; color: #f1f1f1;">
-    <div class="row">
-        <div class="col py-3">
-            <h1 style="color: #f8d047;"> {{ vacante.cargo }}</h1>
-            <br>
-            <!-- Filtros y Acciones -->
-            <div class="mb-4 p-3" style="background-color: #333333; border-radius: 8px;">
-                <div class="row g-2 justify-content-center">
-                    <!-- Botón para abrir filtros avanzados -->
-                    <div class="col-auto">
-                        <button id="openFiltersBtn" class="btn btn-warning btn-sm d-flex align-items-center gap-2">
-                            <i class="fas fa-filter"></i> Filtros
+<div class="container-fluid" style="opacity: 90%; background-color: #525252; color: #f1f1f1;" title="Filtros limpiar seleccionar deseleccionar descargar 0">
+<div class="row" title="Filtros limpiar seleccionar deseleccionar descargar 0">
+<div class="col py-3" title="Filtros limpiar seleccionar deseleccionar descargar 0">
+<h1 style="color: #f8d047;"> {{ vacante.cargo }}</h1>
+<br/>
+<!-- Filtros y Acciones -->
+<div class="mb-4 p-3" style="background-color: #333333; border-radius: 8px;" title="Filtros limpiar seleccionar deseleccionar descargar 0">
+<div class="row g-2 justify-content-center" title="Filtros limpiar seleccionar deseleccionar descargar 0">
+<!-- Botón para abrir filtros avanzados -->
+<div class="col-auto" title="Filtros">
+<button class="btn btn-warning btn-sm d-flex align-items-center gap-2" id="openFiltersBtn" title="Filtros">
+<i class="fas fa-filter"></i> Filtros
                         </button>
-                    </div>
-                    <!-- Botón para limpiar filtros -->
-                    <div class="col-auto">
-                        <button id="clearFiltersBtn" class="btn btn-secondary btn-sm d-flex align-items-center gap-2">
-                            <i class="fas fa-times"></i> Limpiar
+</div>
+<!-- Botón para limpiar filtros -->
+<div class="col-auto" title="Limpiar">
+<button class="btn btn-secondary btn-sm d-flex align-items-center gap-2" id="clearFiltersBtn" title="Limpiar">
+<i class="fas fa-times"></i> Limpiar
                         </button>
-                    </div>
-                    <!-- Botón para seleccionar todos -->
-                    <div class="col-auto">
-                        <button id="selectAll" class="btn btn-primary btn-sm d-flex align-items-center gap-2">
-                            <i class="fas fa-check-square"></i> Seleccionar
+</div>
+<!-- Botón para seleccionar todos -->
+<div class="col-auto" title="Seleccionar">
+<button class="btn btn-primary btn-sm d-flex align-items-center gap-2" id="selectAll" title="Seleccionar">
+<i class="fas fa-check-square"></i> Seleccionar
                         </button>
-                    </div>
-                    <!-- Botón para deseleccionar todos -->
-                    <div class="col-auto">
-                        <button id="deselectAll" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-2">
-                            <i class="fas fa-square"></i> Deseleccionar
+</div>
+<!-- Botón para deseleccionar todos -->
+<div class="col-auto" title="Deseleccionar">
+<button class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-2" id="deselectAll" title="Deseleccionar">
+<i class="fas fa-square"></i> Deseleccionar
                         </button>
-                    </div>
-                    <!-- Botón para descargar candidatos seleccionados -->
-                    <div class="col-auto">
-                        <form id="downloadForm" action="{% url 'descargar_candidatos' %}" method="POST">
+</div>
+<!-- Botón para descargar candidatos seleccionados -->
+<div class="col-auto" title="Descargar">
+<form action="{% url 'descargar_candidatos' %}" id="downloadForm" method="POST">
                             {% csrf_token %}
-                            <input type="hidden" name="selected_candidates" id="selectedCandidates">
-                            <button type="submit" id="downloadExcel" class="btn btn-success btn-sm d-flex align-items-center gap-2" disabled>
-                                <i class="fas fa-file-excel"></i> Descargar
+                            <input id="selectedCandidates" name="selected_candidates" title="Selected candidates" type="hidden"/>
+<button class="btn btn-success btn-sm d-flex align-items-center gap-2" disabled="" id="downloadExcel" title="Descargar" type="submit">
+<i class="fas fa-file-excel"></i> Descargar
                             </button>
-                        </form>
-                    </div>
-                    <!-- Indicador de cantidad de seleccionados -->
-                    <div class="col-auto">
-                        <div id="selectedCount" class="btn btn-info btn-sm d-flex align-items-center gap-2">
-                            <i class="fas fa-users"></i><span>0</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Filtros de Estado con botones compactos y alineados al centro -->
-            <div class="mb-4 text-center">
-                <button class="btn btn-info btn-sm filter-estado mx-1" data-estado="Visto">Visto</button>
-                <button class="btn btn-secondary btn-sm filter-estado mx-1" data-estado="No visto">No Visto</button>
-                <button class="btn btn-danger btn-sm filter-estado mx-1" data-estado="Descartado">Descartado</button>
-                <button class="btn btn-warning btn-sm filter-estado mx-1" data-estado="Todos">Ver Todos</button>
-            </div>
-
-            <!-- Lista de candidatos -->
-            <div class="row" id="candidatosList">
+</form>
+</div>
+<!-- Indicador de cantidad de seleccionados -->
+<div class="col-auto">
+<div class="btn btn-info btn-sm d-flex align-items-center gap-2" id="selectedCount" title="Selectedcount">
+<i class="fas fa-users"></i><span>0</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Filtros de Estado con botones compactos y alineados al centro -->
+<div class="mb-4 text-center" title="Visto no visto descartado ver todos">
+<button class="btn btn-info btn-sm filter-estado mx-1" data-estado="Visto" title="Visto">Visto</button>
+<button class="btn btn-secondary btn-sm filter-estado mx-1" data-estado="No visto" title="No visto">No Visto</button>
+<button class="btn btn-danger btn-sm filter-estado mx-1" data-estado="Descartado" title="Descartado">Descartado</button>
+<button class="btn btn-warning btn-sm filter-estado mx-1" data-estado="Todos" title="Ver todos">Ver Todos</button>
+</div>
+<!-- Lista de candidatos -->
+<div class="row" id="candidatosList" title="Seleccionar estado , feria no visto">
                 {% for candidato in candidatos %}
-                <div class="col-md-6 col-lg-4 mb-3 candidato-card" 
-                     data-nombre="{{ candidato.nombres }} {{ candidato.apellidos }}"
-                     data-departamento="{{ candidato.departamento }}"
-                     data-ciudad="{{ candidato.ciudad }}"
-                     data-documento="{{ candidato.numero_documento }}">
-                    <div class="card h-100" style="background-color: #333333; color: #ffffff;">
-                        <div class="card-body">
-                            <!-- Contenedor responsivo para checkbox y badge alineados paralelamente -->
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <!-- Checkbox a la izquierda -->
-                                <div class="form-check m-0">
-                                    <input class="form-check-input candidate-checkbox" 
-                                        type="checkbox" 
-                                        value="{{ candidato.id }}" 
-                                        id="check_{{ candidato.id }}">
-                                    <label class="form-check-label" for="check_{{ candidato.id }}">
+                <div class="col-md-6 col-lg-4 mb-3 candidato-card" data-ciudad="{{ candidato.ciudad }}" data-departamento="{{ candidato.departamento }}" data-documento="{{ candidato.numero_documento }}" data-nombre="{{ candidato.nombres }} {{ candidato.apellidos }}" title="Seleccionar estado , feria no visto">
+<div class="card h-100" style="background-color: #333333; color: #ffffff;" title="Seleccionar estado , feria no visto">
+<div class="card-body" title="Seleccionar estado , feria no visto">
+<!-- Contenedor responsivo para checkbox y badge alineados paralelamente -->
+<div class="d-flex justify-content-between align-items-center mb-2" title="Seleccionar estado">
+<!-- Checkbox a la izquierda -->
+<div class="form-check m-0" title="Seleccionar">
+<input class="form-check-input candidate-checkbox" id="check_{{ candidato.id }}" title="Check django placeholder 15" type="checkbox" value="{{ candidato.id }}"/>
+<label class="form-check-label" for="check_{{ candidato.id }}" title="Seleccionar">
                                         Seleccionar
                                     </label>
-                                </div>
-                                <!-- Badge a la derecha, centrado verticalmente -->
-                                <span id="estado-candidato-{{ candidato.id }}" class="badge 
-                                    {% if candidato.estado_aplicacion == 'No visto' %}bg-secondary
-                                    {% elif candidato.estado_aplicacion == 'Visto' %}bg-info
-                                    {% elif candidato.estado_aplicacion == 'Descartado' %}bg-danger
-                                    {% endif %}">
+</div>
+<!-- Badge a la derecha, centrado verticalmente -->
+<span class="badge {% if candidato.estado_aplicacion == 'No visto' %}bg-secondary {% elif candidato.estado_aplicacion == 'Visto' %}bg-info {% elif candidato.estado_aplicacion == 'Descartado' %}bg-danger {% endif %}" id="estado-candidato-{{ candidato.id }}" title="Estado">
                                     Estado: {{ candidato.estado_aplicacion }}
                                 </span>
-                            </div>
-
-                            <h5 class="card-title text-warning mb-3">
+</div>
+<h5 class="card-title text-warning mb-3">
                                 {{ candidato.nombres }} {{ candidato.apellidos }}
                             </h5>
-                            <div class="card-text">
-                                <div class="mb-2 text-light">
-                                    <i class="fas fa-map-marker-alt text-warning"></i>
-                                    <span class="ms-2">{{ candidato.departamento }}, {{ candidato.ciudad }}</span>
-                                </div>
-                                <div class="mb-2 text-light">
-                                    <i class="fas fa-id-card text-warning"></i>
-                                    <span class="ms-2">{{ candidato.tipo_documento }}: {{ candidato.numero_documento }}</span>
-                                </div>
-                                <div class="mb-3 text-light">
-                                    <i class="fas fa-calendar text-warning"></i>
-                                    <span class="ms-2">Feria: {{ candidato.fecha_feria }}</span>
-                                </div>
-                            </div>
-                            <div class="d-flex gap-2 justify-content-center mb-2">
-                                <!-- Botón para No Visto -->
-                                <form action="{% url 'cambiar_estado_aplicacion' vacante.id candidato.id 'No visto' %}" method="POST">
+<div class="card-text" title=", feria">
+<div class="mb-2 text-light">
+<i class="fas fa-map-marker-alt text-warning"></i>
+<span class="ms-2">{{ candidato.departamento }}, {{ candidato.ciudad }}</span>
+</div>
+<div class="mb-2 text-light">
+<i class="fas fa-id-card text-warning"></i>
+<span class="ms-2">{{ candidato.tipo_documento }}: {{ candidato.numero_documento }}</span>
+</div>
+<div class="mb-3 text-light" title="Feria">
+<i class="fas fa-calendar text-warning"></i>
+<span class="ms-2" title="Feria">Feria: {{ candidato.fecha_feria }}</span>
+</div>
+</div>
+<div class="d-flex gap-2 justify-content-center mb-2" title="No visto visto descartado">
+<!-- Botón para No Visto -->
+<form action="{% url 'cambiar_estado_aplicacion' vacante.id candidato.id 'No visto' %}" method="POST">
                                     {% csrf_token %}
-                                    <button type="submit" class="btn btn-secondary btn-sm" 
-                                        {% if candidato.estado_aplicacion == 'No visto' %}disabled{% endif %}>
+                                    <button __django_placeholder_32__disabled__django_placeholder_33__="" class="btn btn-secondary btn-sm" title="No visto" type="submit">
                                         No visto
                                     </button>
-                                </form>
-    
-                                <!-- Botón para Visto -->
-                                <form action="{% url 'cambiar_estado_aplicacion' vacante.id candidato.id 'Visto' %}" method="POST">
+</form>
+<!-- Botón para Visto -->
+<form action="{% url 'cambiar_estado_aplicacion' vacante.id candidato.id 'Visto' %}" method="POST">
                                     {% csrf_token %}
-                                    <button type="submit" class="btn btn-info btn-sm" 
-                                        {% if candidato.estado_aplicacion == 'Visto' %}disabled{% endif %}>
+                                    <button __django_placeholder_36__disabled__django_placeholder_37__="" class="btn btn-info btn-sm" title="Visto" type="submit">
                                         Visto
                                     </button>
-                                </form>
-    
-                                <!-- Botón para Descartado -->
-                                <form action="{% url 'cambiar_estado_aplicacion' vacante.id candidato.id 'Descartado' %}" method="POST">
+</form>
+<!-- Botón para Descartado -->
+<form action="{% url 'cambiar_estado_aplicacion' vacante.id candidato.id 'Descartado' %}" method="POST">
                                     {% csrf_token %}
-                                    <button type="submit" class="btn btn-danger btn-sm" 
-                                        {% if candidato.estado_aplicacion == 'Descartado' %}disabled{% endif %}>
+                                    <button __django_placeholder_40__disabled__django_placeholder_41__="" class="btn btn-danger btn-sm" title="Descartado" type="submit">
                                         Descartado
                                     </button>
-                                </form>
-                            </div>
-    
-                            <!-- Contenedor para alinear los botones en paralelo -->
-                            <div class="d-flex gap-2 mb-2">
-                                <!-- Botón Ver Hoja de Vida -->
-                                <button class="btn btn-primary btn-sm flex-grow-1 view-details d-flex align-items-center justify-content-center gap-2" 
-                                    data-candidato-id="{{ candidato.id }}"
-                                    data-estado-actual="{{ candidato.estado_aplicacion }}"
-                                    <i class="fas fa-eye"></i> Ver Hoja de Vida
+</form>
+</div>
+<!-- Contenedor para alinear los botones en paralelo -->
+<div class="d-flex gap-2 mb-2" title="Ver hoja de vida contactar">
+<!-- Botón Ver Hoja de Vida -->
+<button <i="" class="fas fa-eye" data-candidato-id="{{ candidato.id }}" data-estado-actual="{{ candidato.estado_aplicacion }}" title="Ver hoja de vida"> Ver Hoja de Vida
                                 </button>
-                                
-                                <!-- Botón Contactar por WhatsApp -->
-                                <a class="btn btn-success btn-sm flex-grow-1 d-flex align-items-center justify-content-center gap-2" 
-                                    href="https://wa.me/?text=Cordial%20Saludo%20{{ candidato.nombres }}%20{{ candidato.apellidos }},%0ATe%20escribimos%20de%20la%20Agencia%20de%20Empleo%20Colsubsidio%20ya%20que%20aplicaste%20al%20cargo%20de%20{{ vacante.cargo }}%20en%20una%20de%20nuestras%20ferias%20de%20empleo." 
-                                    target="_blank">
-                                    <i class="fab fa-whatsapp"></i> Contactar
+<!-- Botón Contactar por WhatsApp -->
+<a class="btn btn-success btn-sm flex-grow-1 d-flex align-items-center justify-content-center gap-2" href="https://wa.me/?text=Cordial%20Saludo%20{{ candidato.nombres }}%20{{ candidato.apellidos }},%0ATe%20escribimos%20de%20la%20Agencia%20de%20Empleo%20Colsubsidio%20ya%20que%20aplicaste%20al%20cargo%20de%20{{ vacante.cargo }}%20en%20una%20de%20nuestras%20ferias%20de%20empleo." target="_blank" title="Contactar">
+<i class="fab fa-whatsapp"></i> Contactar
                                 </a>
-                            </div>
-                            </div>
-                    </div>
-                </div>
+</div>
+</div>
+</div>
+</div>
                 {% empty %}
-                <div class="col">
-                    <div class="alert alert-warning">No hay candidatos para esta vacante.</div>
-                </div>
+                <div class="col" title="No hay candidatos para esta vacante.">
+<div class="alert alert-warning" title="No hay candidatos para esta vacante.">No hay candidatos para esta vacante.</div>
+</div>
                 {% endfor %}
             </div>
-        </div>
-    </div>
 </div>
-
-
-<div id="filtersOverlay" class="filters-overlay">
-    <div class="filters-container">
-        <div class="filters-header">
-            <h3 class="text-warning mb-0">Filtros Avanzados </h3>
-            <button id="closeFiltersBtn" class="btn-close btn-close-white"></button>
-        </div>
-        <div class="filters-body">
-            <div class="row">
-                <!-- Información Personal -->
-                <div class="col-md-6 mb-3">
-                    <h5 class="text-warning">Información Personal</h5>
-                    <div class="mb-2">
-                        <label class="form-label">Nombre/Apellido</label>
-                        <input type="text" id="filterNombre" class="form-control form-control-sm">
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Tipo Documento</label>
-                        <select id="filterTipoDocumento" class="form-select form-select-sm">
-                            <option value="">Todos</option>
-                            <option value="CEDULA DE CIUDADANIA">CEDULA DE CIUDADANIA</option>
-                            <option value="PERMISO ESPECIAL DE PERMANENCIA">PERMISO ESPECIAL DE PERMANENCIA</option>
-                            <option value="TARJETA DE IDENTIDAD">TARJETA DE IDENTIDAD</option>
-                            <option value="DOCUMENTO NACIONAL DE IDENTIFICACION">DOCUMENTO NACIONAL DE IDENTIFICACION</option>
-                            <option value="PASAPORTE">PASAPORTE</option>
-                            <option value="CEDULA DE EXTRANJERIA">CEDULA DE EXTRANJERIA</option>
-                        </select>
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Número Documento</label>
-                        <input type="text" id="filterNumeroDocumento" class="form-control form-control-sm">
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Sexo</label>
-                        <select id="filterSexo" class="form-select form-select-sm">
-                            <option value="">Todos</option>
-                            <option value="Mujer">Mujer</option>
-                            <option value="Hombre">Hombre</option>
-                            <option value="Intersexual">Intersexual</option>
-                        </select>
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Departamento o Ciudad</label>
-                        <select id="filterDepartamento" name="departamento" class="form-select form-select-sm">
-                            <option value=""></option>
+</div>
+</div>
+<div class="filters-overlay" id="filtersOverlay" title="Filtros avanzados información personal nombre/apellido tipo">
+<div class="filters-container" title="Filtros avanzados información personal nombre/apellido tipo">
+<div class="filters-header" title="Filtros avanzados">
+<h3 class="text-warning mb-0" title="Filtros avanzados">Filtros Avanzados </h3>
+<button class="btn-close btn-close-white" id="closeFiltersBtn" title="Closefiltersbtn"></button>
+</div>
+<div class="filters-body" title="Información personal nombre/apellido tipo documento todos">
+<div class="row" title="Información personal nombre/apellido tipo documento todos">
+<!-- Información Personal -->
+<div class="col-md-6 mb-3" title="Información personal nombre/apellido tipo documento todos">
+<h5 class="text-warning" title="Información personal">Información Personal</h5>
+<div class="mb-2" title="Nombre/apellido">
+<label class="form-label" title="Nombre/apellido">Nombre/Apellido</label>
+<input class="form-control form-control-sm" id="filterNombre" title="Filternombre" type="text"/>
+</div>
+<div class="mb-2" title="Tipo documento todos cedula de ciudadania">
+<label class="form-label" title="Tipo documento">Tipo Documento</label>
+<select class="form-select form-select-sm" id="filterTipoDocumento" title="Todos cedula de ciudadania permiso especial">
+<option title="Todos" value="">Todos</option>
+<option title="Cedula de ciudadania" value="CEDULA DE CIUDADANIA">CEDULA DE CIUDADANIA</option>
+<option title="Permiso especial de permanencia" value="PERMISO ESPECIAL DE PERMANENCIA">PERMISO ESPECIAL DE PERMANENCIA</option>
+<option title="Tarjeta de identidad" value="TARJETA DE IDENTIDAD">TARJETA DE IDENTIDAD</option>
+<option title="Documento nacional de identificacion" value="DOCUMENTO NACIONAL DE IDENTIFICACION">DOCUMENTO NACIONAL DE IDENTIFICACION</option>
+<option title="Pasaporte" value="PASAPORTE">PASAPORTE</option>
+<option title="Cedula de extranjeria" value="CEDULA DE EXTRANJERIA">CEDULA DE EXTRANJERIA</option>
+</select>
+</div>
+<div class="mb-2" title="Número documento">
+<label class="form-label" title="Número documento">Número Documento</label>
+<input class="form-control form-control-sm" id="filterNumeroDocumento" title="Filternumerodocumento" type="text"/>
+</div>
+<div class="mb-2" title="Sexo todos mujer hombre intersexual">
+<label class="form-label" title="Sexo">Sexo</label>
+<select class="form-select form-select-sm" id="filterSexo" title="Todos mujer hombre intersexual">
+<option title="Todos" value="">Todos</option>
+<option title="Mujer" value="Mujer">Mujer</option>
+<option title="Hombre" value="Hombre">Hombre</option>
+<option title="Intersexual" value="Intersexual">Intersexual</option>
+</select>
+</div>
+<div class="mb-2" title="Departamento o ciudad">
+<label class="form-label" title="Departamento o ciudad">Departamento o Ciudad</label>
+<select class="form-select form-select-sm" id="filterDepartamento" name="departamento" title="Departamento">
+<option value=""></option>
                             {% for value, label in departamento_choices %}
-                                <option value="{{ value }}" {% if filtros.departamento == value|stringformat:"s" %}selected{% endif %}>
+                                <option __django_placeholder_51__selected__django_placeholder_52__="" value="{{ value }}">
                                     {{ label }}
                                 </option>
                             {% endfor %}
                         </select>
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Municipio o Localidad</label>
-                        <select id="filterCiudad" name="ciudad" class="form-select form-select-sm">
-                            <option value=""></option>
+</div>
+<div class="mb-2" title="Municipio o localidad">
+<label class="form-label" title="Municipio o localidad">Municipio o Localidad</label>
+<select class="form-select form-select-sm" id="filterCiudad" name="ciudad" title="Ciudad">
+<option value=""></option>
                             {% if filtros.ciudad_nombre %}
-                                <option value="{{ filtros.ciudad }}" selected>{{ filtros.ciudad_nombre }}</option>
+                                <option selected="" title="Ciudad nombre" value="{{ filtros.ciudad }}">{{ filtros.ciudad_nombre }}</option>
                             {% endif %}
                         </select>
-                    </div>                                        
-                    <div class="mb-2">
-                        <label class="form-label">Fecha de Nacimiento</label>
-                        <div class="row">
-                            <div class="col-6">
-                                <input type="date" id="filterNacimientoDesde" class="form-control form-control-sm" placeholder="Desde">
-                            </div>
-                            <div class="col-6">
-                                <input type="date" id="filterNacimientoHasta" class="form-control form-control-sm" placeholder="Hasta">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Formación y Experiencia -->
-                <div class="col-md-6 mb-3">
-                    <h5 class="text-warning">Formación y Experiencia</h5>
-                    <div class="mb-2">
-                        <label class="form-label">Estudio mínimo requerido</label>
-                        <select id="filterEstudioMinimo" class="form-select form-select-sm">
-                            <option value="">Todos</option>
-                            <option value="BASICA PRIMARIA">BASICA PRIMARIA</option>
-                            <option value="BASICA SECUNDARIA">BASICA SECUNDARIA</option>
-                            <option value="BACHILLER ACADEMICO">BACHILLER ACADEMICO</option>
-                            <option value="ESTUDIANTE BACHILLER ACADEMICO">ESTUDIANTE BACHILLER ACADEMICO</option>
-                            <option value="TECNICO LABORAL/PROFESIONAL">TECNICO LABORAL/PROFESIONAL</option>
-                            <option value="ESTUDIANTE TECNICO LABORAL/PROFESIONA">ESTUDIANTE TECNICO LABORAL/PROFESIONAL</option>
-                            <option value="TECNOLOGO">TECNOLOGO</option>
-                            <option value="ESTUDIANTE TECNOLOGO">ESTUDIANTE TECNOLOGO</option>
-                            <option value="PROFESIONAL">PROFESIONAL</option>
-                            <option value="ESTUDIANTE PROFESIONAL">ESTUDIANTE PROFESIONAL</option>
-                            <option value="POSGRADO">POSGRADO</option>
-                        </select>
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Programa Académico</label>
-                        <input type="text" id="filterPrograma" class="form-control form-control-sm">
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Horario Interesado</label>
-                        <select id="filterHorario" class="form-select form-select-sm">
-                            <option value="">Todos</option>
-                            <option value="TIEMPO COMPLETO">TIEMPO COMPLETO</option>
-                            <option value="MEDIO TIEMPO">MEDIO TIEMPO</option>
-                            <option value="FINES DE SEMANA">FINES DE SEMANA</option>
-                        </select>
-                    </div>
-                    <!-- <div class="mb-2">
+</div>
+<div class="mb-2" title="Fecha de nacimiento">
+<label class="form-label" title="Fecha de nacimiento">Fecha de Nacimiento</label>
+<div class="row">
+<div class="col-6">
+<input class="form-control form-control-sm" id="filterNacimientoDesde" placeholder="Desde" title="Desde" type="date"/>
+</div>
+<div class="col-6">
+<input class="form-control form-control-sm" id="filterNacimientoHasta" placeholder="Hasta" title="Hasta" type="date"/>
+</div>
+</div>
+</div>
+</div>
+<!-- Formación y Experiencia -->
+<div class="col-md-6 mb-3" title="Formación y experiencia estudio mínimo requerido">
+<h5 class="text-warning" title="Formación y experiencia">Formación y Experiencia</h5>
+<div class="mb-2" title="Estudio mínimo requerido todos basica primaria">
+<label class="form-label" title="Estudio mínimo requerido">Estudio mínimo requerido</label>
+<select class="form-select form-select-sm" id="filterEstudioMinimo" title="Todos basica primaria basica secundaria bachiller">
+<option title="Todos" value="">Todos</option>
+<option title="Basica primaria" value="BASICA PRIMARIA">BASICA PRIMARIA</option>
+<option title="Basica secundaria" value="BASICA SECUNDARIA">BASICA SECUNDARIA</option>
+<option title="Bachiller academico" value="BACHILLER ACADEMICO">BACHILLER ACADEMICO</option>
+<option title="Estudiante bachiller academico" value="ESTUDIANTE BACHILLER ACADEMICO">ESTUDIANTE BACHILLER ACADEMICO</option>
+<option title="Tecnico laboral/profesional" value="TECNICO LABORAL/PROFESIONAL">TECNICO LABORAL/PROFESIONAL</option>
+<option title="Estudiante tecnico laboral/profesional" value="ESTUDIANTE TECNICO LABORAL/PROFESIONA">ESTUDIANTE TECNICO LABORAL/PROFESIONAL</option>
+<option title="Tecnologo" value="TECNOLOGO">TECNOLOGO</option>
+<option title="Estudiante tecnologo" value="ESTUDIANTE TECNOLOGO">ESTUDIANTE TECNOLOGO</option>
+<option title="Profesional" value="PROFESIONAL">PROFESIONAL</option>
+<option title="Estudiante profesional" value="ESTUDIANTE PROFESIONAL">ESTUDIANTE PROFESIONAL</option>
+<option title="Posgrado" value="POSGRADO">POSGRADO</option>
+</select>
+</div>
+<div class="mb-2" title="Programa académico">
+<label class="form-label" title="Programa académico">Programa Académico</label>
+<input class="form-control form-control-sm" id="filterPrograma" title="Filterprograma" type="text"/>
+</div>
+<div class="mb-2" title="Horario interesado todos tiempo completo medio">
+<label class="form-label" title="Horario interesado">Horario Interesado</label>
+<select class="form-select form-select-sm" id="filterHorario" title="Todos tiempo completo medio tiempo fines">
+<option title="Todos" value="">Todos</option>
+<option title="Tiempo completo" value="TIEMPO COMPLETO">TIEMPO COMPLETO</option>
+<option title="Medio tiempo" value="MEDIO TIEMPO">MEDIO TIEMPO</option>
+<option title="Fines de semana" value="FINES DE SEMANA">FINES DE SEMANA</option>
+</select>
+</div>
+<!-- <div class="mb-2">
                         <label class="form-label">Aspiración Salarial</label>
                         <div class="row">
                             <div class="col-6">
@@ -292,80 +263,77 @@ Candidatos para la Vacante
                             </div>
                         </div>
                     </div> -->
-                    <div class="mb-2">
-                        <label class="form-label">Nombre Feria</label>
-                        <input type="text" id="filterNombreFeria" class="form-control form-control-sm">
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Fecha Feria</label>
-                        <div class="row">
-                            <div class="col-6">
-                                <input type="date" id="filterFeriaDesde" class="form-control form-control-sm" placeholder="Desde">
-                            </div>
-                            <div class="col-6">
-                                <input type="date" id="filterFeriaHasta" class="form-control form-control-sm" placeholder="Hasta">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Técnico de Selección</label>
-                        <select id="filterTecnico" class="form-select form-select-sm">
-                            <option value="">Todos</option>
-                            <option value="No conoce el nombre">No conoce el nombre</option>
-                            <option value="Angel Andres Moyano Molano">Angel Andres Moyano Molano</option>
-                            <option value="Diego Alejandro Parra Pinto">Diego Alejandro Parra Pinto</option>
-                            <option value="Erika Julieth Cristancho Pérez">Erika Julieth Cristancho Pérez</option>
-                        </select>
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Registrado en SISE</label>
-                        <select id="filterSISE" class="form-select form-select-sm">
-                            <option value="">Todos</option>
-                            <option value="SI">Sí</option>
-                            <option value="NO">No</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="filters-footer">
-            <button id="applyFiltersBtn" class="btn btn-warning btn-sm d-flex align-items-center justify-content-center gap-2">
-                <i class="fas fa-check"></i>Aplicar Filtros
-            </button>
-            <button id="clearFiltersBtn" class="btn btn-secondary btn-sm d-flex align-items-center justify-content-center gap-2">
-                <i class="fas fa-times"></i>Limpiar Filtros
-            </button>
-        </div>
-    </div>
+<div class="mb-2" title="Nombre feria">
+<label class="form-label" title="Nombre feria">Nombre Feria</label>
+<input class="form-control form-control-sm" id="filterNombreFeria" title="Filternombreferia" type="text"/>
 </div>
-
+<div class="mb-2" title="Fecha feria">
+<label class="form-label" title="Fecha feria">Fecha Feria</label>
+<div class="row">
+<div class="col-6">
+<input class="form-control form-control-sm" id="filterFeriaDesde" placeholder="Desde" title="Desde" type="date"/>
+</div>
+<div class="col-6">
+<input class="form-control form-control-sm" id="filterFeriaHasta" placeholder="Hasta" title="Hasta" type="date"/>
+</div>
+</div>
+</div>
+<div class="mb-2" title="Técnico de selección todos no conoce">
+<label class="form-label" title="Técnico de selección">Técnico de Selección</label>
+<select class="form-select form-select-sm" id="filterTecnico" title="Todos no conoce el nombre angel">
+<option title="Todos" value="">Todos</option>
+<option title="No conoce el nombre" value="No conoce el nombre">No conoce el nombre</option>
+<option title="Angel andres moyano molano" value="Angel Andres Moyano Molano">Angel Andres Moyano Molano</option>
+<option title="Diego alejandro parra pinto" value="Diego Alejandro Parra Pinto">Diego Alejandro Parra Pinto</option>
+<option title="Erika julieth cristancho pérez" value="Erika Julieth Cristancho Pérez">Erika Julieth Cristancho Pérez</option>
+</select>
+</div>
+<div class="mb-2" title="Registrado en sise todos sí no">
+<label class="form-label" title="Registrado en sise">Registrado en SISE</label>
+<select class="form-select form-select-sm" id="filterSISE" title="Todos sí no">
+<option title="Todos" value="">Todos</option>
+<option title="Sí" value="SI">Sí</option>
+<option title="No" value="NO">No</option>
+</select>
+</div>
+</div>
+</div>
+</div>
+<div class="filters-footer" title="Aplicar filtros limpiar filtros">
+<button class="btn btn-warning btn-sm d-flex align-items-center justify-content-center gap-2" id="applyFiltersBtn" title="Aplicar filtros">
+<i class="fas fa-check"></i>Aplicar Filtros
+            </button>
+<button class="btn btn-secondary btn-sm d-flex align-items-center justify-content-center gap-2" id="clearFiltersBtn" title="Limpiar filtros">
+<i class="fas fa-times"></i>Limpiar Filtros
+            </button>
+</div>
+</div>
+</div>
 <!-- Modal para la hoja de vida -->
-<div class="modal fade" id="cvModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content" style="background-color: #333333; color: #ffffff;">
-            <div class="modal-header border-bottom border-secondary">
-                <h5 class="modal-title text-warning">Hoja de Vida</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div id="cvContent"></div>
-            </div>
-            <div class="modal-footer border-top border-secondary">
-                <button type="button" class="btn btn-secondary btn-sm d-flex align-items-center justify-content-center gap-2" id="prevCandidate">
-                    <i class="fas fa-chevron-left"></i>Anterior
-                </button>
-                <button type="button" class="btn btn-secondary btn-sm d-flex align-items-center justify-content-center gap-2" id="nextCandidate">
-                    <i class="fas fa-chevron-right"></i>Siguiente
-                </button>
-                <button type="button" class="btn btn-warning btn-sm d-flex align-items-center justify-content-center gap-2" data-bs-dismiss="modal">
-                    <i class="fas fa-times"></i>Cerrar
-                </button>
-            </div>
-        </div>
-    </div>
+<div aria-hidden="true" class="modal fade" id="cvModal" tabindex="-1" title="Hoja de vida anterior siguiente cerrar">
+<div class="modal-dialog modal-lg modal-dialog-centered" title="Hoja de vida anterior siguiente cerrar">
+<div class="modal-content" style="background-color: #333333; color: #ffffff;" title="Hoja de vida anterior siguiente cerrar">
+<div class="modal-header border-bottom border-secondary" title="Hoja de vida">
+<h5 class="modal-title text-warning" title="Hoja de vida">Hoja de Vida</h5>
+<button aria-label="Close" class="btn-close btn-close-white" data-bs-dismiss="modal" type="button"></button>
 </div>
-
-
+<div class="modal-body">
+<div id="cvContent" title="Cvcontent"></div>
+</div>
+<div class="modal-footer border-top border-secondary" title="Anterior siguiente cerrar">
+<button class="btn btn-secondary btn-sm d-flex align-items-center justify-content-center gap-2" id="prevCandidate" title="Anterior" type="button">
+<i class="fas fa-chevron-left"></i>Anterior
+                </button>
+<button class="btn btn-secondary btn-sm d-flex align-items-center justify-content-center gap-2" id="nextCandidate" title="Siguiente" type="button">
+<i class="fas fa-chevron-right"></i>Siguiente
+                </button>
+<button class="btn btn-warning btn-sm d-flex align-items-center justify-content-center gap-2" data-bs-dismiss="modal" title="Cerrar" type="button">
+<i class="fas fa-times"></i>Cerrar
+                </button>
+</div>
+</div>
+</div>
+</div>
 <style>
     
     .filter-estado {
@@ -543,7 +511,6 @@ Candidatos para la Vacante
     }
     
 </style>
-
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // --- Element References ---
