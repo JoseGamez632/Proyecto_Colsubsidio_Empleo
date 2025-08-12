@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required # Solicitar ligin para
 from django.contrib.auth.decorators import permission_required # Solicita login para permisos especificos @permission_required('app_name.add_vacante')
 import openpyxl
 from django.db.models.functions import Lower
-from django.db.models import Count, Q
+from django.db.models import Count, Q, F
 import unicodedata
 from django.db import migrations
 from django.views.generic import TemplateView 
@@ -27,6 +27,8 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger # Aseg�
 import shutil
 from django.conf import settings
 import os
+from functools import reduce
+import operator
 
 
 
@@ -632,70 +634,61 @@ def lista_candidatos(request, id):
 
 
 def lista_registros(request):
-    query = request.GET.get('q', '')
+    query = request.GET.get('q', '').strip()
     order_by = request.GET.get('order_by', 'fecha_feria')
-    order_dir = request.GET.get('order_dir', 'asc')
+    order_dir = request.GET.get('order_dir', 'desc')
 
-    registros = RegistroCandidato.objects.all()
+    # --- CORRECCIÓN CLAVE ---
+    # 1. Anotamos los campos en minúsculas SIEMPRE, ANTES de cualquier filtro u ordenamiento.
+    #    Esto asegura que los campos '..._lower' siempre existan.
+    registros = RegistroCandidato.objects.annotate(
+        nombres_lower=Lower('nombres'),
+        apellidos_lower=Lower('apellidos'),
+        numero_documento_lower=Lower('numero_documento')
+    )
+    # --- FIN DE LA CORRECCIÓN CLAVE ---
 
-    # Definir campos válidos para ordenación
+    # 2. Ahora, procedemos con la lógica de búsqueda (si aplica)
+    if query:
+        search_terms = query.split()
+        query_conditions = []
+        for term in search_terms:
+            term_condition = (
+                Q(nombres_lower__icontains=term) |
+                Q(apellidos_lower__icontains=term) |
+                Q(numero_documento_lower__icontains=term)
+            )
+            query_conditions.append(term_condition)
+
+        if query_conditions:
+            final_query = reduce(operator.and_, query_conditions)
+            registros = registros.filter(final_query)
+
+    # 3. Lógica de ordenamiento (ahora 'nombres_lower' siempre existirá)
     valid_order_fields = {
         'nombres': 'nombres_lower',
-        'apellidos': 'apellidos_lower',
-        'numero_documento': 'documento_lower',
-        'feria': 'feria',
         'fecha_feria': 'fecha_feria'
     }
-
-    # Si la ordenación requiere anotaciones, añadirlas
-    if order_by in ['nombres', 'apellidos', 'numero_documento'] or query:
-        registros = registros.annotate(
-            nombres_lower=Lower('nombres'),
-            apellidos_lower=Lower('apellidos'),
-            documento_lower=Lower('numero_documento')
-        )
-
-    # Si hay búsqueda, filtrar
-    if query:
-        registros = registros.filter(
-            Q(nombres_lower__icontains=query) |
-            Q(apellidos_lower__icontains=query) |
-            Q(documento_lower__icontains=query)
-        )
-
-    # Determinar campo de orden válido
     sort_field = valid_order_fields.get(order_by, 'fecha_feria')
 
-    # Aplicar la ordenación
     if order_dir == 'desc':
         registros = registros.order_by(f'-{sort_field}')
     else:
         registros = registros.order_by(sort_field)
-        
-    # --- INICIO: Lógica de Paginación ---
+
+    # 4. Lógica de Paginación (sin cambios)
     try:
-        # Leer 'por_pagina' de GET, default a 10 si no está o es inválido (igual que en lista_vacantes)
-        items_por_pagina = int(request.GET.get('por_pagina', 10)) 
+        items_por_pagina = int(request.GET.get('por_pagina', 10))
     except ValueError:
-        items_por_pagina = 10 # Default si el valor no es un número válido (igual que en lista_vacantes)
+        items_por_pagina = 10
 
     paginator = Paginator(registros, items_por_pagina)
     page_number = request.GET.get('page')
-
-    try:
-        page_obj = paginator.page(page_number)
-    except PageNotAnInteger:
-        # Si page no es un entero, entrega la primera página.
-        page_obj = paginator.page(1)
-    except EmptyPage:
-        # Si page está fuera de rango, entrega la última página de resultados.
-        page_obj = paginator.page(paginator.num_pages)
-    # --- FIN: Lógica de Paginación ---
-
+    page_obj = paginator.get_page(page_number)
 
     context = {
-        'page_obj': page_obj, # <--- Pasar el objeto de página en lugar de la lista completa
-        'items_por_pagina': items_por_pagina, # Para el selector <select>
+        'page_obj': page_obj,
+        'items_por_pagina': items_por_pagina,
         'query': query,
         'order_by': order_by,
         'order_dir': order_dir
